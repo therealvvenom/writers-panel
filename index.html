@@ -6,18 +6,21 @@
     <title>Writer's OS</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* Подключаем футуристичные шрифты от Google */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@300;400;600&display=swap');
+
         :root {
-            --bg: var(--tg-theme-bg-color, #18222d);
-            --text: var(--tg-theme-text-color, #ffffff);
-            --secondary-bg: var(--tg-theme-secondary-bg-color, #242f3d);
-            --button: var(--tg-theme-button-color, #2b9eb3);
-            --button-text: var(--tg-theme-button-text-color, #ffffff);
-            --hint: var(--tg-theme-hint-color, #7f8b9c);
-            --accent: #50b3e6;
+            --bg: #0b0f19; /* Глубокий темный фон терминала */
+            --text: #e2e8f0;
+            --primary: #00f0ff; /* Неоновый голубой акцент */
+            --primary-glow: rgba(0, 240, 255, 0.4);
+            --panel-bg: rgba(15, 23, 42, 0.6); /* Полупрозрачность панелей */
+            --panel-border: rgba(0, 240, 255, 0.2);
+            --danger: #ff0055;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
@@ -26,124 +29,202 @@
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
+            /* Фоновые градиентные блики */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.05), transparent 30%),
+                radial-gradient(circle at 85% 20%, rgba(255, 0, 85, 0.03), transparent 30%);
         }
 
         /* Шапка с навигацией */
         header {
-            padding: 15px;
+            padding: 20px;
             display: flex;
             align-items: center;
-            background-color: var(--secondary-bg);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(180deg, rgba(11,15,25,0.9) 0%, rgba(11,15,25,0) 100%);
+            border-bottom: 1px solid var(--panel-border);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        #header-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 10px var(--primary-glow);
+            margin: 0 auto;
+            transform: translateX(-15px); /* Центровка */
+            text-transform: uppercase;
         }
         #back-btn {
             display: none;
             background: none;
             border: none;
-            color: var(--button);
-            font-size: 16px;
-            margin-right: 15px;
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.2s;
             padding: 0;
         }
+        #back-btn:hover { color: var(--primary); }
 
         /* Экран МЕНЮ */
-        #view-menu { padding: 20px; display: block; overflow-y: auto; }
-        .user-info { display: flex; align-items: center; margin-bottom: 30px; }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--button); margin-right: 15px; overflow: hidden; }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .tile {
-            background: var(--secondary-bg);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.1s;
+        #view-menu { padding: 25px 20px; display: block; overflow-y: auto; }
+        .user-info {
+            display: flex; align-items: center; margin-bottom: 40px;
+            background: var(--panel-bg);
+            padding: 15px; border-radius: 20px;
+            border: 1px solid var(--panel-border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
         }
-        .tile:active { transform: scale(0.95); }
-        .tile-icon { font-size: 30px; margin-bottom: 10px; display: block; }
-        .tile-title { font-weight: bold; font-size: 14px; }
+        .avatar {
+            width: 60px; height: 60px; border-radius: 16px;
+            background: var(--primary); margin-right: 20px; overflow: hidden;
+            box-shadow: 0 0 15px var(--primary-glow);
+            border: 2px solid var(--primary);
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .welcome-text { font-size: 13px; color: #8b9bb4; text-transform: uppercase; letter-spacing: 1px; }
+        #user-name { font-family: 'Orbitron', sans-serif; font-size: 18px; color: var(--primary); margin-top: 3px; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .tile {
+            background: var(--panel-bg);
+            padding: 25px 15px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--panel-border);
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .tile:active { transform: translateY(4px) scale(0.96); box-shadow: 0 0 5px rgba(0,0,0,0.5); border-color: var(--primary); }
+        .tile-icon { font-size: 35px; margin-bottom: 12px; display: block; filter: drop-shadow(0 0 8px rgba(255,255,255,0.2)); }
+        .tile-title { font-weight: 600; font-size: 14px; letter-spacing: 0.5px; }
 
         /* Общие стили разделов */
-        .view { display: none; padding: 15px; flex-direction: column; height: 100%; box-sizing: border-box; }
-        
+        .view { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; animation: fadeIn 0.4s cubic-bezier(0.1, 0.8, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
         textarea, input {
-            width: 100%; background: var(--secondary-bg); color: var(--text);
-            border: 1px solid var(--hint); border-radius: 12px; padding: 15px;
-            box-sizing: border-box; font-size: 16px; outline: none; margin-bottom: 10px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--text);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 18px;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
         }
-        
-        /* Специфика редактора главы */
-        #chapterText { flex-grow: 1; resize: none; font-size: 17px; line-height: 1.5; }
-        .status-bar { font-size: 12px; color: var(--hint); margin-bottom: 5px; text-align: right; }
+        textarea:focus, input:focus { border-color: var(--primary); box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 12px var(--primary-glow); }
+
+        #chapterText { flex-grow: 1; resize: none; font-size: 17px; line-height: 1.6; }
+        .status-bar {
+            font-family: 'Orbitron', sans-serif; font-size: 12px; color: var(--primary);
+            margin-bottom: 10px; text-align: right; text-transform: uppercase; letter-spacing: 1px;
+        }
 
         .btn {
-            background-color: var(--button); color: var(--button-text);
-            border: none; padding: 15px; border-radius: 12px;
-            font-size: 16px; font-weight: bold; cursor: pointer;
+            background: linear-gradient(135deg, #005f8f 0%, var(--primary) 100%);
+            color: #000;
+            border: none; padding: 18px; border-radius: 16px;
+            font-size: 15px; font-weight: 700; cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: all 0.2s ease;
         }
+        .btn:active { transform: scale(0.97); box-shadow: 0 2px 5px var(--primary-glow); }
 
-        /* Персонажи */
-        #charList { overflow-y: auto; flex-grow: 1; }
+        /* Карточки персонажей */
+        #charList { overflow-y: auto; flex-grow: 1; padding-bottom: 20px; }
         .char-card {
-            background: var(--secondary-bg); padding: 15px; border-radius: 12px;
-            margin-bottom: 10px; position: relative; border-left: 4px solid var(--button);
+            background: var(--panel-bg); padding: 20px; border-radius: 16px;
+            margin-bottom: 15px; position: relative;
+            border-left: 4px solid var(--primary);
+            border-top: 1px solid var(--panel-border);
+            border-right: 1px solid var(--panel-border);
+            border-bottom: 1px solid var(--panel-border);
+            backdrop-filter: blur(5px);
         }
+        .char-name { font-family: 'Orbitron', sans-serif; color: var(--primary); font-size: 16px; margin-bottom: 8px; display: block; letter-spacing: 1px;}
+        .char-desc { color: #a0aec0; font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+        
+        .del-btn {
+            position: absolute; top: 18px; right: 18px; background: rgba(255,0,85,0.1); color: var(--danger);
+            border: 1px solid var(--danger); border-radius: 8px; padding: 5px 12px; cursor: pointer;
+            font-weight: bold; font-family: 'Orbitron', sans-serif; transition: all 0.2s;
+        }
+        .del-btn:hover, .del-btn:active { background: var(--danger); color: #fff; box-shadow: 0 0 10px rgba(255,0,85,0.5); }
+        
+        /* Скроллбар для красоты на ПК */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-glow); border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <header>
-    <button id="back-btn" onclick="showView('view-menu')">← Назад</button>
-    <div id="header-title">Штаб Писателя</div>
+    <button id="back-btn" onclick="showView('view-menu')">←</button>
+    <div id="header-title">ОС ПИСАТЕЛЯ</div>
 </header>
 
+<!-- ГЛАВНОЕ МЕНЮ -->
 <div id="view-menu">
     <div class="user-info">
         <div class="avatar" id="user-avatar"></div>
         <div>
-            <div style="font-size: 14px; color: var(--hint);">Добро пожаловать,</div>
-            <div id="user-name" style="font-size: 20px; font-weight: bold;">Автор</div>
+            <div class="welcome-text">Синхронизация:</div>
+            <div id="user-name">АВТОР</div>
         </div>
     </div>
 
     <div class="grid">
         <div class="tile" onclick="showView('view-chapter')">
-            <span class="tile-icon">✍️</span>
-            <span class="tile-title">Писать главу</span>
+            <span class="tile-icon">📝</span>
+            <span class="tile-title">ТЕРМИНАЛ</span>
         </div>
         <div class="tile" onclick="showView('view-idea')">
-            <span class="tile-icon">💡</span>
-            <span class="tile-title">Быстрая идея</span>
+            <span class="tile-icon">⚡</span>
+            <span class="tile-title">ИМПУЛЬС</span>
         </div>
         <div class="tile" onclick="showView('view-chars')">
-            <span class="tile-icon">🎭</span>
-            <span class="tile-title">Персонажи</span>
+            <span class="tile-icon">🧬</span>
+            <span class="tile-title">БАЗА ДАННЫХ</span>
         </div>
         <div class="tile" onclick="tg.close()">
-            <span class="tile-icon">🚪</span>
-            <span class="tile-title">Выход</span>
+            <span class="tile-icon">🔌</span>
+            <span class="tile-title">ОТКЛЮЧИТЬСЯ</span>
         </div>
     </div>
 </div>
 
+<!-- РАЗДЕЛ: ТЕРМИНАЛ (ГЛАВА) -->
 <div id="view-chapter" class="view">
-    <div class="status-bar" id="char-count">Знаков: 0</div>
-    <textarea id="chapterText" placeholder="Здесь можно писать длинную 11-ю главу... Она сохранится автоматически."></textarea>
-    <button class="btn" onclick="downloadText()">💾 Скачать как .txt</button>
+    <div class="status-bar" id="char-count">МАССИВ: 0</div>
+    <textarea id="chapterText" placeholder="Инициализация загрузки сознания... Ввод текста активирован."></textarea>
+    <button class="btn" onclick="downloadText()">ЭКСПОРТ ДАННЫХ [.TXT]</button>
 </div>
 
+<!-- РАЗДЕЛ: ИМПУЛЬС (ИДЕЯ) -->
 <div id="view-idea" class="view">
-    <textarea id="quickIdea" style="height: 200px;" placeholder="Внезапная мысль..."></textarea>
-    <button class="btn" onclick="sendIdeaToBot()">🚀 Отправить боту</button>
+    <textarea id="quickIdea" style="height: 250px;" placeholder="Захват мысли..."></textarea>
+    <button class="btn" onclick="sendIdeaToBot()">ОТПРАВИТЬ НА СЕРВЕР</button>
 </div>
 
+<!-- РАЗДЕЛ: БАЗА ДАННЫХ (ПЕРСОНАЖИ) -->
 <div id="view-chars" class="view">
-    <div style="background: var(--secondary-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-        <input type="text" id="charName" placeholder="Имя героя">
-        <textarea id="charDesc" rows="3" placeholder="Описание..."></textarea>
-        <button class="btn" style="width: 100%; padding: 10px;" onclick="addChar()">Добавить</button>
+    <div style="background: var(--panel-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--panel-border); margin-bottom: 20px;">
+        <input type="text" id="charName" placeholder="ИДЕНТИФИКАТОР (ИМЯ)">
+        <textarea id="charDesc" rows="3" placeholder="ХАРАКТЕРИСТИКИ..."></textarea>
+        <button class="btn" style="width: 100%; padding: 14px;" onclick="addChar()">ЗАПИСАТЬ В БАЗУ</button>
     </div>
     <div id="charList"></div>
 </div>
@@ -152,37 +233,30 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    // 1. ИНИЦИАЛИЗАЦИЯ ПОЛЬЗОВАТЕЛЯ
     const user = tg.initDataUnsafe?.user;
     if (user) {
-        document.getElementById('user-name').innerText = user.first_name;
+        document.getElementById('user-name').innerText = user.first_name.toUpperCase();
         if (user.photo_url) {
             document.getElementById('user-avatar').innerHTML = `<img src="${user.photo_url}">`;
         }
     }
 
-    // 2. НАВИГАЦИЯ
     function showView(viewId) {
         document.querySelectorAll('#view-menu, .view').forEach(v => v.style.display = 'none');
         document.getElementById(viewId).style.display = (viewId === 'view-menu') ? 'block' : 'flex';
-        
         document.getElementById('back-btn').style.display = (viewId === 'view-menu') ? 'none' : 'block';
         
-        // Меняем заголовок
         const titles = {
-            'view-menu': 'Штаб Писателя',
-            'view-chapter': 'Редактор главы',
-            'view-idea': 'Новая идея',
-            'view-chars': 'Мир и герои'
+            'view-menu': 'ОС ПИСАТЕЛЯ',
+            'view-chapter': 'ТЕРМИНАЛ СВЯЗИ',
+            'view-idea': 'БЫСТРЫЙ ИМПУЛЬС',
+            'view-chars': 'БАЗА ДАННЫХ LORE'
         };
         document.getElementById('header-title').innerText = titles[viewId];
     }
 
-    // 3. АВТОСОХРАНЕНИЕ ГЛАВЫ
+    // АВТОСОХРАНЕНИЕ
     const chapterInput = document.getElementById('chapterText');
-    const charCount = document.getElementById('charCount');
-
-    // Загружаем сохраненный текст при входе
     chapterInput.value = localStorage.getItem('writer_draft') || "";
     updateCharCount();
 
@@ -192,14 +266,14 @@
     });
 
     function updateCharCount() {
-        document.getElementById('char-count').innerText = "Знаков: " + chapterInput.value.length;
+        document.getElementById('char-count').innerText = "МАССИВ: " + chapterInput.value.length;
     }
 
     function downloadText() {
         const text = chapterInput.value;
         const blob = new Blob([text], { type: 'text/plain' });
         const anchor = document.createElement('a');
-        anchor.download = 'chapter_draft.txt';
+        anchor.download = 'data_export.txt';
         anchor.href = window.URL.createObjectURL(blob);
         anchor.target = '_blank';
         anchor.style.display = 'none';
@@ -208,7 +282,7 @@
         document.body.removeChild(anchor);
     }
 
-    // 4. БЫСТРАЯ ИДЕЯ
+    // БЫСТРАЯ ИДЕЯ
     function sendIdeaToBot() {
         let text = document.getElementById("quickIdea").value;
         if (text.trim() !== "") {
@@ -217,7 +291,7 @@
         }
     }
 
-    // 5. ПЕРСОНАЖИ (СОХРАНЕНИЕ В ОБЛАКО)
+    // ПЕРСОНАЖИ В ОБЛАКЕ С УДАЛЕНИЕМ
     let characters = [];
     tg.CloudStorage.getItem('my_characters', (err, val) => {
         if (!err && val) { characters = JSON.parse(val); renderChars(); }
@@ -234,11 +308,22 @@
         renderChars();
     }
 
+    function deleteChar(index) {
+        characters.splice(index, 1);
+        tg.CloudStorage.setItem('my_characters', JSON.stringify(characters));
+        renderChars();
+    }
+
     function renderChars() {
         const list = document.getElementById("charList");
-        list.innerHTML = characters.length ? "" : "<p style='text-align:center; opacity:0.5;'>Мир пока пуст...</p>";
+        list.innerHTML = characters.length ? "" : "<p style='text-align:center; color:#8b9bb4; font-family:Orbitron;'>БАЗА ПУСТА...</p>";
         characters.forEach((c, i) => {
-            list.innerHTML += `<div class="char-card"><strong>${c.name}</strong><br><small>${c.desc}</small></div>`;
+            list.innerHTML += `
+                <div class="char-card">
+                    <button class="del-btn" onclick="deleteChar(${i})">X</button>
+                    <span class="char-name">${c.name}</span>
+                    <div class="char-desc">${c.desc}</div>
+                </div>`;
         });
     }
 </script>
