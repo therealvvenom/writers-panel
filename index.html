@@ -141,7 +141,7 @@
 
 <div id="view-chapter" class="view">
     <textarea id="chapterText" placeholder="Начни писать свою историю..."></textarea>
-    <button class="btn" style="background: var(--secondary-bg); color: var(--accent); margin-top: 10px;" onclick="downloadText()">💾 Сохранить файл</button>
+    <button class="btn" style="background: var(--secondary-bg); color: var(--accent); margin-top: 10px;" onclick="copyText()">📋 Скопировать весь текст</button>
 </div>
 
 <div id="view-idea" class="view">
@@ -189,12 +189,20 @@
         localStorage.setItem('writer_draft', chapterInput.value);
     });
 
-    function downloadText() {
-        const blob = new Blob([chapterInput.value], { type: 'text/plain' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'chapter_11_draft.txt';
-        a.click();
+    function copyText() {
+        const text = chapterInput.value;
+        if (!text) {
+            tg.showAlert("Текст пустой. Нечего копировать!");
+            return;
+        }
+        
+        // Надежный способ скопировать текст для телефона
+        chapterInput.select();
+        chapterInput.setSelectionRange(0, 99999); // Для мобильных устройств
+        document.execCommand("copy");
+        
+        // Выводим красивое уведомление от самого Telegram
+        tg.showAlert("✅ Текст скопирован в буфер обмена! Теперь его можно вставить куда угодно.");
     }
 
     function sendIdeaToBot() {
