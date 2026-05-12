@@ -6,27 +6,78 @@
     <title>Панель Писателя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg: var(--tg-theme-bg-color, #18222d);
+            --text: var(--tg-theme-text-color, #ffffff);
+            --secondary-bg: var(--tg-theme-secondary-bg-color, #242f3d);
+            --button: var(--tg-theme-button-color, #2b9eb3);
+            --button-text: var(--tg-theme-button-text-color, #ffffff);
+            --hint: var(--tg-theme-hint-color, #7f8b9c);
+        }
+
         body {
             font-family: sans-serif;
-            background-color: var(--tg-theme-bg-color, #18222d);
-            color: var(--tg-theme-text-color, #ffffff);
-            padding: 20px;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 0;
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            box-sizing: border-box;
+            overflow: hidden;
         }
-        h2 {
-            margin-top: 0;
-            margin-bottom: 15px;
+
+        /* Шапка с вкладками */
+        .tabs {
+            display: flex;
+            background-color: var(--secondary-bg);
+            border-bottom: 1px solid var(--hint);
         }
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.6;
+        }
+        .tab.active {
+            opacity: 1;
+            border-bottom: 3px solid var(--button);
+        }
+
+        /* Контент вкладок */
+        .content {
+            flex-grow: 1;
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+        }
+        .content.active {
+            display: flex;
+        }
+
+        /* Быстрые символы */
+        .tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .tool-btn {
+            background-color: var(--secondary-bg);
+            color: var(--text);
+            border: 1px solid var(--hint);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
         textarea {
-            flex-grow: 1; /* Растягивает поле на весь экран */
+            flex-grow: 1;
             width: 100%;
-            background-color: var(--tg-theme-secondary-bg-color, #242f3d);
-            color: var(--tg-theme-text-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #7f8b9c);
+            background-color: var(--secondary-bg);
+            color: var(--text);
+            border: 1px solid var(--hint);
             border-radius: 10px;
             padding: 15px;
             box-sizing: border-box;
@@ -34,40 +85,85 @@
             resize: none;
             outline: none;
         }
-        button {
-            width: 100%;
-            background-color: var(--tg-theme-button-color, #2b9eb3);
-            color: var(--tg-theme-button-text-color, #ffffff);
+
+        .char-card {
+            background-color: var(--secondary-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--button);
+        }
+
+        .main-btn {
+            background-color: var(--button);
+            color: var(--button-text);
             border: none;
             padding: 15px;
             border-radius: 10px;
             margin-top: 15px;
             font-size: 16px;
-            cursor: pointer;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h2>Блокнот 📝</h2>
-    
-    <!-- Текстовое поле -->
-    <textarea id="myText" placeholder="Введи черновик 11-й главы... Например, опиши, как выглядит маскировка техно-костюма в действии."></textarea>
-    
-    <!-- Кнопка -->
-    <button onclick="sendTextToBot()">Отправить в Идеи</button>
+    <div class="tabs">
+        <div class="tab active" onclick="openTab('write')">Текст 📝</div>
+        <div class="tab" onclick="openTab('lore')">Шпаргалка 📚</div>
+    </div>
+
+    <div id="write" class="content active">
+        <div class="tools">
+            <button class="tool-btn" onclick="insertText('—')">—</button>
+            <button class="tool-btn" onclick="insertText('«')">«</button>
+            <button class="tool-btn" onclick="insertText('»')">»</button>
+            <button class="tool-btn" onclick="insertText('...')">...</button>
+        </div>
+        <textarea id="myText" placeholder="Начни 11-ю главу здесь..."></textarea>
+        <button class="main-btn" onclick="sendToBot()">Сохранить как идею</button>
+    </div>
+
+    <div id="lore" class="content">
+        <div class="char-card">
+            <strong>Лия (Амелия)</strong><br>
+            <small>Путь исцеления, эмоциональная глубина.</small>
+        </div>
+        <div class="char-card">
+            <strong>Стив</strong><br>
+            <small>Помощь и поддержка в трудный момент.</small>
+        </div>
+        <div class="char-card">
+            <strong>Техно-боец</strong><br>
+            <small>Механика костюма, экшен-сцены.</small>
+        </div>
+        <p style="font-size: 12px; color: var(--hint);">* Это статичная шпаргалка. Скоро научим её тянуть данные из базы!</p>
+    </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Эта функция берет текст и кидает его боту
-        function sendTextToBot() {
+        function openTab(tabId) {
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function insertText(symbol) {
+            const area = document.getElementById('myText');
+            const start = area.selectionStart;
+            const end = area.selectionEnd;
+            const text = area.value;
+            area.value = text.slice(0, start) + symbol + text.slice(end);
+            area.focus();
+            area.setSelectionRange(start + symbol.length, start + symbol.length);
+        }
+
+        function sendToBot() {
             let text = document.getElementById("myText").value;
             if (text.trim() !== "") {
-                tg.sendData(text); // Отправка данных в Python
-            } else {
-                tg.showAlert("Текст пустой. Напиши что-нибудь!");
+                tg.sendData(text);
             }
         }
     </script>
