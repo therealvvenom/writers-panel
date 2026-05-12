@@ -6,7 +6,6 @@
     <title>Writer App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Нативные переменные Telegram для идеальной интеграции */
         :root {
             --bg: var(--tg-theme-bg-color, #f3f2f8);
             --card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
@@ -18,7 +17,6 @@
             --border: rgba(142, 142, 147, 0.15);
         }
 
-        /* Системные шрифты (Apple, Android) */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, sans-serif;
             background-color: var(--bg);
@@ -32,7 +30,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Минималистичная навигация */
         header {
             padding: 16px 20px;
             display: flex;
@@ -41,88 +38,48 @@
             position: relative;
             z-index: 10;
         }
-        #header-title {
-            font-weight: 600;
-            font-size: 17px;
-            margin: 0 auto;
-            transform: translateX(-12px);
-        }
+        #header-title { font-weight: 600; font-size: 17px; margin: 0 auto; transform: translateX(-12px); }
         #back-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--accent);
-            font-size: 28px;
-            line-height: 1;
-            cursor: pointer;
-            padding: 0 10px 0 0;
-            font-weight: 300;
+            display: none; background: none; border: none; color: var(--accent);
+            font-size: 28px; line-height: 1; cursor: pointer; padding: 0 10px 0 0; font-weight: 300;
         }
 
-        /* ЭКРАН МЕНЮ */
         #view-menu { padding: 10px 20px 30px; display: block; overflow-y: auto; }
         
-        .user-profile {
-            display: flex;
-            align-items: center;
-            margin-bottom: 32px;
-            padding: 0 5px;
-        }
+        .user-profile { display: flex; align-items: center; margin-bottom: 32px; padding: 0 5px; }
         .avatar {
             width: 56px; height: 56px; border-radius: 50%;
             background-color: var(--accent); margin-right: 16px;
             overflow: hidden; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent-text); font-size: 24px; font-weight: bold;
         }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .greeting { font-size: 14px; color: var(--hint); margin-bottom: 2px; }
         #user-name { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
 
-        /* Дизайн сеток в стиле Bento */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .tile {
-            background-color: var(--card-bg);
-            padding: 24px 20px;
-            border-radius: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            text-align: left;
-            cursor: pointer;
+            background-color: var(--card-bg); padding: 24px 20px; border-radius: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03); text-align: left; cursor: pointer;
             transition: transform 0.15s ease, opacity 0.15s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 110px;
-            box-sizing: border-box;
+            display: flex; flex-direction: column; justify-content: space-between;
+            min-height: 110px; box-sizing: border-box;
         }
         .tile:active { transform: scale(0.96); opacity: 0.8; }
-        
-        /* Особая плитка для "Писать главу" на всю ширину */
         .tile.large { grid-column: 1 / -1; min-height: 140px; }
         
         .tile-icon { font-size: 32px; margin-bottom: 16px; display: inline-block; }
         .tile-title { font-weight: 600; font-size: 16px; line-height: 1.2; }
         .tile-subtitle { font-size: 13px; color: var(--hint); margin-top: 6px; font-weight: 400; }
 
-        /* ОБЩИЕ СТИЛИ РАЗДЕЛОВ */
         .view { display: none; padding: 0 20px 20px; flex-direction: column; height: 100%; box-sizing: border-box; }
         
-        /* Современные инпуты */
         textarea, input {
-            width: 100%;
-            background-color: var(--card-bg);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            box-sizing: border-box;
-            font-size: 16px;
-            font-family: inherit;
-            outline: none;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            width: 100%; background-color: var(--card-bg); color: var(--text);
+            border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+            box-sizing: border-box; font-size: 16px; font-family: inherit;
+            outline: none; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
             transition: border-color 0.2s;
         }
         textarea:focus, input:focus { border-color: var(--accent); }
@@ -131,41 +88,26 @@
         #chapterText { flex-grow: 1; font-size: 17px; }
         .status-bar { font-size: 13px; color: var(--hint); margin-bottom: 12px; font-weight: 500; }
 
-        /* Кнопки в стиле iOS */
         .btn {
-            background-color: var(--accent);
-            color: var(--accent-text);
+            background-color: var(--accent); color: var(--accent-text);
             border: none; padding: 16px; border-radius: 16px;
-            font-size: 17px; font-weight: 600; cursor: pointer;
-            width: 100%;
-            transition: opacity 0.2s;
+            font-size: 17px; font-weight: 600; cursor: pointer; width: 100%;
         }
         .btn:active { opacity: 0.8; }
-        .btn-secondary {
-            background-color: var(--card-bg);
-            color: var(--accent);
-            border: 1px solid var(--border);
-        }
+        .btn-secondary { background-color: var(--card-bg); color: var(--accent); border: 1px solid var(--border); }
 
-        /* Карточки лора */
         #charList { overflow-y: auto; flex-grow: 1; padding-bottom: 20px; }
         .char-card {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 16px;
-            position: relative;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            background-color: var(--card-bg); padding: 20px; border-radius: 20px;
+            margin-bottom: 16px; position: relative; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
             border: 1px solid var(--border);
         }
         .char-name { font-weight: 700; font-size: 18px; margin-bottom: 6px; display: block; }
         .char-desc { color: var(--hint); font-size: 15px; line-height: 1.4; white-space: pre-wrap; }
         
         .del-btn {
-            position: absolute; top: 20px; right: 20px;
-            background: none; border: none; color: var(--hint);
-            font-size: 20px; cursor: pointer; padding: 0;
-            line-height: 1; transition: color 0.2s;
+            position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--hint);
+            font-size: 20px; cursor: pointer; padding: 0; line-height: 1;
         }
         .del-btn:hover, .del-btn:active { color: var(--danger); }
     </style>
@@ -177,7 +119,6 @@
     <div id="header-title">Проекты</div>
 </header>
 
-<!-- ГЛАВНОЕ МЕНЮ -->
 <div id="view-menu">
     <div class="user-profile">
         <div class="avatar" id="user-avatar"></div>
@@ -189,51 +130,38 @@
 
     <div class="grid">
         <div class="tile large" onclick="showView('view-chapter')">
-            <div>
-                <span class="tile-icon">✍️</span>
-            </div>
+            <div><span class="tile-icon">✍️</span></div>
             <div>
                 <div class="tile-title">Редактор главы</div>
                 <div class="tile-subtitle">Автосохранение включено</div>
             </div>
         </div>
-        
         <div class="tile" onclick="showView('view-idea')">
             <span class="tile-icon">💡</span>
-            <div>
-                <div class="tile-title">Идеи</div>
-                <div class="tile-subtitle">Отправить боту</div>
-            </div>
+            <div><div class="tile-title">Идеи</div><div class="tile-subtitle">Отправить боту</div></div>
         </div>
-        
         <div class="tile" onclick="showView('view-chars')">
             <span class="tile-icon">📚</span>
-            <div>
-                <div class="tile-title">Лоребук</div>
-                <div class="tile-subtitle">База знаний</div>
-            </div>
+            <div><div class="tile-title">Лоребук</div><div class="tile-subtitle">База знаний</div></div>
         </div>
     </div>
 </div>
 
-<!-- РАЗДЕЛ: ГЛАВА -->
 <div id="view-chapter" class="view">
     <div class="status-bar" id="char-count">Символов: 0</div>
-    <textarea id="chapterText" placeholder="Начни печатать... Текст сохраняется автоматически на твоем устройстве."></textarea>
+    <textarea id="chapterText" placeholder="Начни печатать..."></textarea>
     <button class="btn btn-secondary" onclick="downloadText()">Экспорт в .txt</button>
 </div>
 
-<!-- РАЗДЕЛ: ИДЕЯ -->
 <div id="view-idea" class="view">
-    <textarea id="quickIdea" style="flex-grow: 1;" placeholder="Запиши внезапную мысль, диалог или сцену..."></textarea>
+    <textarea id="quickIdea" style="flex-grow: 1;" placeholder="Запиши внезапную мысль..."></textarea>
     <button class="btn" onclick="sendIdeaToBot()">Отправить в Идеи</button>
 </div>
 
-<!-- РАЗДЕЛ: ПЕРСОНАЖИ / ЛОР -->
 <div id="view-chars" class="view">
-    <div style="background-color: var(--card-bg); padding: 20px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+    <div style="background-color: var(--card-bg); padding: 20px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 24px;">
         <input type="text" id="charName" placeholder="Имя или Название">
-        <textarea id="charDesc" rows="3" placeholder="Описание, факты, характер..."></textarea>
+        <textarea id="charDesc" rows="3" placeholder="Описание, факты..."></textarea>
         <button class="btn" onclick="addChar()">Добавить запись</button>
     </div>
     <div id="charList"></div>
@@ -243,22 +171,20 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    // 1. УМНАЯ ЗАГРУЗКА ПРОФИЛЯ
+    // 1. ЗАГРУЗКА ДАННЫХ ИЗ TELEGRAM
     const user = tg.initDataUnsafe?.user;
+    const avatarDiv = document.getElementById('user-avatar');
+    
     if (user) {
-        // Ставим реальное имя
         document.getElementById('user-name').innerText = user.first_name;
-        
-        // Работаем с аватаркой
-        const avatarDiv = document.getElementById('user-avatar');
         if (user.photo_url) {
-            // Если фото открыто - ставим его
             avatarDiv.innerHTML = `<img src="${user.photo_url}">`;
         } else {
-            // Если фото скрыто - ставим красивую первую букву имени
-            const firstLetter = user.first_name.charAt(0).toUpperCase();
-            avatarDiv.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; font-weight:bold;">${firstLetter}</div>`;
+            avatarDiv.innerText = user.first_name.charAt(0).toUpperCase();
         }
+    } else {
+        // Если открыто не в Telegram, ставим дефолтную букву
+        avatarDiv.innerText = "П"; 
     }
 
     // 2. НАВИГАЦИЯ
@@ -314,16 +240,18 @@
 
     // 5. ПЕРСОНАЖИ В ОБЛАКЕ
     let characters = [];
-    tg.CloudStorage.getItem('my_characters', (err, val) => {
-        if (!err && val) { characters = JSON.parse(val); renderChars(); }
-    });
+    if (tg.CloudStorage) {
+        tg.CloudStorage.getItem('my_characters', (err, val) => {
+            if (!err && val) { characters = JSON.parse(val); renderChars(); }
+        });
+    }
 
     function addChar() {
         let name = document.getElementById("charName").value.trim();
         let desc = document.getElementById("charDesc").value.trim();
         if (!name) return;
         characters.unshift({ name, desc });
-        tg.CloudStorage.setItem('my_characters', JSON.stringify(characters));
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_characters', JSON.stringify(characters));
         document.getElementById("charName").value = "";
         document.getElementById("charDesc").value = "";
         renderChars();
@@ -331,7 +259,7 @@
 
     function deleteChar(index) {
         characters.splice(index, 1);
-        tg.CloudStorage.setItem('my_characters', JSON.stringify(characters));
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_characters', JSON.stringify(characters));
         renderChars();
     }
 
@@ -346,8 +274,7 @@
                     <div class="char-desc">${c.desc}</div>
                 </div>`;
         });
-    }}
+    }
 </script>
-
 </body>
 </html>
