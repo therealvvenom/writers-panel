@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель Писателя</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Writer's OS</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -13,191 +13,235 @@
             --button: var(--tg-theme-button-color, #2b9eb3);
             --button-text: var(--tg-theme-button-text-color, #ffffff);
             --hint: var(--tg-theme-hint-color, #7f8b9c);
-            --danger: #ff595a;
+            --accent: #50b3e6;
         }
 
         body {
-            font-family: sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            padding: 0;
             margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
+            overflow: hidden;
         }
 
-        .tabs { display: flex; background-color: var(--secondary-bg); border-bottom: 1px solid var(--hint); }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: bold; opacity: 0.6; }
-        .tab.active { opacity: 1; border-bottom: 3px solid var(--button); }
-
-        .content { flex-grow: 1; padding: 15px; display: none; flex-direction: column; overflow-y: auto; }
-        .content.active { display: flex; }
-
-        .tools { display: flex; gap: 10px; margin-bottom: 10px; }
-        .tool-btn { background-color: var(--secondary-bg); color: var(--text); border: 1px solid var(--hint); padding: 8px 12px; border-radius: 5px; font-size: 14px; }
-
-        textarea, input {
-            width: 100%;
-            background-color: var(--secondary-bg);
-            color: var(--text);
-            border: 1px solid var(--hint);
-            border-radius: 10px;
+        /* Шапка с навигацией */
+        header {
             padding: 15px;
-            box-sizing: border-box;
-            font-size: 16px;
-            outline: none;
-            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            background-color: var(--secondary-bg);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        textarea { resize: none; }
-        #myText { flex-grow: 1; }
+        #back-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--button);
+            font-size: 16px;
+            margin-right: 15px;
+            padding: 0;
+        }
+
+        /* Экран МЕНЮ */
+        #view-menu { padding: 20px; display: block; overflow-y: auto; }
+        .user-info { display: flex; align-items: center; margin-bottom: 30px; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--button); margin-right: 15px; overflow: hidden; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .tile {
+            background: var(--secondary-bg);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.1s;
+        }
+        .tile:active { transform: scale(0.95); }
+        .tile-icon { font-size: 30px; margin-bottom: 10px; display: block; }
+        .tile-title { font-weight: bold; font-size: 14px; }
+
+        /* Общие стили разделов */
+        .view { display: none; padding: 15px; flex-direction: column; height: 100%; box-sizing: border-box; }
+        
+        textarea, input {
+            width: 100%; background: var(--secondary-bg); color: var(--text);
+            border: 1px solid var(--hint); border-radius: 12px; padding: 15px;
+            box-sizing: border-box; font-size: 16px; outline: none; margin-bottom: 10px;
+        }
+        
+        /* Специфика редактора главы */
+        #chapterText { flex-grow: 1; resize: none; font-size: 17px; line-height: 1.5; }
+        .status-bar { font-size: 12px; color: var(--hint); margin-bottom: 5px; text-align: right; }
 
         .btn {
-            background-color: var(--button);
-            color: var(--button-text);
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
+            background-color: var(--button); color: var(--button-text);
+            border: none; padding: 15px; border-radius: 12px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
         }
 
-        /* Карточки персонажей */
+        /* Персонажи */
+        #charList { overflow-y: auto; flex-grow: 1; }
         .char-card {
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--button);
-            position: relative;
-        }
-        .del-btn {
-            position: absolute;
-            top: 10px; right: 10px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
+            background: var(--secondary-bg); padding: 15px; border-radius: 12px;
+            margin-bottom: 10px; position: relative; border-left: 4px solid var(--button);
         }
     </style>
 </head>
 <body>
-    <div class="tabs">
-        <div class="tab active" onclick="openTab('write')">Текст 📝</div>
-        <div class="tab" onclick="openTab('chars')">Персонажи 🎭</div>
+
+<header>
+    <button id="back-btn" onclick="showView('view-menu')">← Назад</button>
+    <div id="header-title">Штаб Писателя</div>
+</header>
+
+<div id="view-menu">
+    <div class="user-info">
+        <div class="avatar" id="user-avatar"></div>
+        <div>
+            <div style="font-size: 14px; color: var(--hint);">Добро пожаловать,</div>
+            <div id="user-name" style="font-size: 20px; font-weight: bold;">Автор</div>
+        </div>
     </div>
 
-    <!-- ВКЛАДКА ТЕКСТА -->
-    <div id="write" class="content active">
-        <div class="tools">
-            <button class="tool-btn" onclick="insertText('—')">—</button>
-            <button class="tool-btn" onclick="insertText('«')">«</button>
-            <button class="tool-btn" onclick="insertText('»')">»</button>
-            <button class="tool-btn" onclick="insertText('...')">...</button>
+    <div class="grid">
+        <div class="tile" onclick="showView('view-chapter')">
+            <span class="tile-icon">✍️</span>
+            <span class="tile-title">Писать главу</span>
         </div>
-        <textarea id="myText" placeholder="Пиши здесь..."></textarea>
-        <button class="btn" onclick="sendToBot()">Сохранить в Идеи</button>
+        <div class="tile" onclick="showView('view-idea')">
+            <span class="tile-icon">💡</span>
+            <span class="tile-title">Быстрая идея</span>
+        </div>
+        <div class="tile" onclick="showView('view-chars')">
+            <span class="tile-icon">🎭</span>
+            <span class="tile-title">Персонажи</span>
+        </div>
+        <div class="tile" onclick="tg.close()">
+            <span class="tile-icon">🚪</span>
+            <span class="tile-title">Выход</span>
+        </div>
     </div>
+</div>
 
-    <!-- ВКЛАДКА ПЕРСОНАЖЕЙ -->
-    <div id="chars" class="content">
-        <div style="background: var(--secondary-bg); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-            <input type="text" id="charName" placeholder="Имя (например, Лия)">
-            <textarea id="charDesc" rows="3" placeholder="Описание (характер, костюм, роль)"></textarea>
-            <button class="btn" style="width: 100%; padding: 10px;" onclick="addChar()">Добавить в список</button>
-        </div>
+<div id="view-chapter" class="view">
+    <div class="status-bar" id="char-count">Знаков: 0</div>
+    <textarea id="chapterText" placeholder="Здесь можно писать длинную 11-ю главу... Она сохранится автоматически."></textarea>
+    <button class="btn" onclick="downloadText()">💾 Скачать как .txt</button>
+</div>
+
+<div id="view-idea" class="view">
+    <textarea id="quickIdea" style="height: 200px;" placeholder="Внезапная мысль..."></textarea>
+    <button class="btn" onclick="sendIdeaToBot()">🚀 Отправить боту</button>
+</div>
+
+<div id="view-chars" class="view">
+    <div style="background: var(--secondary-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+        <input type="text" id="charName" placeholder="Имя героя">
+        <textarea id="charDesc" rows="3" placeholder="Описание..."></textarea>
+        <button class="btn" style="width: 100%; padding: 10px;" onclick="addChar()">Добавить</button>
+    </div>
+    <div id="charList"></div>
+</div>
+
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand();
+
+    // 1. ИНИЦИАЛИЗАЦИЯ ПОЛЬЗОВАТЕЛЯ
+    const user = tg.initDataUnsafe?.user;
+    if (user) {
+        document.getElementById('user-name').innerText = user.first_name;
+        if (user.photo_url) {
+            document.getElementById('user-avatar').innerHTML = `<img src="${user.photo_url}">`;
+        }
+    }
+
+    // 2. НАВИГАЦИЯ
+    function showView(viewId) {
+        document.querySelectorAll('#view-menu, .view').forEach(v => v.style.display = 'none');
+        document.getElementById(viewId).style.display = (viewId === 'view-menu') ? 'block' : 'flex';
         
-        <div id="charList">
-            <!-- Сюда будут подгружаться сохраненные герои -->
-        </div>
-    </div>
-
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+        document.getElementById('back-btn').style.display = (viewId === 'view-menu') ? 'none' : 'block';
         
-        let characters = []; // Тут мы храним персонажей в памяти
+        // Меняем заголовок
+        const titles = {
+            'view-menu': 'Штаб Писателя',
+            'view-chapter': 'Редактор главы',
+            'view-idea': 'Новая идея',
+            'view-chars': 'Мир и герои'
+        };
+        document.getElementById('header-title').innerText = titles[viewId];
+    }
 
-        // ПРИ ЗАПУСКЕ: Достаем персонажей из личного облака Telegram
-        tg.CloudStorage.getItem('my_characters', function(error, value) {
-            if (!error && value) {
-                characters = JSON.parse(value); // Расшифровываем сохраненный текст в список
-                renderChars(); // Рисуем на экране
-            }
+    // 3. АВТОСОХРАНЕНИЕ ГЛАВЫ
+    const chapterInput = document.getElementById('chapterText');
+    const charCount = document.getElementById('charCount');
+
+    // Загружаем сохраненный текст при входе
+    chapterInput.value = localStorage.getItem('writer_draft') || "";
+    updateCharCount();
+
+    chapterInput.addEventListener('input', () => {
+        localStorage.setItem('writer_draft', chapterInput.value);
+        updateCharCount();
+    });
+
+    function updateCharCount() {
+        document.getElementById('char-count').innerText = "Знаков: " + chapterInput.value.length;
+    }
+
+    function downloadText() {
+        const text = chapterInput.value;
+        const blob = new Blob([text], { type: 'text/plain' });
+        const anchor = document.createElement('a');
+        anchor.download = 'chapter_draft.txt';
+        anchor.href = window.URL.createObjectURL(blob);
+        anchor.target = '_blank';
+        anchor.style.display = 'none';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+    }
+
+    // 4. БЫСТРАЯ ИДЕЯ
+    function sendIdeaToBot() {
+        let text = document.getElementById("quickIdea").value;
+        if (text.trim() !== "") {
+            tg.sendData(text);
+            document.getElementById("quickIdea").value = "";
+        }
+    }
+
+    // 5. ПЕРСОНАЖИ (СОХРАНЕНИЕ В ОБЛАКО)
+    let characters = [];
+    tg.CloudStorage.getItem('my_characters', (err, val) => {
+        if (!err && val) { characters = JSON.parse(val); renderChars(); }
+    });
+
+    function addChar() {
+        let name = document.getElementById("charName").value.trim();
+        let desc = document.getElementById("charDesc").value.trim();
+        if (!name) return;
+        characters.push({ name, desc });
+        tg.CloudStorage.setItem('my_characters', JSON.stringify(characters));
+        document.getElementById("charName").value = "";
+        document.getElementById("charDesc").value = "";
+        renderChars();
+    }
+
+    function renderChars() {
+        const list = document.getElementById("charList");
+        list.innerHTML = characters.length ? "" : "<p style='text-align:center; opacity:0.5;'>Мир пока пуст...</p>";
+        characters.forEach((c, i) => {
+            list.innerHTML += `<div class="char-card"><strong>${c.name}</strong><br><small>${c.desc}</small></div>`;
         });
+    }
+</script>
 
-        // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
-        function openTab(tabId) {
-            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        // БЫСТРЫЕ СИМВОЛЫ
-        function insertText(symbol) {
-            const area = document.getElementById('myText');
-            const start = area.selectionStart; const end = area.selectionEnd;
-            area.value = area.value.slice(0, start) + symbol + area.value.slice(end);
-            area.focus(); area.setSelectionRange(start + symbol.length, start + symbol.length);
-        }
-
-        // ОТПРАВКА БОТУ
-        function sendToBot() {
-            let text = document.getElementById("myText").value;
-            if (text.trim() !== "") tg.sendData(text);
-        }
-
-        // ДОБАВИТЬ ПЕРСОНАЖА
-        function addChar() {
-            let name = document.getElementById("charName").value.trim();
-            let desc = document.getElementById("charDesc").value.trim();
-            
-            if (!name) return tg.showAlert("Напиши хотя бы имя!");
-
-            // Добавляем в список
-            characters.push({ name: name, desc: desc });
-            
-            // Сохраняем обновленный список в облако Telegram!
-            tg.CloudStorage.setItem('my_characters', JSON.stringify(characters));
-            
-            // Очищаем поля ввода и обновляем экран
-            document.getElementById("charName").value = "";
-            document.getElementById("charDesc").value = "";
-            renderChars();
-        }
-
-        // УДАЛИТЬ ПЕРСОНАЖА
-        function deleteChar(index) {
-            characters.splice(index, 1); // Удаляем из списка
-            tg.CloudStorage.setItem('my_characters', JSON.stringify(characters)); // Обновляем облако
-            renderChars(); // Перерисовываем
-        }
-
-        // НАРИСОВАТЬ СПИСОК ПЕРСОНАЖЕЙ
-        function renderChars() {
-            let listDiv = document.getElementById("charList");
-            listDiv.innerHTML = ""; // Очищаем старое
-            
-            if (characters.length === 0) {
-                listDiv.innerHTML = "<p style='text-align:center; opacity:0.5;'>Список пуст. Добавь первого героя!</p>";
-                return;
-            }
-
-            // Рисуем карточку для каждого
-            characters.forEach((char, index) => {
-                listDiv.innerHTML += `
-                    <div class="char-card">
-                        <button class="del-btn" onclick="deleteChar(${index})">Х</button>
-                        <strong>${char.name}</strong><br>
-                        <small style="white-space: pre-wrap;">${char.desc}</small>
-                    </div>
-                `;
-            });
-        }
-    </script>
 </body>
 </html>
