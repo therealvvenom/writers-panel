@@ -8,30 +8,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: var(--tg-theme-bg-color, #ffffff);
-            --text: var(--tg-theme-text-color, #37352f);
-            --hint: var(--tg-theme-hint-color, #787774);
-            --border: rgba(120, 119, 116, 0.2);
-            --hover: rgba(120, 119, 116, 0.08);
-            --danger: #eb5757;
-            --btn-bg: var(--tg-theme-text-color, #37352f);
-            --btn-text: var(--tg-theme-bg-color, #ffffff);
-            --nav-bg: var(--tg-theme-bg-color, #ffffff);
+            --bg: var(--tg-theme-bg-color, #ffffff); --text: var(--tg-theme-text-color, #37352f);
+            --hint: var(--tg-theme-hint-color, #787774); --border: rgba(120, 119, 116, 0.2);
+            --hover: rgba(120, 119, 116, 0.08); --danger: #eb5757;
+            --btn-bg: var(--tg-theme-text-color, #37352f); --btn-text: var(--tg-theme-bg-color, #ffffff);
+            --nav-bg: var(--tg-theme-bg-color, #ffffff); --link: #007aff;
         }
 
         body {
             font-family: 'Inter', -apple-system, sans-serif; background-color: var(--bg); color: var(--text);
             margin: 0; padding: 0; display: flex; flex-direction: column; 
-            /* Высота теперь задается через JS, чтобы учитывать клавиатуру */
             height: 100vh; height: var(--tg-viewport-stable-height, 100vh);
-            -webkit-font-smoothing: antialiased; padding-bottom: 70px; box-sizing: border-box;
-            overflow: hidden; /* Запрещаем прокрутку всего экрана, крутятся только вкладки */
+            -webkit-font-smoothing: antialiased; padding-bottom: 70px; box-sizing: border-box; overflow: hidden;
         }
 
         header { 
             padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; 
-            border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 10;
-            flex-shrink: 0;
+            border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 10; flex-shrink: 0;
         }
         #header-title { font-weight: 600; font-size: 16px; margin: 0 auto; }
         #sync-status { font-size: 12px; color: var(--hint); position: absolute; right: 20px; opacity: 0; transition: 0.3s; }
@@ -39,37 +32,26 @@
         .view { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; overflow-y: auto; }
         .view.active { display: flex; }
 
-        /* Встречающая страница */
         .profile-hero { text-align: center; padding: 40px 20px; }
-        .avatar-large {
-            width: 80px; height: 80px; border-radius: 24px; background: var(--btn-bg);
-            margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
-            color: var(--btn-text); font-weight: 600; font-size: 32px; overflow: hidden;
-        }
+        .avatar-large { width: 80px; height: 80px; border-radius: 24px; background: var(--btn-bg); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: var(--btn-text); font-weight: 600; font-size: 32px; overflow: hidden; }
         .avatar-large img { width: 100%; height: 100%; object-fit: cover; }
         .greeting-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.5px; }
         .greeting-subtitle { font-size: 15px; color: var(--hint); margin-bottom: 40px; }
 
-        textarea, input, select {
-            width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border);
-            border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px;
-            box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0;
-        }
+        textarea, input, select { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px; box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0; }
         textarea:focus, input:focus, select:focus { border-color: var(--hint); }
+        select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23787774%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 14px top 50%; background-size: 10px auto; }
         
         #chapterText { flex-grow: 1; resize: none; line-height: 1.6; font-family: 'Lora', serif; font-size: 16px; border: none; padding: 0; margin-top: 8px; margin-bottom: 0; }
-        #chapterText:focus { border: none; }
         .auto-expand { overflow: hidden; resize: none; min-height: 60px; }
         
-        .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; margin-bottom: 12px; flex-shrink: 0; }
+        .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; margin-bottom: 12px; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;}
 
-        .btn {
-            background: var(--btn-bg); color: var(--btn-text); border: none; padding: 14px;
-            border-radius: 8px; font-size: 14px; font-weight: 500; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 16px; flex-shrink: 0;
-        }
+        .btn { background: var(--btn-bg); color: var(--btn-text); border: none; padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 500; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 16px; flex-shrink: 0; }
         .btn:active { opacity: 0.8; }
         .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); margin-bottom: 0; margin-top: 10px; }
         .btn-cancel { background: var(--hover); color: var(--text); margin-bottom: 24px; display: none; }
+        .btn-small { padding: 8px 12px; font-size: 12px; width: auto; margin: 0; border-radius: 6px; }
 
         .symbol-toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-shrink: 0; }
         .symbol-btn { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--hint); padding: 8px; border-radius: 6px; font-size: 16px; cursor: pointer; }
@@ -82,39 +64,32 @@
         .card-name { font-weight: 600; display: block; margin-bottom: 6px; font-size: 15px;}
         .card-desc { font-size: 14px; color: var(--hint); white-space: pre-wrap; line-height: 1.5;}
         
-        .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; }
+        .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 4px; }
         .icon-btn { border: none; background: none; font-size: 16px; cursor: pointer; padding: 4px; color: var(--hint); opacity: 0.7; }
-        .icon-btn:active { opacity: 1; }
+        .icon-btn:active { opacity: 1; color: var(--text); }
         .icon-btn.danger:active { color: var(--danger); }
 
-        /* Нижняя панель */
-        .tab-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
-            background: var(--nav-bg); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center;
-            padding-bottom: env(safe-area-inset-bottom); z-index: 100;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-        .tab {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 60px; height: 50px; color: var(--hint); cursor: pointer; transition: 0.2s;
-        }
+        /* Кросс-линкинг */
+        .crosslink { color: var(--link); font-weight: 500; cursor: pointer; text-decoration: underline; text-decoration-color: transparent; transition: 0.2s; }
+        .crosslink:active { text-decoration-color: var(--link); }
+
+        /* Таймлайн */
+        .timeline-item { display: flex; gap: 12px; margin-bottom: 16px; }
+        .tl-controls { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+        .tl-btn { background: var(--hover); border: none; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--hint); cursor: pointer; }
+        .tl-content { flex: 1; background: var(--hover); padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+        .tl-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+        .tl-desc { font-size: 13px; color: var(--hint); white-space: pre-wrap; }
+
+        .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: var(--nav-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); z-index: 100; transition: transform 0.2s ease, opacity 0.2s ease; }
+        .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; height: 50px; color: var(--hint); cursor: pointer; transition: 0.2s; }
         .tab.active { color: var(--text); }
         .tab-icon { font-size: 20px; margin-bottom: 4px; filter: grayscale(100%) opacity(0.6); }
         .tab.active .tab-icon { filter: grayscale(0%) opacity(1); transform: scale(1.1); }
         .tab-label { font-size: 10px; font-weight: 600; }
 
-        .toast {
-            visibility: hidden; min-width: 200px; background: var(--btn-bg); color: var(--btn-text);
-            text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 1000;
-            left: 50%; bottom: 90px; transform: translateX(-50%); font-size: 13px; font-weight: 500;
-            opacity: 0; transition: 0.3s;
-        }
+        .toast { visibility: hidden; min-width: 200px; background: var(--btn-bg); color: var(--btn-text); text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 1000; left: 50%; bottom: 90px; transform: translateX(-50%); font-size: 13px; font-weight: 500; opacity: 0; transition: 0.3s; }
         .toast.show { visibility: visible; opacity: 1; bottom: 100px; }
-        
-        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .stat-date { font-weight: 500; font-size: 14px; }
-        .stat-words { color: var(--hint); font-size: 14px; margin-right: auto; margin-left: 12px; }
     </style>
 </head>
 <body>
@@ -129,83 +104,96 @@
     <div class="profile-hero">
         <div class="avatar-large" id="user-avatar">?</div>
         <div class="greeting-title" id="greeting-text">Привет, Писатель!</div>
-        <div class="greeting-subtitle">Все системы синхронизированы в облаке.</div>
+        <div class="greeting-subtitle">Все системы синхронизированы.</div>
         
         <div style="text-align: left; background: var(--hover); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
-            <div style="font-size: 13px; color: var(--hint); margin-bottom: 4px;">Слов в текущей главе:</div>
+            <div style="font-size: 13px; color: var(--hint); margin-bottom: 4px;">Слов во всех главах:</div>
             <div id="home-char-count" style="font-size: 24px; font-weight: 600;">0</div>
         </div>
     </div>
 </div>
 
-<!-- 2. Редактор -->
+<!-- 2. Редактор (Теперь с МЕНЕДЖЕРОМ ГЛАВ) -->
 <div id="view-chapter" class="view">
-    <div class="status-bar" id="char-count">0 слов</div>
+    <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
+        <select id="chapterSelect" onchange="changeChapter()" style="margin-bottom: 0; flex: 1; padding: 10px; font-weight: 600;"></select>
+        <button class="btn btn-small" onclick="addChapter()">+ Глава</button>
+    </div>
+    
+    <div class="status-bar">
+        <span id="char-count">0 слов</span>
+        <button class="icon-btn danger" style="font-size: 12px; padding: 0;" onclick="deleteCurrentChapter()">Удалить главу</button>
+    </div>
+    
     <div class="symbol-toolbar">
         <button class="symbol-btn" onclick="insertSymbol('—')">—</button>
         <button class="symbol-btn" onclick="insertSymbol('«')">«</button>
         <button class="symbol-btn" onclick="insertSymbol('»')">»</button>
         <button class="symbol-btn" onclick="insertSymbol('…')">…</button>
     </div>
-    <textarea id="chapterText" placeholder="Начни писать..."></textarea>
-    <button class="btn btn-secondary" onclick="copyText()">Скопировать текст</button>
+    <textarea id="chapterText" placeholder="Начни писать главу..."></textarea>
+    <button class="btn btn-secondary" onclick="copyText()">Скопировать главу</button>
 </div>
 
-<!-- 3. Идеи -->
-<div id="view-idea" class="view">
-    <textarea id="quickIdea" class="auto-expand" placeholder="Запиши внезапную идею..."></textarea>
-    <button class="btn" id="btn-save-idea" onclick="saveIdea()">Добавить идею</button>
-    <button class="btn btn-cancel" id="btn-cancel-idea" onclick="cancelEditIdea()">Отменить редактирование</button>
+<!-- 3. Сюжет (Таймлайн / Карточки) -->
+<div id="view-timeline" class="view">
+    <input type="text" id="tlName" placeholder="Название сцены (Напр: Петля обрывается)">
+    <textarea id="tlDesc" class="auto-expand" placeholder="Краткое описание событий..."></textarea>
+    <button class="btn" id="btn-save-tl" onclick="saveTimeline()">Добавить сцену на доску</button>
+    <button class="btn btn-cancel" id="btn-cancel-tl" onclick="cancelEditTimeline()">Отмена</button>
     
-    <div style="margin-top: 10px;" id="ideasList"></div>
+    <div style="font-weight: 600; margin-bottom: 16px; margin-top: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Хронология:</div>
+    <div id="timelineList"></div>
 </div>
 
-<!-- 4. Вселенная -->
+<!-- 4. Вселенная (Архив с КРОСС-ЛИНКАМИ) -->
 <div id="view-universe" class="view">
     <div class="segmented-control">
         <div class="seg-btn active" id="seg-char" onclick="setUniverseMode('char')">Герои</div>
         <div class="seg-btn" id="seg-loc" onclick="setUniverseMode('loc')">Места</div>
         <div class="seg-btn" id="seg-lore" onclick="setUniverseMode('lore')">Лор</div>
     </div>
-
-    <input type="text" id="uniName" placeholder="Имя / Название">
-    <textarea id="uniDesc" class="auto-expand" placeholder="Подробное описание..."></textarea>
+    <input type="text" id="uniName" placeholder="Имя / Название (Напр: Стив)">
+    <textarea id="uniDesc" class="auto-expand" placeholder="Описание (если упомянуть имена из базы, они станут ссылками)..."></textarea>
     <button class="btn" id="btn-save-uni" onclick="saveUniverse()">Добавить запись</button>
-    <button class="btn btn-cancel" id="btn-cancel-uni" onclick="cancelEditUniverse()">Отменить редактирование</button>
-    
+    <button class="btn btn-cancel" id="btn-cancel-uni" onclick="cancelEditUniverse()">Отмена</button>
     <div id="universeList"></div>
 </div>
 
-<!-- 5. Статистика -->
-<div id="view-stat" class="view">
-    <div style="display: flex; gap: 10px;">
-        <input type="date" id="statDate" style="flex: 1;">
-        <input type="number" id="statWords" placeholder="Слов" style="flex: 1;">
+<!-- 5. Заметки (Идеи + Статистика) -->
+<div id="view-tools" class="view">
+    <div class="segmented-control">
+        <div class="seg-btn active" id="seg-idea" onclick="setToolMode('idea')">Быстрые идеи</div>
+        <div class="seg-btn" id="seg-stat" onclick="setToolMode('stat')">Прогресс</div>
     </div>
-    <button class="btn" id="btn-save-stat" onclick="saveStat()">Добавить прогресс</button>
-    <button class="btn btn-cancel" id="btn-cancel-stat" onclick="cancelEditStat()">Отменить редактирование</button>
-    
-    <div style="margin-bottom: 16px; font-weight: 600;">История сессий:</div>
-    <div id="statList"></div>
+
+    <!-- Блок Идей -->
+    <div id="tool-idea-block">
+        <textarea id="quickIdea" class="auto-expand" placeholder="Внезапная мысль..."></textarea>
+        <button class="btn" id="btn-save-idea" onclick="saveIdea()">Сохранить идею</button>
+        <button class="btn btn-cancel" id="btn-cancel-idea" onclick="cancelEditIdea()">Отмена</button>
+        <div id="ideasList" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- Блок Статистики -->
+    <div id="tool-stat-block" style="display: none;">
+        <div style="display: flex; gap: 10px;">
+            <input type="date" id="statDate" style="flex: 1;">
+            <input type="number" id="statWords" placeholder="Слов" style="flex: 1;">
+        </div>
+        <button class="btn" id="btn-save-stat" onclick="saveStat()">Записать прогресс</button>
+        <button class="btn btn-cancel" id="btn-cancel-stat" onclick="cancelEditStat()">Отмена</button>
+        <div id="statList" style="margin-top: 16px;"></div>
+    </div>
 </div>
 
-<!-- Нижняя навигация -->
+<!-- Нижняя навигация (5 вкладок) -->
 <nav class="tab-bar">
-    <div class="tab active" onclick="switchTab('view-home', this, 'ОС Писателя')">
-        <span class="tab-icon">🏠</span><span class="tab-label">Главная</span>
-    </div>
-    <div class="tab" onclick="switchTab('view-chapter', this, 'Черновик')">
-        <span class="tab-icon">✍️</span><span class="tab-label">Текст</span>
-    </div>
-    <div class="tab" onclick="switchTab('view-idea', this, 'Идеи')">
-        <span class="tab-icon">💡</span><span class="tab-label">Идеи</span>
-    </div>
-    <div class="tab" onclick="switchTab('view-universe', this, 'Вселенная')">
-        <span class="tab-icon">🗂</span><span class="tab-label">Вселенная</span>
-    </div>
-    <div class="tab" onclick="switchTab('view-stat', this, 'Статистика')">
-        <span class="tab-icon">📊</span><span class="tab-label">Стата</span>
-    </div>
+    <div class="tab active" onclick="switchTab('view-home', this, 'ОС Писателя')"><span class="tab-icon">🏠</span><span class="tab-label">Главная</span></div>
+    <div class="tab" onclick="switchTab('view-chapter', this, 'Черновики')"><span class="tab-icon">✍️</span><span class="tab-label">Текст</span></div>
+    <div class="tab" onclick="switchTab('view-timeline', this, 'Сюжет')"><span class="tab-icon">⏳</span><span class="tab-label">Сюжет</span></div>
+    <div class="tab" onclick="switchTab('view-universe', this, 'Вселенная')"><span class="tab-icon">🗂</span><span class="tab-label">База</span></div>
+    <div class="tab" onclick="switchTab('view-tools', this, 'Инструменты')"><span class="tab-icon">📝</span><span class="tab-label">Заметки</span></div>
 </nav>
 
 <div id="toast" class="toast">Уведомление</div>
@@ -214,29 +202,18 @@
     const tg = window.Telegram.WebApp;
     tg.ready(); tg.expand();
 
-    // ==========================================
-    // УМНАЯ ОБРАБОТКА МОБИЛЬНОЙ КЛАВИАТУРЫ
-    // ==========================================
-    let initialHeight = window.innerHeight; // Запоминаем изначальную высоту
-    
+    // Обработка клавиатуры
+    let initialHeight = window.innerHeight;
     function adjustForKeyboard() {
         const currentHeight = tg.viewportStableHeight || window.innerHeight;
-        document.body.style.height = currentHeight + 'px'; // Подгоняем сайт под свободное место
-
-        // Если высота экрана сильно уменьшилась (больше чем на 20%) — значит вылезла клавиатура
+        document.body.style.height = currentHeight + 'px';
         if (currentHeight < initialHeight * 0.8) {
-            document.body.style.paddingBottom = '0px'; // Убираем отступ
-            document.querySelector('.tab-bar').style.display = 'none'; // Прячем меню
+            document.body.style.paddingBottom = '0px'; document.querySelector('.tab-bar').style.display = 'none';
         } else {
-            // Клавиатура закрылась, возвращаем всё как было
-            document.body.style.paddingBottom = '70px';
-            document.querySelector('.tab-bar').style.display = 'flex';
+            document.body.style.paddingBottom = '70px'; document.querySelector('.tab-bar').style.display = 'flex';
         }
     }
-    
-    // Telegram сам скажет нам, когда изменится размер окна
-    tg.onEvent('viewportChanged', adjustForKeyboard);
-    adjustForKeyboard(); // Запускаем при старте
+    tg.onEvent('viewportChanged', adjustForKeyboard); adjustForKeyboard();
 
     // Профиль
     const user = tg.initDataUnsafe?.user;
@@ -265,84 +242,162 @@
     document.addEventListener('input', e => { if (e.target.classList.contains('auto-expand')) autoResize(e.target); }, false);
 
     // ==========================================
-    // ТЕКСТ (Облако)
+    // 1. МЕНЕДЖЕР ГЛАВ (Текст)
     // ==========================================
+    let chapters = [{ id: 'default', title: 'Глава 1', text: '' }];
+    let currentChapterId = 'default';
     const chapterInput = document.getElementById('chapterText');
+    const chapterSelect = document.getElementById('chapterSelect');
     const syncStatus = document.getElementById('sync-status');
     let saveTimeout;
 
     if (tg.CloudStorage) {
-        tg.CloudStorage.getItem('writer_draft_cloud', (err, val) => {
-            if (!err && val) { chapterInput.value = val; updateCount(); }
+        tg.CloudStorage.getItem('my_book_chapters', (err, val) => {
+            if (!err && val) { 
+                chapters = JSON.parse(val); 
+                currentChapterId = chapters[0].id; 
+                renderChapterSelect(); 
+                loadCurrentChapter(); 
+            } else { renderChapterSelect(); }
         });
+    } else { renderChapterSelect(); }
+
+    function renderChapterSelect() {
+        chapterSelect.innerHTML = chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join('');
+        updateTotalWords();
+    }
+
+    function loadCurrentChapter() {
+        const chapter = chapters.find(c => c.id === currentChapterId);
+        if (chapter) { chapterInput.value = chapter.text; updateCount(); }
+    }
+
+    function changeChapter() {
+        currentChapterId = chapterSelect.value;
+        loadCurrentChapter();
+    }
+
+    function addChapter() {
+        const title = prompt("Название новой главы:", `Глава ${chapters.length + 1}`);
+        if (!title) return;
+        const newId = 'ch_' + Date.now();
+        chapters.push({ id: newId, title: title, text: '' });
+        currentChapterId = newId;
+        renderChapterSelect(); loadCurrentChapter(); cloudSaveChapters();
+    }
+
+    function deleteCurrentChapter() {
+        if (chapters.length <= 1) { showToast("Нельзя удалить единственную главу!"); return; }
+        if (!confirm("Точно удалить эту главу?")) return;
+        chapters = chapters.filter(c => c.id !== currentChapterId);
+        currentChapterId = chapters[0].id;
+        renderChapterSelect(); loadCurrentChapter(); cloudSaveChapters();
     }
 
     chapterInput.addEventListener('input', () => { 
         updateCount(); 
-        clearTimeout(saveTimeout);
-        syncStatus.style.opacity = '1'; 
-        saveTimeout = setTimeout(() => {
-            if (tg.CloudStorage) {
-                tg.CloudStorage.setItem('writer_draft_cloud', chapterInput.value, (err) => {
-                    if (!err) syncStatus.style.opacity = '0';
-                });
-            }
-        }, 1500); 
+        const chapter = chapters.find(c => c.id === currentChapterId);
+        if (chapter) chapter.text = chapterInput.value;
+        
+        clearTimeout(saveTimeout); syncStatus.style.opacity = '1'; 
+        saveTimeout = setTimeout(cloudSaveChapters, 1500); 
     });
+
+    function cloudSaveChapters() {
+        if (tg.CloudStorage) {
+            tg.CloudStorage.setItem('my_book_chapters', JSON.stringify(chapters), (err) => {
+                if (!err) syncStatus.style.opacity = '0';
+                updateTotalWords();
+            });
+        }
+    }
     
     function updateCount() { 
         const text = chapterInput.value.trim(); 
         const words = text ? text.split(/\s+/).length : 0;
         document.getElementById('char-count').innerText = words + " слов(а)"; 
-        document.getElementById('home-char-count').innerText = words;
+    }
+    
+    function updateTotalWords() {
+        let total = 0;
+        chapters.forEach(c => { const text = c.text.trim(); total += text ? text.split(/\s+/).length : 0; });
+        document.getElementById('home-char-count').innerText = total;
     }
     
     function insertSymbol(symbol) {
         const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value;
         chapterInput.value = text.substring(0, start) + symbol + text.substring(end);
-        updateCount(); chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1;
+        chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1;
         chapterInput.dispatchEvent(new Event('input'));
     }
-    function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Текст скопирован"); }
+    function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Глава скопирована"); }
 
     // ==========================================
-    // ИДЕИ
+    // 2. СЮЖЕТ (Таймлайн с Drag & Drop/Стрелочками)
     // ==========================================
-    let ideas = [];
-    let editIdeaIndex = -1;
-    
-    if (tg.CloudStorage) tg.CloudStorage.getItem('my_ideas_app', (err, val) => { if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } });
+    let timeline = [];
+    let editTlIndex = -1;
 
-    function saveIdea() {
-        const text = document.getElementById("quickIdea").value.trim();
-        if (!text) { showToast("Пустое поле!"); return; }
-        if (editIdeaIndex > -1) ideas[editIdeaIndex].text = text;
-        else ideas.unshift({ text });
-        if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas));
-        cancelEditIdea(); renderIdeas(); showToast("Сохранено!");
+    if (tg.CloudStorage) tg.CloudStorage.getItem('my_timeline', (err, val) => { if (!err && val) { timeline = JSON.parse(val); renderTimeline(); } });
+
+    function saveTimeline() {
+        const name = document.getElementById("tlName").value.trim();
+        const desc = document.getElementById("tlDesc").value.trim();
+        if (!name) { showToast("Введите название сцены!"); return; }
+
+        if (editTlIndex > -1) timeline[editTlIndex] = { name, desc };
+        else timeline.push({ name, desc }); // Добавляем в конец линии времени
+
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline));
+        cancelEditTimeline(); renderTimeline(); showToast("Сцена сохранена!");
     }
 
-    function editIdea(index) {
-        editIdeaIndex = index; document.getElementById("quickIdea").value = ideas[index].text;
-        autoResize(document.getElementById("quickIdea"));
-        document.getElementById("btn-save-idea").innerText = "💾 Обновить идею";
-        document.getElementById("btn-cancel-idea").style.display = "block";
+    function editTimeline(index) {
+        editTlIndex = index; 
+        document.getElementById("tlName").value = timeline[index].name;
+        document.getElementById("tlDesc").value = timeline[index].desc;
+        autoResize(document.getElementById("tlDesc"));
+        document.getElementById("btn-save-tl").innerText = "💾 Обновить сцену"; document.getElementById("btn-cancel-tl").style.display = "block";
     }
 
-    function cancelEditIdea() {
-        editIdeaIndex = -1; document.getElementById("quickIdea").value = ""; document.getElementById("quickIdea").style.height = 'auto';
-        document.getElementById("btn-save-idea").innerText = "Добавить идею"; document.getElementById("btn-cancel-idea").style.display = "none";
+    function cancelEditTimeline() {
+        editTlIndex = -1; document.getElementById("tlName").value = ""; document.getElementById("tlDesc").value = "";
+        document.getElementById("tlDesc").style.height = 'auto';
+        document.getElementById("btn-save-tl").innerText = "Добавить сцену на доску"; document.getElementById("btn-cancel-tl").style.display = "none";
     }
 
-    function deleteIdea(index) { ideas.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); renderIdeas(); }
+    function moveTimeline(index, dir) {
+        if (dir === -1 && index > 0) {
+            [timeline[index], timeline[index - 1]] = [timeline[index - 1], timeline[index]];
+        } else if (dir === 1 && index < timeline.length - 1) {
+            [timeline[index], timeline[index + 1]] = [timeline[index + 1], timeline[index]];
+        }
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline));
+        renderTimeline();
+    }
 
-    function renderIdeas() {
-        document.getElementById("ideasList").innerHTML = ideas.map((idea, i) => `
-            <div class="card"><div class="card-actions"><button class="icon-btn" onclick="editIdea(${i})">✏️</button><button class="icon-btn danger" onclick="deleteIdea(${i})">✖</button></div><div class="card-desc">${idea.text}</div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>Пусто.</p>";
+    function deleteTimeline(index) { timeline.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); }
+
+    function renderTimeline() {
+        document.getElementById("timelineList").innerHTML = timeline.map((tl, i) => `
+            <div class="timeline-item">
+                <div class="tl-controls">
+                    <button class="tl-btn" onclick="moveTimeline(${i}, -1)">▲</button>
+                    <button class="tl-btn" onclick="moveTimeline(${i}, 1)">▼</button>
+                </div>
+                <div class="tl-content">
+                    <div class="card-actions" style="top: 8px; right: 8px;">
+                        <button class="icon-btn" onclick="editTimeline(${i})" style="font-size: 14px;">✏️</button>
+                        <button class="icon-btn danger" onclick="deleteTimeline(${i})" style="font-size: 14px;">✖</button>
+                    </div>
+                    <div class="tl-title">${i + 1}. ${tl.name}</div>
+                    <div class="tl-desc">${tl.desc}</div>
+                </div>
+            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>Сцен пока нет.</p>";
     }
 
     // ==========================================
-    // ВСЕЛЕННАЯ
+    // 3. ВСЕЛЕННАЯ (С Кросс-Линками)
     // ==========================================
     let universe = [];
     let currentUniMode = 'char'; 
@@ -352,11 +407,11 @@
 
     function setUniverseMode(mode) {
         currentUniMode = mode;
-        document.querySelectorAll('.seg-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('#view-universe .seg-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(`seg-${mode}`).classList.add('active');
         const nameInput = document.getElementById("uniName");
         if (mode === 'lore') { nameInput.style.display = 'none'; nameInput.value = ''; } 
-        else { nameInput.style.display = 'block'; nameInput.placeholder = mode === 'char' ? "Имя героя" : "Название места"; }
+        else { nameInput.style.display = 'block'; nameInput.placeholder = mode === 'char' ? "Имя героя (Напр: Лия)" : "Название места"; }
         cancelEditUniverse(); renderUniverse();
     }
 
@@ -388,45 +443,91 @@
 
     function deleteUniverse(index) { universe.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); renderUniverse(); }
 
+    // МАГИЯ КРОСС-ЛИНКОВ
+    function applyCrosslinks(text) {
+        let linkedText = text;
+        // Собираем все имена из базы (кроме пустых и фактов лора)
+        const namesToLink = universe.filter(u => u.type !== 'lore' && u.name).map(u => u.name);
+        
+        // Сортируем по длине (сначала длинные), чтобы "Старый Особняк" не разбился словом "Особняк"
+        namesToLink.sort((a, b) => b.length - a.length);
+
+        namesToLink.forEach(name => {
+            // Экранируем спецсимволы в имени для регулярки
+            const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`(?<!<[^>]*)\\b(${safeName})\\b`, 'gi');
+            linkedText = linkedText.replace(regex, `<span class="crosslink" onclick="openCrosslink('${name}')">$1</span>`);
+        });
+        return linkedText;
+    }
+
+    function openCrosslink(name) {
+        const itemIndex = universe.findIndex(u => u.name.toLowerCase() === name.toLowerCase());
+        if (itemIndex > -1) {
+            setUniverseMode(universe[itemIndex].type);
+            showToast(`Открыто: ${universe[itemIndex].name}`);
+            // Можно добавить подсветку, но переключение вкладки уже делает много
+        }
+    }
+
     function renderUniverse() {
         const filtered = universe.map((item, index) => ({...item, originalIndex: index})).filter(item => item.type === currentUniMode);
         document.getElementById("universeList").innerHTML = filtered.map(item => `
-            <div class="card"><div class="card-actions"><button class="icon-btn" onclick="editUniverse(${item.originalIndex})">✏️</button><button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">✖</button></div>${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}<div class="card-desc">${item.desc}</div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>В этой категории пока пусто.</p>";
+            <div class="card">
+                <div class="card-actions">
+                    <button class="icon-btn" onclick="editUniverse(${item.originalIndex})">✏️</button>
+                    <button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">✖</button>
+                </div>
+                ${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}
+                <div class="card-desc">${applyCrosslinks(item.desc)}</div>
+            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>В этой категории пока пусто.</p>";
     }
 
     // ==========================================
-    // СТАТИСТИКА
+    // 4. ИНСТРУМЕНТЫ (Идеи и Статистика в одной вкладке)
     // ==========================================
+    function setToolMode(mode) {
+        document.querySelectorAll('#view-tools .seg-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`seg-${mode}`).classList.add('active');
+        document.getElementById("tool-idea-block").style.display = mode === 'idea' ? 'block' : 'none';
+        document.getElementById("tool-stat-block").style.display = mode === 'stat' ? 'block' : 'none';
+    }
+
+    // --- Логика Идей ---
+    let ideas = [];
+    let editIdeaIndex = -1;
+    if (tg.CloudStorage) tg.CloudStorage.getItem('my_ideas_app', (err, val) => { if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } });
+
+    function saveIdea() {
+        const text = document.getElementById("quickIdea").value.trim();
+        if (!text) return;
+        if (editIdeaIndex > -1) ideas[editIdeaIndex].text = text; else ideas.unshift({ text });
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas));
+        cancelEditIdea(); renderIdeas(); showToast("Сохранено!");
+    }
+    function editIdea(index) { editIdeaIndex = index; document.getElementById("quickIdea").value = ideas[index].text; autoResize(document.getElementById("quickIdea")); document.getElementById("btn-save-idea").innerText = "💾 Обновить идею"; document.getElementById("btn-cancel-idea").style.display = "block"; }
+    function cancelEditIdea() { editIdeaIndex = -1; document.getElementById("quickIdea").value = ""; document.getElementById("quickIdea").style.height = 'auto'; document.getElementById("btn-save-idea").innerText = "Сохранить идею"; document.getElementById("btn-cancel-idea").style.display = "none"; }
+    function deleteIdea(index) { ideas.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); renderIdeas(); }
+    function renderIdeas() { document.getElementById("ideasList").innerHTML = ideas.map((idea, i) => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editIdea(${i})">✏️</button><button class="icon-btn danger" onclick="deleteIdea(${i})">✖</button></div><div class="card-desc">${idea.text}</div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>Пусто.</p>"; }
+
+    // --- Логика Статистики ---
     let stats = [];
     let editStatIndex = -1;
     document.getElementById("statDate").valueAsDate = new Date();
-
     if (tg.CloudStorage) tg.CloudStorage.getItem('my_stats', (err, val) => { if (!err && val) { stats = JSON.parse(val); renderStats(); } });
 
     function saveStat() {
         const date = document.getElementById("statDate").value; const words = parseInt(document.getElementById("statWords").value);
-        if (!date || isNaN(words)) { showToast("Заполните данные!"); return; }
+        if (!date || isNaN(words)) return;
         if (editStatIndex > -1) stats[editStatIndex] = { date, words }; else stats.unshift({ date, words });
         if (tg.CloudStorage) tg.CloudStorage.setItem('my_stats', JSON.stringify(stats));
-        cancelEditStat(); renderStats(); showToast("Прогресс записан!");
+        cancelEditStat(); renderStats(); showToast("Записано!");
     }
-
-    function editStat(index) {
-        editStatIndex = index; document.getElementById("statDate").value = stats[index].date; document.getElementById("statWords").value = stats[index].words;
-        document.getElementById("btn-save-stat").innerText = "💾 Обновить"; document.getElementById("btn-cancel-stat").style.display = "block";
-    }
-
-    function cancelEditStat() {
-        editStatIndex = -1; document.getElementById("statDate").valueAsDate = new Date(); document.getElementById("statWords").value = "";
-        document.getElementById("btn-save-stat").innerText = "Добавить прогресс"; document.getElementById("btn-cancel-stat").style.display = "none";
-    }
-
+    function editStat(index) { editStatIndex = index; document.getElementById("statDate").value = stats[index].date; document.getElementById("statWords").value = stats[index].words; document.getElementById("btn-save-stat").innerText = "💾 Обновить"; document.getElementById("btn-cancel-stat").style.display = "block"; }
+    function cancelEditStat() { editStatIndex = -1; document.getElementById("statDate").valueAsDate = new Date(); document.getElementById("statWords").value = ""; document.getElementById("btn-save-stat").innerText = "Записать прогресс"; document.getElementById("btn-cancel-stat").style.display = "none"; }
     function deleteStat(index) { stats.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_stats', JSON.stringify(stats)); renderStats(); }
+    function renderStats() { document.getElementById("statList").innerHTML = stats.map((stat, i) => `<div class="stat-row"><div class="stat-date">${stat.date}</div><div class="stat-words">+ ${stat.words} слов</div><div style="display:flex; gap:4px;"><button class="icon-btn" onclick="editStat(${i})">✏️</button><button class="icon-btn danger" onclick="deleteStat(${i})">✖</button></div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>История чиста.</p>"; }
 
-    function renderStats() {
-        document.getElementById("statList").innerHTML = stats.map((stat, i) => `
-            <div class="stat-row"><div class="stat-date">${stat.date}</div><div class="stat-words">+ ${stat.words} слов</div><div style="display:flex; gap:4px;"><button class="icon-btn" onclick="editStat(${i})">✏️</button><button class="icon-btn danger" onclick="deleteStat(${i})">✖</button></div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>История чиста.</p>";
-    }
 </script>
 </body>
 </html>
