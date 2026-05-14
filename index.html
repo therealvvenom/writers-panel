@@ -12,7 +12,7 @@
             --hint: var(--tg-theme-hint-color, #787774); --border: rgba(120, 119, 116, 0.2);
             --hover: rgba(120, 119, 116, 0.08); --danger: #eb5757;
             --btn-bg: var(--tg-theme-text-color, #37352f); --btn-text: var(--tg-theme-bg-color, #ffffff);
-            --nav-bg: var(--tg-theme-bg-color, #ffffff); --link: #007aff;
+            --nav-bg: var(--tg-theme-bg-color, #ffffff); --link: var(--tg-theme-link-color, #007aff);
         }
 
         body {
@@ -25,23 +25,34 @@
         header { 
             padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; 
             border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 10; flex-shrink: 0;
+            display: none; /* Скрываем старый хэдер, используем новый профильный */
         }
-        #header-title { font-weight: 600; font-size: 16px; margin: 0 auto; }
-        #sync-status { font-size: 12px; color: var(--hint); position: absolute; right: 20px; opacity: 0; transition: 0.3s; }
 
         .view { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; overflow-y: auto; }
         .view.active { display: flex; }
 
-        .profile-hero { text-align: center; padding: 30px 20px 20px; }
-        .avatar-large { width: 84px; height: 84px; border-radius: 28px; background: var(--btn-bg); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: var(--btn-text); font-weight: 600; font-size: 34px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
-        .avatar-large img { width: 100%; height: 100%; object-fit: cover; }
-        .greeting-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
-        .greeting-subtitle { font-size: 15px; color: var(--hint); margin-bottom: 10px; }
+        /* НОВАЯ ШАПКА ПРОФИЛЯ */
+        .top-profile-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+        .top-profile-left { display: flex; align-items: center; gap: 12px; }
+        .top-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--btn-bg); color: var(--btn-text); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px; overflow: hidden; }
+        .top-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .top-username { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 2px; }
+        .top-subtitle { font-size: 12px; color: var(--hint); display: flex; align-items: center; gap: 4px;}
+        
+        .btn-ai { background: var(--hover); color: var(--text); border: none; padding: 8px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; }
+        .btn-ai:active { transform: scale(0.96); background: var(--border); }
+        .btn-ai svg { width: 16px; height: 16px; fill: currentColor; }
 
-        /* Стиль для новой красивой карточки статистики */
-        .stat-card { margin-top: 30px; text-align: center; background: var(--hover); padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
+        .stat-card { margin-top: 10px; text-align: center; background: var(--hover); padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
         .stat-card-title { font-size: 14px; color: var(--hint); margin-bottom: 8px; font-weight: 500; }
         .stat-card-value { font-size: 36px; font-weight: 700; color: var(--text); }
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px 0; }
+        .dash-card { background: var(--hover); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; }
+        .dash-card:active { transform: scale(0.96); background: var(--border); }
+        .dash-icon-svg { width: 28px; height: 28px; fill: var(--hint); }
+        .dash-title { font-weight: 600; font-size: 15px; color: var(--text); }
+        .dash-desc { font-size: 12px; color: var(--hint); line-height: 1.3; }
 
         textarea, input, select { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px; box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0; }
         textarea:focus, input:focus, select:focus { border-color: var(--hint); }
@@ -84,12 +95,15 @@
         .tl-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; padding-right: 50px; }
         .tl-desc { font-size: 13px; color: var(--hint); word-wrap: break-word; }
 
+        /* СТИЛИ НАВИГАЦИИ С ИКОНКАМИ SVG */
         .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: var(--nav-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); z-index: 100; transition: transform 0.2s ease, opacity 0.2s ease; }
-        .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; height: 50px; color: var(--hint); cursor: pointer; transition: 0.2s; }
-        .tab.active { color: var(--text); }
-        .tab-icon { font-size: 20px; margin-bottom: 4px; filter: grayscale(100%) opacity(0.6); }
-        .tab.active .tab-icon { filter: grayscale(0%) opacity(1); transform: scale(1.1); }
-        .tab-label { font-size: 10px; font-weight: 600; }
+        .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 64px; height: 50px; color: var(--hint); cursor: pointer; transition: 0.2s; }
+        
+        .tab svg { width: 24px; height: 24px; fill: var(--hint); margin-bottom: 4px; transition: 0.2s; }
+        .tab-label { font-size: 10px; font-weight: 600; transition: 0.2s; }
+        
+        .tab.active svg { fill: var(--link); transform: scale(1.1); }
+        .tab.active .tab-label { color: var(--link); }
 
         .toast { visibility: hidden; min-width: 200px; background: var(--btn-bg); color: var(--btn-text); text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 1000; left: 50%; bottom: 90px; transform: translateX(-50%); font-size: 13px; font-weight: 500; opacity: 0; transition: 0.3s; }
         .toast.show { visibility: visible; opacity: 1; bottom: 100px; }
@@ -97,20 +111,58 @@
 </head>
 <body>
 
-<header>
-    <div id="header-title">Студия писателя</div>
-    <span id="sync-status">☁️</span>
-</header>
-
 <div id="view-home" class="view active">
-    <div class="profile-hero">
-        <div class="avatar-large" id="user-avatar">🖋️</div>
-        <div class="greeting-title">Студия писателя</div>
-        <div class="greeting-subtitle" id="greeting-text">Добро пожаловать!</div>
-        
-        <div class="stat-card">
-            <div class="stat-card-title">Всего написано слов:</div>
-            <div id="home-char-count" class="stat-card-value">0</div>
+    <!-- НОВАЯ ШАПКА -->
+    <div class="top-profile-bar">
+        <div class="top-profile-left">
+            <div class="top-avatar" id="user-avatar">?</div>
+            <div>
+                <div class="top-username" id="username-text">@user</div>
+                <div class="top-subtitle">
+                    <span id="sync-dot">☁️</span> <span id="sync-status">Синхронизация</span>
+                </div>
+            </div>
+        </div>
+        <button class="btn-ai" onclick="openAIBot()">
+            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+            Связь с ИИ
+        </button>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-card-title">Всего написано слов:</div>
+        <div id="home-char-count" class="stat-card-value">0</div>
+    </div>
+
+    <!-- ДАШБОРД -->
+    <div class="dashboard-grid">
+        <div class="dash-card" onclick="goToTab(1)">
+            <svg class="dash-icon-svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            <div>
+                <div class="dash-title">Тексты</div>
+                <div class="dash-desc">Писать главы и черновики</div>
+            </div>
+        </div>
+        <div class="dash-card" onclick="goToTab(2)">
+            <svg class="dash-icon-svg" viewBox="0 0 24 24"><path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zm-4-5l-4-4V4h8v3.5l-4 4z"/></svg>
+            <div>
+                <div class="dash-title">Сюжет</div>
+                <div class="dash-desc">Хронология и сцены</div>
+            </div>
+        </div>
+        <div class="dash-card" onclick="goToTab(3)">
+            <svg class="dash-icon-svg" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+            <div>
+                <div class="dash-title">База</div>
+                <div class="dash-desc">Герои, места и лор</div>
+            </div>
+        </div>
+        <div class="dash-card" onclick="goToTab(4)">
+            <svg class="dash-icon-svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            <div>
+                <div class="dash-title">Заметки</div>
+                <div class="dash-desc">Идеи и статистика</div>
+            </div>
         </div>
     </div>
 </div>
@@ -179,11 +231,26 @@
 </div>
 
 <nav class="tab-bar">
-    <div class="tab active" onclick="switchTab('view-home', this, 'Студия писателя')"><span class="tab-icon">🏠</span><span class="tab-label">Главная</span></div>
-    <div class="tab" onclick="switchTab('view-chapter', this, 'Черновики')"><span class="tab-icon">✍️</span><span class="tab-label">Текст</span></div>
-    <div class="tab" onclick="switchTab('view-timeline', this, 'Сюжет')"><span class="tab-icon">⏳</span><span class="tab-label">Сюжет</span></div>
-    <div class="tab" onclick="switchTab('view-universe', this, 'Вселенная')"><span class="tab-icon">🗂</span><span class="tab-label">База</span></div>
-    <div class="tab" onclick="switchTab('view-tools', this, 'Инструменты')"><span class="tab-icon">📝</span><span class="tab-label">Заметки</span></div>
+    <div class="tab active" onclick="goToTab(0)">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span class="tab-label">Главная</span>
+    </div>
+    <div class="tab" onclick="goToTab(1)">
+        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        <span class="tab-label">Текст</span>
+    </div>
+    <div class="tab" onclick="goToTab(2)">
+        <svg viewBox="0 0 24 24"><path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zm-4-5l-4-4V4h8v3.5l-4 4z"/></svg>
+        <span class="tab-label">Сюжет</span>
+    </div>
+    <div class="tab" onclick="goToTab(3)">
+        <svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+        <span class="tab-label">База</span>
+    </div>
+    <div class="tab" onclick="goToTab(4)">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <span class="tab-label">Заметки</span>
+    </div>
 </nav>
 
 <div id="toast" class="toast">Уведомление</div>
@@ -201,19 +268,30 @@
     }
     tg.onEvent('viewportChanged', adjustForKeyboard); adjustForKeyboard();
 
+    // Загрузка профиля пользователя
     const user = tg.initDataUnsafe?.user;
     if (user) {
-        document.getElementById('greeting-text').innerText = `Привет, ${user.first_name}!`;
+        document.getElementById('username-text').innerText = user.username ? '@' + user.username : user.first_name;
         const avatar = document.getElementById('user-avatar');
         if (user.photo_url) { avatar.innerHTML = `<img src="${user.photo_url}">`; } 
+        else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); }
     }
 
-    function switchTab(viewId, tabElement, title) {
+    // Открытие бота (ЗАМЕНИ ССЫЛКУ ТУТ 👇)
+    function openAIBot() {
+        tg.openTelegramLink('https://t.me/@Fudjit_bot'); 
+    }
+
+    // Вспомогательная функция для навигации
+    function goToTab(index) {
+        const tabs = document.querySelectorAll('.tab');
+        const views = ['view-home', 'view-chapter', 'view-timeline', 'view-universe', 'view-tools'];
+        
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
+        document.getElementById(views[index]).classList.add('active');
+        
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        tabElement.classList.add('active');
-        document.getElementById('header-title').innerText = title;
+        tabs[index].classList.add('active');
     }
 
     function showToast(message) { const toast = document.getElementById("toast"); toast.innerText = message; toast.classList.add("show"); setTimeout(() => { toast.classList.remove("show"); }, 2500); }
@@ -228,12 +306,13 @@
     const chapterInput = document.getElementById('chapterText');
     const chapterSelect = document.getElementById('chapterSelect');
     const syncStatus = document.getElementById('sync-status');
+    const syncDot = document.getElementById('sync-dot');
     let saveTimeout;
 
     const API_URL = 'https://tonygererro.pythonanywhere.com/api/chapters';
 
     async function loadChaptersFromServer() {
-        syncStatus.innerText = "☁️ Загрузка..."; syncStatus.style.opacity = '1';
+        syncStatus.innerText = "Загрузка..."; syncDot.innerText = "🔄";
         try {
             const response = await fetch(API_URL);
             const data = await response.json();
@@ -242,32 +321,30 @@
             } else {
                 chapters = [{ id: 'default', title: 'Глава 1', text: '' }];
             }
-            syncStatus.style.opacity = '0';
+            syncStatus.innerText = "Синхронизировано"; syncDot.innerText = "✅";
         } catch (e) {
             console.error("Ошибка загрузки", e);
             showToast("Не удалось загрузить данные с сервера!");
             chapters = [{ id: 'default', title: 'Офлайн Глава', text: '' }];
+            syncStatus.innerText = "Офлайн"; syncDot.innerText = "❌";
         }
         currentChapterId = chapters[0].id;
-        renderChapterSelect(); 
-        loadCurrentChapter();
+        renderChapterSelect(); loadCurrentChapter();
     }
 
     async function cloudSaveChapters() {
-        syncStatus.innerText = "☁️ Сохраняем...";
-        syncStatus.style.opacity = '1';
+        syncStatus.innerText = "Сохраняем..."; syncDot.innerText = "☁️";
         try {
             await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chapters_data: JSON.stringify(chapters) })
             });
-            syncStatus.innerText = "✅ На сервере";
-            setTimeout(() => syncStatus.style.opacity = '0', 2000);
+            syncStatus.innerText = "Синхронизировано"; syncDot.innerText = "✅";
             updateTotalWords();
         } catch (e) {
             console.error("Ошибка сети", e);
-            syncStatus.innerText = "❌ Ошибка";
+            syncStatus.innerText = "Ошибка сохранения"; syncDot.innerText = "❌";
             showToast("Ошибка сохранения!");
         }
     }
@@ -298,7 +375,7 @@
     chapterInput.addEventListener('input', () => { 
         updateCount(); const chapter = chapters.find(c => c.id === currentChapterId);
         if (chapter) chapter.text = chapterInput.value;
-        clearTimeout(saveTimeout); syncStatus.style.opacity = '1'; syncStatus.innerText = "☁️ Печатает...";
+        clearTimeout(saveTimeout); syncStatus.innerText = "Печатает..."; syncDot.innerText = "✍️";
         saveTimeout = setTimeout(cloudSaveChapters, 2000); 
     });
 
