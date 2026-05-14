@@ -21,17 +21,19 @@
 
         body {
             font-family: 'Inter', -apple-system, sans-serif; background-color: var(--bg); color: var(--text);
-            margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh;
+            margin: 0; padding: 0; display: flex; flex-direction: column; 
+            /* Высота теперь задается через JS, чтобы учитывать клавиатуру */
+            height: 100vh; height: var(--tg-viewport-stable-height, 100vh);
             -webkit-font-smoothing: antialiased; padding-bottom: 70px; box-sizing: border-box;
+            overflow: hidden; /* Запрещаем прокрутку всего экрана, крутятся только вкладки */
         }
 
         header { 
             padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; 
             border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 10;
+            flex-shrink: 0;
         }
         #header-title { font-weight: 600; font-size: 16px; margin: 0 auto; }
-        
-        /* Индикатор сохранения в облако */
         #sync-status { font-size: 12px; color: var(--hint); position: absolute; right: 20px; opacity: 0; transition: 0.3s; }
 
         .view { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; overflow-y: auto; }
@@ -51,34 +53,32 @@
         textarea, input, select {
             width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border);
             border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px;
-            box-sizing: border-box; font-family: 'Inter', sans-serif;
+            box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0;
         }
         textarea:focus, input:focus, select:focus { border-color: var(--hint); }
         
-        #chapterText { flex-grow: 1; resize: none; line-height: 1.6; font-family: 'Lora', serif; font-size: 16px; border: none; padding: 0; margin-top: 8px; }
+        #chapterText { flex-grow: 1; resize: none; line-height: 1.6; font-family: 'Lora', serif; font-size: 16px; border: none; padding: 0; margin-top: 8px; margin-bottom: 0; }
         #chapterText:focus { border: none; }
         .auto-expand { overflow: hidden; resize: none; min-height: 60px; }
         
-        .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; margin-bottom: 12px; }
+        .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; margin-bottom: 12px; flex-shrink: 0; }
 
         .btn {
             background: var(--btn-bg); color: var(--btn-text); border: none; padding: 14px;
-            border-radius: 8px; font-size: 14px; font-weight: 500; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 16px;
+            border-radius: 8px; font-size: 14px; font-weight: 500; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 16px; flex-shrink: 0;
         }
         .btn:active { opacity: 0.8; }
-        .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); margin-bottom: 0; margin-top: 10px; }
         .btn-cancel { background: var(--hover); color: var(--text); margin-bottom: 24px; display: none; }
 
-        .symbol-toolbar { display: flex; gap: 8px; margin-bottom: 16px; }
+        .symbol-toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-shrink: 0; }
         .symbol-btn { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--hint); padding: 8px; border-radius: 6px; font-size: 16px; cursor: pointer; }
         
-        /* Верхние переключатели (Sub-tabs) */
-        .segmented-control { display: flex; background: var(--hover); border-radius: 8px; padding: 4px; margin-bottom: 20px; }
+        .segmented-control { display: flex; background: var(--hover); border-radius: 8px; padding: 4px; margin-bottom: 20px; flex-shrink: 0; }
         .seg-btn { flex: 1; text-align: center; padding: 8px 0; font-size: 13px; font-weight: 500; color: var(--hint); border-radius: 6px; cursor: pointer; transition: 0.2s; }
         .seg-btn.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        /* Карточки */
-        .card { background: transparent; padding: 16px; border-radius: 8px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); }
+        .card { background: transparent; padding: 16px; border-radius: 8px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); flex-shrink: 0; }
         .card-name { font-weight: 600; display: block; margin-bottom: 6px; font-size: 15px;}
         .card-desc { font-size: 14px; color: var(--hint); white-space: pre-wrap; line-height: 1.5;}
         
@@ -93,6 +93,7 @@
             background: var(--nav-bg); border-top: 1px solid var(--border);
             display: flex; justify-content: space-around; align-items: center;
             padding-bottom: env(safe-area-inset-bottom); z-index: 100;
+            transition: transform 0.2s ease, opacity 0.2s ease;
         }
         .tab {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -111,7 +112,7 @@
         }
         .toast.show { visibility: visible; opacity: 1; bottom: 100px; }
         
-        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); flex-shrink: 0; }
         .stat-date { font-weight: 500; font-size: 14px; }
         .stat-words { color: var(--hint); font-size: 14px; margin-right: auto; margin-left: 12px; }
     </style>
@@ -159,9 +160,8 @@
     <div style="margin-top: 10px;" id="ideasList"></div>
 </div>
 
-<!-- 4. Вселенная (Архив с подвкладками) -->
+<!-- 4. Вселенная -->
 <div id="view-universe" class="view">
-    <!-- Переключатель категорий -->
     <div class="segmented-control">
         <div class="seg-btn active" id="seg-char" onclick="setUniverseMode('char')">Герои</div>
         <div class="seg-btn" id="seg-loc" onclick="setUniverseMode('loc')">Места</div>
@@ -189,7 +189,7 @@
     <div id="statList"></div>
 </div>
 
-<!-- Нижняя навигация (5 кнопок) -->
+<!-- Нижняя навигация -->
 <nav class="tab-bar">
     <div class="tab active" onclick="switchTab('view-home', this, 'ОС Писателя')">
         <span class="tab-icon">🏠</span><span class="tab-label">Главная</span>
@@ -214,6 +214,30 @@
     const tg = window.Telegram.WebApp;
     tg.ready(); tg.expand();
 
+    // ==========================================
+    // УМНАЯ ОБРАБОТКА МОБИЛЬНОЙ КЛАВИАТУРЫ
+    // ==========================================
+    let initialHeight = window.innerHeight; // Запоминаем изначальную высоту
+    
+    function adjustForKeyboard() {
+        const currentHeight = tg.viewportStableHeight || window.innerHeight;
+        document.body.style.height = currentHeight + 'px'; // Подгоняем сайт под свободное место
+
+        // Если высота экрана сильно уменьшилась (больше чем на 20%) — значит вылезла клавиатура
+        if (currentHeight < initialHeight * 0.8) {
+            document.body.style.paddingBottom = '0px'; // Убираем отступ
+            document.querySelector('.tab-bar').style.display = 'none'; // Прячем меню
+        } else {
+            // Клавиатура закрылась, возвращаем всё как было
+            document.body.style.paddingBottom = '70px';
+            document.querySelector('.tab-bar').style.display = 'flex';
+        }
+    }
+    
+    // Telegram сам скажет нам, когда изменится размер окна
+    tg.onEvent('viewportChanged', adjustForKeyboard);
+    adjustForKeyboard(); // Запускаем при старте
+
     // Профиль
     const user = tg.initDataUnsafe?.user;
     if (user) {
@@ -223,7 +247,6 @@
         else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); }
     }
 
-    // Утилиты
     function switchTab(viewId, tabElement, title) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
@@ -238,19 +261,16 @@
         setTimeout(() => { toast.classList.remove("show"); }, 2500);
     }
 
-    function autoResize(el) {
-        el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px';
-    }
+    function autoResize(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
     document.addEventListener('input', e => { if (e.target.classList.contains('auto-expand')) autoResize(e.target); }, false);
 
     // ==========================================
-    // 1. ТЕКСТ (Синхронизация через ОБЛАКО!)
+    // ТЕКСТ (Облако)
     // ==========================================
     const chapterInput = document.getElementById('chapterText');
     const syncStatus = document.getElementById('sync-status');
     let saveTimeout;
 
-    // Загружаем текст из облака (теперь и на ПК, и на телефоне текст будет общим!)
     if (tg.CloudStorage) {
         tg.CloudStorage.getItem('writer_draft_cloud', (err, val) => {
             if (!err && val) { chapterInput.value = val; updateCount(); }
@@ -259,17 +279,15 @@
 
     chapterInput.addEventListener('input', () => { 
         updateCount(); 
-        // Умное сохранение с задержкой, чтобы не перегружать Telegram
         clearTimeout(saveTimeout);
-        syncStatus.style.opacity = '1'; // Показываем облачко
-        
+        syncStatus.style.opacity = '1'; 
         saveTimeout = setTimeout(() => {
             if (tg.CloudStorage) {
                 tg.CloudStorage.setItem('writer_draft_cloud', chapterInput.value, (err) => {
-                    if (!err) syncStatus.style.opacity = '0'; // Прячем облачко после успешного сохранения
+                    if (!err) syncStatus.style.opacity = '0';
                 });
             }
-        }, 1500); // Сохраняем через 1.5 сек после остановки печати
+        }, 1500); 
     });
     
     function updateCount() { 
@@ -283,15 +301,12 @@
         const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value;
         chapterInput.value = text.substring(0, start) + symbol + text.substring(end);
         updateCount(); chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1;
-        // Принудительно триггерим сохранение
         chapterInput.dispatchEvent(new Event('input'));
     }
-    function copyText() {
-        chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Текст скопирован");
-    }
+    function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Текст скопирован"); }
 
     // ==========================================
-    // 2. ИДЕИ (Добавление, Редактирование, Удаление)
+    // ИДЕИ
     // ==========================================
     let ideas = [];
     let editIdeaIndex = -1;
@@ -301,48 +316,36 @@
     function saveIdea() {
         const text = document.getElementById("quickIdea").value.trim();
         if (!text) { showToast("Пустое поле!"); return; }
-        
-        if (editIdeaIndex > -1) ideas[editIdeaIndex].text = text; // Обновляем
-        else ideas.unshift({ text }); // Новое
-            
+        if (editIdeaIndex > -1) ideas[editIdeaIndex].text = text;
+        else ideas.unshift({ text });
         if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas));
         cancelEditIdea(); renderIdeas(); showToast("Сохранено!");
     }
 
     function editIdea(index) {
-        editIdeaIndex = index;
-        document.getElementById("quickIdea").value = ideas[index].text;
+        editIdeaIndex = index; document.getElementById("quickIdea").value = ideas[index].text;
         autoResize(document.getElementById("quickIdea"));
         document.getElementById("btn-save-idea").innerText = "💾 Обновить идею";
         document.getElementById("btn-cancel-idea").style.display = "block";
     }
 
     function cancelEditIdea() {
-        editIdeaIndex = -1;
-        document.getElementById("quickIdea").value = "";
-        document.getElementById("quickIdea").style.height = 'auto';
-        document.getElementById("btn-save-idea").innerText = "Добавить идею";
-        document.getElementById("btn-cancel-idea").style.display = "none";
+        editIdeaIndex = -1; document.getElementById("quickIdea").value = ""; document.getElementById("quickIdea").style.height = 'auto';
+        document.getElementById("btn-save-idea").innerText = "Добавить идею"; document.getElementById("btn-cancel-idea").style.display = "none";
     }
 
     function deleteIdea(index) { ideas.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); renderIdeas(); }
 
     function renderIdeas() {
         document.getElementById("ideasList").innerHTML = ideas.map((idea, i) => `
-            <div class="card">
-                <div class="card-actions">
-                    <button class="icon-btn" onclick="editIdea(${i})">✏️</button>
-                    <button class="icon-btn danger" onclick="deleteIdea(${i})">✖</button>
-                </div>
-                <div class="card-desc">${idea.text}</div>
-            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>Пусто.</p>";
+            <div class="card"><div class="card-actions"><button class="icon-btn" onclick="editIdea(${i})">✏️</button><button class="icon-btn danger" onclick="deleteIdea(${i})">✖</button></div><div class="card-desc">${idea.text}</div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>Пусто.</p>";
     }
 
     // ==========================================
-    // 3. ВСЕЛЕННАЯ (Подвкладки + Редактирование)
+    // ВСЕЛЕННАЯ
     // ==========================================
     let universe = [];
-    let currentUniMode = 'char'; // 'char', 'loc', 'lore'
+    let currentUniMode = 'char'; 
     let editUniIndex = -1;
 
     if (tg.CloudStorage) tg.CloudStorage.getItem('my_universe_v2', (err, val) => { if (!err && val) { universe = JSON.parse(val); renderUniverse(); } });
@@ -351,7 +354,6 @@
         currentUniMode = mode;
         document.querySelectorAll('.seg-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(`seg-${mode}`).classList.add('active');
-        
         const nameInput = document.getElementById("uniName");
         if (mode === 'lore') { nameInput.style.display = 'none'; nameInput.value = ''; } 
         else { nameInput.style.display = 'block'; nameInput.placeholder = mode === 'char' ? "Имя героя" : "Название места"; }
@@ -361,40 +363,27 @@
     function saveUniverse() {
         const name = document.getElementById("uniName").value.trim();
         const desc = document.getElementById("uniDesc").value.trim();
-        
         if (!desc) { showToast("Описание не может быть пустым!"); return; }
         if (currentUniMode !== 'lore' && !name) { showToast("Введите название!"); return; }
 
-        if (editUniIndex > -1) {
-            universe[editUniIndex] = { type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc };
-        } else {
-            universe.unshift({ type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc });
-        }
+        if (editUniIndex > -1) universe[editUniIndex] = { type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc };
+        else universe.unshift({ type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc });
 
         if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe));
         cancelEditUniverse(); renderUniverse(); showToast("Сохранено!");
     }
 
     function editUniverse(index) {
-        editUniIndex = index;
-        const item = universe[index];
-        setUniverseMode(item.type); // Переключаем вкладку на нужную
-        
-        editUniIndex = index; // Восстанавливаем индекс, т.к. setUniverseMode его сбрасывает
+        const item = universe[index]; setUniverseMode(item.type); editUniIndex = index; 
         if (item.type !== 'lore') document.getElementById("uniName").value = item.name;
-        document.getElementById("uniDesc").value = item.desc;
-        autoResize(document.getElementById("uniDesc"));
-        
-        document.getElementById("btn-save-uni").innerText = "💾 Обновить запись";
-        document.getElementById("btn-cancel-uni").style.display = "block";
+        document.getElementById("uniDesc").value = item.desc; autoResize(document.getElementById("uniDesc"));
+        document.getElementById("btn-save-uni").innerText = "💾 Обновить запись"; document.getElementById("btn-cancel-uni").style.display = "block";
     }
 
     function cancelEditUniverse() {
-        editUniIndex = -1;
-        document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = "";
+        editUniIndex = -1; document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = "";
         document.getElementById("uniDesc").style.height = 'auto';
-        document.getElementById("btn-save-uni").innerText = "Добавить запись";
-        document.getElementById("btn-cancel-uni").style.display = "none";
+        document.getElementById("btn-save-uni").innerText = "Добавить запись"; document.getElementById("btn-cancel-uni").style.display = "none";
     }
 
     function deleteUniverse(index) { universe.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); renderUniverse(); }
@@ -402,66 +391,41 @@
     function renderUniverse() {
         const filtered = universe.map((item, index) => ({...item, originalIndex: index})).filter(item => item.type === currentUniMode);
         document.getElementById("universeList").innerHTML = filtered.map(item => `
-            <div class="card">
-                <div class="card-actions">
-                    <button class="icon-btn" onclick="editUniverse(${item.originalIndex})">✏️</button>
-                    <button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">✖</button>
-                </div>
-                ${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}
-                <div class="card-desc">${item.desc}</div>
-            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>В этой категории пока пусто.</p>";
+            <div class="card"><div class="card-actions"><button class="icon-btn" onclick="editUniverse(${item.originalIndex})">✏️</button><button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">✖</button></div>${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}<div class="card-desc">${item.desc}</div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>В этой категории пока пусто.</p>";
     }
 
     // ==========================================
-    // 4. СТАТИСТИКА (Прогресс)
+    // СТАТИСТИКА
     // ==========================================
     let stats = [];
     let editStatIndex = -1;
-    // Устанавливаем сегодня по умолчанию
     document.getElementById("statDate").valueAsDate = new Date();
 
     if (tg.CloudStorage) tg.CloudStorage.getItem('my_stats', (err, val) => { if (!err && val) { stats = JSON.parse(val); renderStats(); } });
 
     function saveStat() {
-        const date = document.getElementById("statDate").value;
-        const words = parseInt(document.getElementById("statWords").value);
-        if (!date || isNaN(words)) { showToast("Заполните дату и количество слов!"); return; }
-
-        if (editStatIndex > -1) stats[editStatIndex] = { date, words };
-        else stats.unshift({ date, words });
-
+        const date = document.getElementById("statDate").value; const words = parseInt(document.getElementById("statWords").value);
+        if (!date || isNaN(words)) { showToast("Заполните данные!"); return; }
+        if (editStatIndex > -1) stats[editStatIndex] = { date, words }; else stats.unshift({ date, words });
         if (tg.CloudStorage) tg.CloudStorage.setItem('my_stats', JSON.stringify(stats));
         cancelEditStat(); renderStats(); showToast("Прогресс записан!");
     }
 
     function editStat(index) {
-        editStatIndex = index;
-        document.getElementById("statDate").value = stats[index].date;
-        document.getElementById("statWords").value = stats[index].words;
-        document.getElementById("btn-save-stat").innerText = "💾 Обновить статистику";
-        document.getElementById("btn-cancel-stat").style.display = "block";
+        editStatIndex = index; document.getElementById("statDate").value = stats[index].date; document.getElementById("statWords").value = stats[index].words;
+        document.getElementById("btn-save-stat").innerText = "💾 Обновить"; document.getElementById("btn-cancel-stat").style.display = "block";
     }
 
     function cancelEditStat() {
-        editStatIndex = -1;
-        document.getElementById("statDate").valueAsDate = new Date();
-        document.getElementById("statWords").value = "";
-        document.getElementById("btn-save-stat").innerText = "Добавить прогресс";
-        document.getElementById("btn-cancel-stat").style.display = "none";
+        editStatIndex = -1; document.getElementById("statDate").valueAsDate = new Date(); document.getElementById("statWords").value = "";
+        document.getElementById("btn-save-stat").innerText = "Добавить прогресс"; document.getElementById("btn-cancel-stat").style.display = "none";
     }
 
     function deleteStat(index) { stats.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_stats', JSON.stringify(stats)); renderStats(); }
 
     function renderStats() {
         document.getElementById("statList").innerHTML = stats.map((stat, i) => `
-            <div class="stat-row">
-                <div class="stat-date">${stat.date}</div>
-                <div class="stat-words">+ ${stat.words} слов</div>
-                <div style="display:flex; gap:4px;">
-                    <button class="icon-btn" onclick="editStat(${i})">✏️</button>
-                    <button class="icon-btn danger" onclick="deleteStat(${i})">✖</button>
-                </div>
-            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>История чиста.</p>";
+            <div class="stat-row"><div class="stat-date">${stat.date}</div><div class="stat-words">+ ${stat.words} слов</div><div style="display:flex; gap:4px;"><button class="icon-btn" onclick="editStat(${i})">✏️</button><button class="icon-btn danger" onclick="deleteStat(${i})">✖</button></div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>История чиста.</p>";
     }
 </script>
 </body>
