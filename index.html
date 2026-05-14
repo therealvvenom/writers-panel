@@ -38,13 +38,10 @@
         .greeting-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
         .greeting-subtitle { font-size: 15px; color: var(--hint); margin-bottom: 10px; }
 
-        /* Стили для нового меню-дашборда */
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px 0; }
-        .dash-card { background: var(--hover); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 6px; }
-        .dash-card:active { transform: scale(0.96); background: var(--border); }
-        .dash-icon { font-size: 26px; margin-bottom: 4px; filter: grayscale(20%); }
-        .dash-title { font-weight: 600; font-size: 15px; color: var(--text); }
-        .dash-desc { font-size: 12px; color: var(--hint); line-height: 1.3; }
+        /* Стиль для новой красивой карточки статистики */
+        .stat-card { margin-top: 30px; text-align: center; background: var(--hover); padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
+        .stat-card-title { font-size: 14px; color: var(--hint); margin-bottom: 8px; font-weight: 500; }
+        .stat-card-value { font-size: 36px; font-weight: 700; color: var(--text); }
 
         textarea, input, select { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px; box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0; }
         textarea:focus, input:focus, select:focus { border-color: var(--hint); }
@@ -101,7 +98,7 @@
 <body>
 
 <header>
-    <div id="header-title">ОС Писателя</div>
+    <div id="header-title">Студия писателя</div>
     <span id="sync-status">☁️</span>
 </header>
 
@@ -110,29 +107,10 @@
         <div class="avatar-large" id="user-avatar">🖋️</div>
         <div class="greeting-title">Студия писателя</div>
         <div class="greeting-subtitle" id="greeting-text">Добро пожаловать!</div>
-    </div>
-    
-    <!-- Новое меню-дашборд -->
-    <div class="dashboard-grid">
-        <div class="dash-card" onclick="goToTab(1)">
-            <div class="dash-icon">✍️</div>
-            <div class="dash-title">Тексты</div>
-            <div class="dash-desc">Писать главы и черновики</div>
-        </div>
-        <div class="dash-card" onclick="goToTab(2)">
-            <div class="dash-icon">⏳</div>
-            <div class="dash-title">Сюжет</div>
-            <div class="dash-desc">Хронология и сцены</div>
-        </div>
-        <div class="dash-card" onclick="goToTab(3)">
-            <div class="dash-icon">🗂</div>
-            <div class="dash-title">База</div>
-            <div class="dash-desc">Герои, места и лор</div>
-        </div>
-        <div class="dash-card" onclick="goToTab(4)">
-            <div class="dash-icon">📝</div>
-            <div class="dash-title">Заметки</div>
-            <div class="dash-desc">Идеи и статистика</div>
+        
+        <div class="stat-card">
+            <div class="stat-card-title">Всего написано слов:</div>
+            <div id="home-char-count" class="stat-card-value">0</div>
         </div>
     </div>
 </div>
@@ -201,7 +179,7 @@
 </div>
 
 <nav class="tab-bar">
-    <div class="tab active" onclick="switchTab('view-home', this, 'ОС Писателя')"><span class="tab-icon">🏠</span><span class="tab-label">Главная</span></div>
+    <div class="tab active" onclick="switchTab('view-home', this, 'Студия писателя')"><span class="tab-icon">🏠</span><span class="tab-label">Главная</span></div>
     <div class="tab" onclick="switchTab('view-chapter', this, 'Черновики')"><span class="tab-icon">✍️</span><span class="tab-label">Текст</span></div>
     <div class="tab" onclick="switchTab('view-timeline', this, 'Сюжет')"><span class="tab-icon">⏳</span><span class="tab-label">Сюжет</span></div>
     <div class="tab" onclick="switchTab('view-universe', this, 'Вселенная')"><span class="tab-icon">🗂</span><span class="tab-label">База</span></div>
@@ -228,14 +206,6 @@
         document.getElementById('greeting-text').innerText = `Привет, ${user.first_name}!`;
         const avatar = document.getElementById('user-avatar');
         if (user.photo_url) { avatar.innerHTML = `<img src="${user.photo_url}">`; } 
-    }
-
-    // Вспомогательная функция для дашборда
-    function goToTab(index) {
-        const tabs = document.querySelectorAll('.tab');
-        const views = ['view-home', 'view-chapter', 'view-timeline', 'view-universe', 'view-tools'];
-        const titles = ['ОС Писателя', 'Черновики', 'Сюжет', 'База', 'Инструменты'];
-        switchTab(views[index], tabs[index], titles[index]);
     }
 
     function switchTab(viewId, tabElement, title) {
@@ -294,6 +264,7 @@
             });
             syncStatus.innerText = "✅ На сервере";
             setTimeout(() => syncStatus.style.opacity = '0', 2000);
+            updateTotalWords();
         } catch (e) {
             console.error("Ошибка сети", e);
             syncStatus.innerText = "❌ Ошибка";
@@ -303,7 +274,7 @@
 
     loadChaptersFromServer();
 
-    function renderChapterSelect() { chapterSelect.innerHTML = chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join(''); }
+    function renderChapterSelect() { chapterSelect.innerHTML = chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join(''); updateTotalWords(); }
     function loadCurrentChapter() { const chapter = chapters.find(c => c.id === currentChapterId); if (chapter) { chapterInput.value = chapter.text; updateCount(); } }
     function changeChapter() { currentChapterId = chapterSelect.value; loadCurrentChapter(); }
     
@@ -332,6 +303,7 @@
     });
 
     function updateCount() { const text = chapterInput.value.trim(); const words = text ? text.split(/\s+/).length : 0; document.getElementById('char-count').innerText = words + " слов(а)"; }
+    function updateTotalWords() { let total = 0; chapters.forEach(c => { const text = c.text.trim(); total += text ? text.split(/\s+/).length : 0; }); document.getElementById('home-char-count').innerText = total; }
     function insertSymbol(symbol) { const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value; chapterInput.value = text.substring(0, start) + symbol + text.substring(end); chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1; chapterInput.dispatchEvent(new Event('input')); }
     function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Глава скопирована"); }
 
