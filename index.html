@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        /* Цвета в стиле Notion: строгие, зависят от темы Telegram */
         :root {
             --bg: var(--tg-theme-bg-color, #ffffff);
             --text: var(--tg-theme-text-color, #37352f);
@@ -15,7 +14,6 @@
             --border: rgba(120, 119, 116, 0.2);
             --hover: rgba(120, 119, 116, 0.08);
             --danger: #eb5757;
-            /* Кнопки контрастны фону (монохром) */
             --btn-bg: var(--tg-theme-text-color, #37352f);
             --btn-text: var(--tg-theme-bg-color, #ffffff);
         }
@@ -27,7 +25,6 @@
             height: 100vh; -webkit-font-smoothing: antialiased;
         }
 
-        /* Минималистичная шапка */
         header { 
             padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; 
             border-bottom: 1px solid var(--border);
@@ -41,7 +38,6 @@
 
         #view-menu { padding: 24px 20px; display: block; overflow-y: auto; }
         
-        /* Строгий профиль (как заголовок документа) */
         .profile-section {
             display: flex; align-items: center; margin-bottom: 32px;
             padding-bottom: 24px; border-bottom: 1px solid var(--border);
@@ -55,7 +51,6 @@
         .user-meta .name { font-weight: 600; font-size: 16px; margin-bottom: 2px; }
         .user-meta .status { font-size: 13px; color: var(--hint); }
 
-        /* Сетка без теней, только тонкие линии */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .tile {
             background: transparent; padding: 16px; border-radius: 6px;
@@ -67,58 +62,48 @@
         .tile-icon { font-size: 20px; margin-bottom: 12px; opacity: 0.9; }
         .tile-label { font-weight: 500; font-size: 14px; }
 
-        .view { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; }
+        .view { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; overflow-y: auto; }
         
-        /* Острые инпуты */
-        textarea, input {
+        textarea, input, select {
             width: 100%; background: transparent; color: var(--text);
             border: 1px solid var(--border); border-radius: 6px; padding: 14px;
             font-size: 15px; outline: none; margin-bottom: 16px; box-sizing: border-box;
             transition: border-color 0.2s; font-family: 'Inter', sans-serif;
+            appearance: none; -webkit-appearance: none;
         }
-        textarea:focus, input:focus { border-color: var(--hint); }
+        select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23787774%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 14px top 50%; background-size: 10px auto; }
+        textarea:focus, input:focus, select:focus { border-color: var(--hint); }
         
-        /* Панель символов */
         .symbol-toolbar { display: flex; gap: 8px; margin-bottom: 16px; }
         .symbol-btn {
             flex: 1; background: transparent; border: 1px solid var(--border);
-            color: var(--hint); padding: 8px; border-radius: 4px;
-            font-size: 16px; font-weight: 500; cursor: pointer; transition: 0.1s;
+            color: var(--hint); padding: 8px; border-radius: 4px; font-size: 16px; font-weight: 500; cursor: pointer; transition: 0.1s;
         }
         .symbol-btn:active { background: var(--hover); color: var(--text); }
 
-        /* Текст главы - Книжный шрифт Lora */
         #chapterText { 
-            flex-grow: 1; resize: none; line-height: 1.6; 
-            font-family: 'Lora', serif; font-size: 16px; 
-            border: none; padding: 0; margin-top: 8px;
+            flex-grow: 1; resize: none; line-height: 1.6; font-family: 'Lora', serif; font-size: 16px; border: none; padding: 0; margin-top: 8px;
         }
         #chapterText:focus { border: none; }
         
         .auto-expand { overflow: hidden; resize: none; min-height: 60px; }
-        .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; }
+        .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; margin-bottom: 12px;}
 
-        /* Строгие кнопки */
         .btn {
-            background: var(--btn-bg); color: var(--btn-text); border: none; 
-            padding: 14px; border-radius: 6px; font-size: 14px; font-weight: 500; 
-            width: 100%; cursor: pointer; transition: 0.2s;
+            background: var(--btn-bg); color: var(--btn-text); border: none; padding: 14px; border-radius: 6px; font-size: 14px; font-weight: 500; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 24px;
         }
         .btn:active { opacity: 0.8; }
         .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
 
-        /* База знаний */
-        #charList { overflow-y: auto; flex-grow: 1; padding-bottom: 20px; }
-        .card {
-            background: transparent; padding: 16px; border-radius: 6px;
-            margin-bottom: 12px; position: relative; border: 1px solid var(--border);
-        }
+        .list-container { margin-bottom: 20px; }
+        .section-title { font-weight: 600; font-size: 13px; color: var(--hint); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+        
+        .card { background: transparent; padding: 16px; border-radius: 6px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); }
         .card-name { font-weight: 600; display: block; margin-bottom: 6px; font-size: 15px;}
         .card-desc { font-size: 14px; color: var(--hint); white-space: pre-wrap; line-height: 1.5;}
         .del-btn { position: absolute; top: 16px; right: 16px; color: var(--hint); border: none; background: none; font-size: 18px; cursor: pointer; padding: 0; }
         .del-btn:active { color: var(--danger); }
 
-        /* Уведомления */
         .toast {
             visibility: hidden; min-width: 200px; background: var(--btn-bg); color: var(--btn-text);
             text-align: center; border-radius: 6px; padding: 12px 16px;
@@ -134,7 +119,7 @@
 <header>
     <button id="back-btn" onclick="showView('view-menu')">←</button>
     <div id="header-title">ОС Писателя</div>
-    <div style="width: 22px;"></div> <!-- Пустой блок для идеальной центровки -->
+    <div style="width: 22px;"></div>
 </header>
 
 <div id="view-menu">
@@ -153,65 +138,79 @@
         </div>
         <div class="tile" onclick="showView('view-idea')">
             <span class="tile-icon">💡</span>
-            <span class="tile-label">Новая мысль</span>
+            <span class="tile-label">Заметка</span>
         </div>
-        <div class="tile" onclick="showView('view-chars')">
-            <span class="tile-icon">📚</span>
-            <span class="tile-label">База знаний</span>
+        <div class="tile" onclick="showView('view-lore')">
+            <span class="tile-icon">📜</span>
+            <span class="tile-label">Лоребук</span>
+        </div>
+        <div class="tile wide" onclick="showView('view-archive')">
+            <span class="tile-icon">🗂</span>
+            <span class="tile-label">Архив: Герои и Места</span>
         </div>
     </div>
 </div>
 
+<!-- РАЗДЕЛ: ГЛАВА -->
 <div id="view-chapter" class="view">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <div class="status-bar" id="char-count">0 слов</div>
-    </div>
-    
-    <!-- ПАНЕЛЬ СИМВОЛОВ -->
+    <div class="status-bar" id="char-count">0 слов</div>
     <div class="symbol-toolbar">
         <button class="symbol-btn" onclick="insertSymbol('—')">—</button>
         <button class="symbol-btn" onclick="insertSymbol('«')">«</button>
         <button class="symbol-btn" onclick="insertSymbol('»')">»</button>
         <button class="symbol-btn" onclick="insertSymbol('…')">…</button>
     </div>
-
     <textarea id="chapterText" placeholder="Начни писать..."></textarea>
-    <button class="btn btn-secondary" onclick="copyText()">Скопировать текст</button>
+    <button class="btn btn-secondary" onclick="copyText()" style="margin-bottom: 0;">Скопировать текст</button>
 </div>
 
+<!-- РАЗДЕЛ: ИДЕЯ -->
 <div id="view-idea" class="view">
-    <textarea id="quickIdea" class="auto-expand" placeholder="Запиши идею, диалог или сцену..."></textarea>
-    <button class="btn" onclick="sendIdeaToBot()">Отправить в Идеи</button>
+    <textarea id="quickIdea" class="auto-expand" placeholder="Быстрая мысль или диалог..."></textarea>
+    <button class="btn" onclick="sendIdeaToBot()">Отправить боту</button>
 </div>
 
-<div id="view-chars" class="view">
-    <div style="margin-bottom: 24px;">
-        <input type="text" id="charName" placeholder="Заголовок (Имя / Факт)">
-        <textarea id="charDesc" class="auto-expand" placeholder="Описание..."></textarea>
-        <button class="btn" onclick="addChar()">Сохранить запись</button>
+<!-- РАЗДЕЛ: ЛОРЕБУК (Общие факты) -->
+<div id="view-lore" class="view">
+    <div>
+        <textarea id="loreDesc" class="auto-expand" placeholder="Запиши правило мира или важный факт (например: 'Особняк меняет комнаты местами ровно в полночь')..."></textarea>
+        <button class="btn" onclick="addLore()">Добавить в лор</button>
     </div>
-    <div id="charList"></div>
+    <div id="loreList" class="list-container"></div>
+</div>
+
+<!-- РАЗДЕЛ: АРХИВ (Герои и Локации) -->
+<div id="view-archive" class="view">
+    <div>
+        <select id="archiveType">
+            <option value="char">👤 Персонаж</option>
+            <option value="loc">🗺 Локация</option>
+        </select>
+        <input type="text" id="archiveName" placeholder="Название (например: Стив / Старый особняк)">
+        <textarea id="archiveDesc" class="auto-expand" placeholder="Подробное описание..."></textarea>
+        <button class="btn" onclick="addArchive()">Сохранить в архив</button>
+    </div>
+    
+    <div class="section-title">Персонажи</div>
+    <div id="charList" class="list-container"></div>
+    
+    <div class="section-title">Места действия</div>
+    <div id="locList" class="list-container"></div>
 </div>
 
 <div id="toast" class="toast">Уведомление</div>
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+    tg.ready(); tg.expand();
 
     const user = tg.initDataUnsafe?.user;
     if (user) {
         document.getElementById('user-name').innerText = user.first_name;
         const avatar = document.getElementById('user-avatar');
-        if (user.photo_url) {
-            avatar.innerHTML = `<img src="${user.photo_url}">`;
-        } else {
-            avatar.innerText = user.first_name.charAt(0).toUpperCase();
-        }
-    } else {
-        document.getElementById('user-name').innerText = "Автор";
-    }
+        if (user.photo_url) { avatar.innerHTML = `<img src="${user.photo_url}">`; } 
+        else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); }
+    } else { document.getElementById('user-name').innerText = "Автор"; }
 
     function showView(viewId) {
         document.querySelectorAll('#view-menu, .view').forEach(v => v.style.display = 'none');
@@ -222,111 +221,98 @@
             document.getElementById('header-title').innerText = 'ОС Писателя';
         } else {
             document.getElementById('back-btn').style.display = 'block';
-            const titles = {'view-chapter': 'Черновик', 'view-idea': 'Заметка', 'view-chars': 'База знаний'};
+            const titles = {'view-chapter': 'Черновик', 'view-idea': 'Заметка', 'view-lore': 'Лоребук', 'view-archive': 'Архив'};
             document.getElementById('header-title').innerText = titles[viewId];
         }
     }
 
     function showToast(message) {
         const toast = document.getElementById("toast");
-        toast.innerText = message;
-        toast.classList.add("show");
+        toast.innerText = message; toast.classList.add("show");
         setTimeout(() => { toast.classList.remove("show"); }, 2500);
     }
 
     document.addEventListener('input', function (event) {
         if (!event.target.classList.contains('auto-expand')) return;
-        event.target.style.height = 'auto';
-        event.target.style.height = (event.target.scrollHeight) + 'px';
+        event.target.style.height = 'auto'; event.target.style.height = (event.target.scrollHeight) + 'px';
     }, false);
 
+    // Логика редактора
     const chapterInput = document.getElementById('chapterText');
     const charCountDisplay = document.getElementById('char-count');
-    
     chapterInput.value = localStorage.getItem('writer_draft') || "";
     updateCount();
-
-    chapterInput.addEventListener('input', () => {
-        localStorage.setItem('writer_draft', chapterInput.value);
-        updateCount();
-    });
-
-    // Считаем не символы, а СЛОВА (как в проф. редакторах)
-    function updateCount() {
-        const text = chapterInput.value.trim();
-        const words = text ? text.split(/\s+/).length : 0;
-        charCountDisplay.innerText = words + " слов(а)";
-    }
-
+    chapterInput.addEventListener('input', () => { localStorage.setItem('writer_draft', chapterInput.value); updateCount(); });
+    function updateCount() { const text = chapterInput.value.trim(); charCountDisplay.innerText = (text ? text.split(/\s+/).length : 0) + " слов(а)"; }
     function insertSymbol(symbol) {
-        const start = chapterInput.selectionStart;
-        const end = chapterInput.selectionEnd;
-        const text = chapterInput.value;
+        const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value;
         chapterInput.value = text.substring(0, start) + symbol + text.substring(end);
-        localStorage.setItem('writer_draft', chapterInput.value);
-        updateCount();
-        chapterInput.focus();
-        chapterInput.selectionStart = chapterInput.selectionEnd = start + 1;
+        localStorage.setItem('writer_draft', chapterInput.value); updateCount();
+        chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1;
     }
-
     function copyText() {
         if (!chapterInput.value) { showToast("Пустой черновик"); return; }
-        chapterInput.select();
-        chapterInput.setSelectionRange(0, 99999);
-        document.execCommand("copy");
-        showToast("Текст скопирован");
+        chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Текст скопирован");
     }
 
+    // Идеи (в бота)
     function sendIdeaToBot() {
         const text = document.getElementById("quickIdea").value;
-        if (text.trim()) {
-            tg.sendData(text);
-            document.getElementById("quickIdea").value = "";
-            document.getElementById("quickIdea").style.height = 'auto';
-            showToast("Отправлено в базу");
-        }
+        if (text.trim()) { tg.sendData(text); document.getElementById("quickIdea").value = ""; document.getElementById("quickIdea").style.height = 'auto'; showToast("Отправлено в базу"); }
     }
 
-    let chars = [];
-    if (tg.CloudStorage) {
-        tg.CloudStorage.getItem('my_characters', (err, val) => {
-            if (!err && val) { chars = JSON.parse(val); renderChars(); }
+    // --- ЛОР (Облако) ---
+    let lores = [];
+    if (tg.CloudStorage) { tg.CloudStorage.getItem('my_lores', (err, val) => { if (!err && val) { lores = JSON.parse(val); renderLores(); } }); }
+    function addLore() {
+        const desc = document.getElementById("loreDesc").value.trim();
+        if (!desc) return;
+        lores.unshift({ desc });
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_lores', JSON.stringify(lores));
+        document.getElementById("loreDesc").value = ""; document.getElementById("loreDesc").style.height = 'auto';
+        showToast("Факт добавлен"); renderLores();
+    }
+    function deleteLore(index) { lores.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_lores', JSON.stringify(lores)); showToast("Факт удален"); renderLores(); }
+    function renderLores() {
+        const list = document.getElementById("loreList");
+        if (!lores.length) { list.innerHTML = "<p style='color:var(--hint); font-size:14px;'>Записей пока нет.</p>"; return; }
+        list.innerHTML = lores.map((l, i) => `<div class="card"><button class="del-btn" onclick="deleteLore(${i})">×</button><div class="card-desc">${l.desc}</div></div>`).join('');
+    }
+
+    // --- АРХИВ (Герои и Локации - Облако) ---
+    let archives = [];
+    if (tg.CloudStorage) { tg.CloudStorage.getItem('my_archives', (err, val) => { if (!err && val) { archives = JSON.parse(val); renderArchives(); } }); }
+    
+    function addArchive() {
+        const type = document.getElementById("archiveType").value;
+        const name = document.getElementById("archiveName").value.trim();
+        const desc = document.getElementById("archiveDesc").value.trim();
+        if (!name) { showToast("Введите название!"); return; }
+        archives.unshift({ type, name, desc });
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_archives', JSON.stringify(archives));
+        document.getElementById("archiveName").value = ""; document.getElementById("archiveDesc").value = ""; document.getElementById("archiveDesc").style.height = 'auto';
+        showToast("Запись сохранена"); renderArchives();
+    }
+    
+    function deleteArchive(index) {
+        // Так как мы фильтруем массив при отрисовке, нам нужно найти реальный индекс в исходном массиве
+        archives.splice(index, 1);
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_archives', JSON.stringify(archives));
+        showToast("Удалено"); renderArchives();
+    }
+
+    function renderArchives() {
+        const charList = document.getElementById("charList");
+        const locList = document.getElementById("locList");
+        let charHTML = '', locHTML = '';
+        
+        archives.forEach((a, index) => {
+            const html = `<div class="card"><button class="del-btn" onclick="deleteArchive(${index})">×</button><span class="card-name">${a.name}</span><div class="card-desc">${a.desc}</div></div>`;
+            if (a.type === 'char') charHTML += html; else locHTML += html;
         });
-    }
-
-    function addChar() {
-        const name = document.getElementById("charName").value.trim();
-        const desc = document.getElementById("charDesc").value.trim();
-        if (!name) return;
-        chars.unshift({ name, desc });
-        if (tg.CloudStorage) tg.CloudStorage.setItem('my_characters', JSON.stringify(chars));
-        document.getElementById("charName").value = "";
-        document.getElementById("charDesc").value = "";
-        document.getElementById("charDesc").style.height = 'auto';
-        showToast("Запись сохранена");
-        renderChars();
-    }
-
-    function deleteChar(index) {
-        chars.splice(index, 1);
-        if (tg.CloudStorage) tg.CloudStorage.setItem('my_characters', JSON.stringify(chars));
-        showToast("Запись удалена");
-        renderChars();
-    }
-
-    function renderChars() {
-        const list = document.getElementById("charList");
-        if (!chars.length) {
-            list.innerHTML = "<p style='color:var(--hint); font-size:14px;'>Записей пока нет.</p>";
-            return;
-        }
-        list.innerHTML = chars.map((c, i) => `
-            <div class="card">
-                <button class="del-btn" onclick="deleteChar(${i})">×</button>
-                <span class="card-name">${c.name}</span>
-                <div class="card-desc">${c.desc}</div>
-            </div>
-        `).join('');
+        
+        charList.innerHTML = charHTML || "<p style='color:var(--hint); font-size:14px; margin-bottom: 24px;'>Нет персонажей.</p>";
+        locList.innerHTML = locHTML || "<p style='color:var(--hint); font-size:14px;'>Нет локаций.</p>";
     }
 </script>
 </body>
