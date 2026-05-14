@@ -22,45 +22,43 @@
         body {
             font-family: 'Inter', -apple-system, sans-serif; background-color: var(--bg); color: var(--text);
             margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh;
-            -webkit-font-smoothing: antialiased; padding-bottom: 70px; /* Отступ для нижней панели */
-            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased; padding-bottom: 70px; box-sizing: border-box;
         }
 
         header { 
-            padding: 16px 20px; display: flex; align-items: center; justify-content: center; 
+            padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; 
             border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 10;
         }
-        #header-title { font-weight: 600; font-size: 16px; }
+        #header-title { font-weight: 600; font-size: 16px; margin: 0 auto; }
+        
+        /* Индикатор сохранения в облако */
+        #sync-status { font-size: 12px; color: var(--hint); position: absolute; right: 20px; opacity: 0; transition: 0.3s; }
 
         .view { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; overflow-y: auto; }
         .view.active { display: flex; }
 
-        /* Встречающая страница (Главная) */
+        /* Встречающая страница */
         .profile-hero { text-align: center; padding: 40px 20px; }
         .avatar-large {
             width: 80px; height: 80px; border-radius: 24px; background: var(--btn-bg);
             margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
             color: var(--btn-text); font-weight: 600; font-size: 32px; overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         }
         .avatar-large img { width: 100%; height: 100%; object-fit: cover; }
         .greeting-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.5px; }
         .greeting-subtitle { font-size: 15px; color: var(--hint); margin-bottom: 40px; }
 
-        /* Элементы интерфейса */
         textarea, input, select {
             width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border);
             border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px;
             box-sizing: border-box; font-family: 'Inter', sans-serif;
-            appearance: none; -webkit-appearance: none;
         }
-        select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23787774%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 14px top 50%; background-size: 10px auto; }
         textarea:focus, input:focus, select:focus { border-color: var(--hint); }
         
         #chapterText { flex-grow: 1; resize: none; line-height: 1.6; font-family: 'Lora', serif; font-size: 16px; border: none; padding: 0; margin-top: 8px; }
         #chapterText:focus { border: none; }
-        
         .auto-expand { overflow: hidden; resize: none; min-height: 60px; }
+        
         .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; margin-bottom: 12px; }
 
         .btn {
@@ -69,21 +67,27 @@
         }
         .btn:active { opacity: 0.8; }
         .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .btn-cancel { background: var(--hover); color: var(--text); margin-bottom: 24px; display: none; }
 
         .symbol-toolbar { display: flex; gap: 8px; margin-bottom: 16px; }
-        .symbol-btn { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--hint); padding: 8px; border-radius: 6px; font-size: 16px; font-weight: 500; cursor: pointer; }
-        .symbol-btn:active { background: var(--hover); color: var(--text); }
+        .symbol-btn { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--hint); padding: 8px; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        
+        /* Верхние переключатели (Sub-tabs) */
+        .segmented-control { display: flex; background: var(--hover); border-radius: 8px; padding: 4px; margin-bottom: 20px; }
+        .seg-btn { flex: 1; text-align: center; padding: 8px 0; font-size: 13px; font-weight: 500; color: var(--hint); border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .seg-btn.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        /* Списки и карточки */
-        .list-container { margin-bottom: 24px; }
-        .section-title { font-weight: 600; font-size: 13px; color: var(--hint); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; margin-top: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+        /* Карточки */
         .card { background: transparent; padding: 16px; border-radius: 8px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); }
         .card-name { font-weight: 600; display: block; margin-bottom: 6px; font-size: 15px;}
         .card-desc { font-size: 14px; color: var(--hint); white-space: pre-wrap; line-height: 1.5;}
-        .del-btn { position: absolute; top: 16px; right: 16px; color: var(--hint); border: none; background: none; font-size: 18px; cursor: pointer; padding: 0; }
-        .del-btn:active { color: var(--danger); }
+        
+        .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; }
+        .icon-btn { border: none; background: none; font-size: 16px; cursor: pointer; padding: 4px; color: var(--hint); opacity: 0.7; }
+        .icon-btn:active { opacity: 1; }
+        .icon-btn.danger:active { color: var(--danger); }
 
-        /* НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (TabBar) */
+        /* Нижняя панель */
         .tab-bar {
             position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
             background: var(--nav-bg); border-top: 1px solid var(--border);
@@ -95,41 +99,45 @@
             width: 60px; height: 50px; color: var(--hint); cursor: pointer; transition: 0.2s;
         }
         .tab.active { color: var(--text); }
-        .tab-icon { font-size: 22px; margin-bottom: 4px; filter: grayscale(100%) opacity(0.6); transition: 0.2s; }
+        .tab-icon { font-size: 20px; margin-bottom: 4px; filter: grayscale(100%) opacity(0.6); }
         .tab.active .tab-icon { filter: grayscale(0%) opacity(1); transform: scale(1.1); }
         .tab-label { font-size: 10px; font-weight: 600; }
 
-        /* Уведомления */
         .toast {
             visibility: hidden; min-width: 200px; background: var(--btn-bg); color: var(--btn-text);
             text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 1000;
             left: 50%; bottom: 90px; transform: translateX(-50%); font-size: 13px; font-weight: 500;
-            opacity: 0; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            opacity: 0; transition: 0.3s;
         }
         .toast.show { visibility: visible; opacity: 1; bottom: 100px; }
+        
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .stat-date { font-weight: 500; font-size: 14px; }
+        .stat-words { color: var(--hint); font-size: 14px; margin-right: auto; margin-left: 12px; }
     </style>
 </head>
 <body>
 
 <header>
     <div id="header-title">ОС Писателя</div>
+    <span id="sync-status">☁️</span>
 </header>
 
-<!-- Вкладка 1: Главная -->
+<!-- 1. Главная -->
 <div id="view-home" class="view active">
     <div class="profile-hero">
         <div class="avatar-large" id="user-avatar">?</div>
         <div class="greeting-title" id="greeting-text">Привет, Писатель!</div>
-        <div class="greeting-subtitle">Все системы синхронизированы и готовы к работе.</div>
+        <div class="greeting-subtitle">Все системы синхронизированы в облаке.</div>
         
         <div style="text-align: left; background: var(--hover); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
-            <div style="font-size: 13px; color: var(--hint); margin-bottom: 4px;">Символов в текущей главе:</div>
+            <div style="font-size: 13px; color: var(--hint); margin-bottom: 4px;">Слов в текущей главе:</div>
             <div id="home-char-count" style="font-size: 24px; font-weight: 600;">0</div>
         </div>
     </div>
 </div>
 
-<!-- Вкладка 2: Редактор -->
+<!-- 2. Редактор -->
 <div id="view-chapter" class="view">
     <div class="status-bar" id="char-count">0 слов</div>
     <div class="symbol-toolbar">
@@ -142,64 +150,71 @@
     <button class="btn btn-secondary" onclick="copyText()">Скопировать текст</button>
 </div>
 
-<!-- Вкладка 3: Идеи -->
+<!-- 3. Идеи -->
 <div id="view-idea" class="view">
     <textarea id="quickIdea" class="auto-expand" placeholder="Запиши внезапную идею..."></textarea>
-    <button class="btn" onclick="addIdea()">Сохранить идею</button>
+    <button class="btn" id="btn-save-idea" onclick="saveIdea()">Добавить идею</button>
+    <button class="btn btn-cancel" id="btn-cancel-idea" onclick="cancelEditIdea()">Отменить редактирование</button>
     
-    <div class="section-title">Список идей</div>
-    <div id="ideasList" class="list-container"></div>
+    <div style="margin-top: 10px;" id="ideasList"></div>
 </div>
 
-<!-- Вкладка 4: Архив (Герои, Локации, Лор) -->
-<div id="view-archive" class="view">
-    <select id="archiveType">
-        <option value="char">👤 Персонаж</option>
-        <option value="loc">🗺 Локация</option>
-        <option value="lore">📜 Факт мира (Лор)</option>
-    </select>
-    <input type="text" id="archiveName" placeholder="Название / Имя (для лора можно пропустить)">
-    <textarea id="archiveDesc" class="auto-expand" placeholder="Подробное описание..."></textarea>
-    <button class="btn" onclick="addArchive()">Сохранить в архив</button>
-    
-    <div class="section-title">Персонажи</div>
-    <div id="charList" class="list-container"></div>
-    
-    <div class="section-title">Локации</div>
-    <div id="locList" class="list-container"></div>
+<!-- 4. Вселенная (Архив с подвкладками) -->
+<div id="view-universe" class="view">
+    <!-- Переключатель категорий -->
+    <div class="segmented-control">
+        <div class="seg-btn active" id="seg-char" onclick="setUniverseMode('char')">Герои</div>
+        <div class="seg-btn" id="seg-loc" onclick="setUniverseMode('loc')">Места</div>
+        <div class="seg-btn" id="seg-lore" onclick="setUniverseMode('lore')">Лор</div>
+    </div>
 
-    <div class="section-title">Законы мира</div>
-    <div id="loreList" class="list-container"></div>
+    <input type="text" id="uniName" placeholder="Имя / Название">
+    <textarea id="uniDesc" class="auto-expand" placeholder="Подробное описание..."></textarea>
+    <button class="btn" id="btn-save-uni" onclick="saveUniverse()">Добавить запись</button>
+    <button class="btn btn-cancel" id="btn-cancel-uni" onclick="cancelEditUniverse()">Отменить редактирование</button>
+    
+    <div id="universeList"></div>
 </div>
 
-<!-- Нижняя навигация -->
+<!-- 5. Статистика -->
+<div id="view-stat" class="view">
+    <div style="display: flex; gap: 10px;">
+        <input type="date" id="statDate" style="flex: 1;">
+        <input type="number" id="statWords" placeholder="Слов" style="flex: 1;">
+    </div>
+    <button class="btn" id="btn-save-stat" onclick="saveStat()">Добавить прогресс</button>
+    <button class="btn btn-cancel" id="btn-cancel-stat" onclick="cancelEditStat()">Отменить редактирование</button>
+    
+    <div style="margin-bottom: 16px; font-weight: 600;">История сессий:</div>
+    <div id="statList"></div>
+</div>
+
+<!-- Нижняя навигация (5 кнопок) -->
 <nav class="tab-bar">
     <div class="tab active" onclick="switchTab('view-home', this, 'ОС Писателя')">
-        <span class="tab-icon">🏠</span>
-        <span class="tab-label">Главная</span>
+        <span class="tab-icon">🏠</span><span class="tab-label">Главная</span>
     </div>
     <div class="tab" onclick="switchTab('view-chapter', this, 'Черновик')">
-        <span class="tab-icon">✍️</span>
-        <span class="tab-label">Текст</span>
+        <span class="tab-icon">✍️</span><span class="tab-label">Текст</span>
     </div>
     <div class="tab" onclick="switchTab('view-idea', this, 'Идеи')">
-        <span class="tab-icon">💡</span>
-        <span class="tab-label">Идеи</span>
+        <span class="tab-icon">💡</span><span class="tab-label">Идеи</span>
     </div>
-    <div class="tab" onclick="switchTab('view-archive', this, 'Архив')">
-        <span class="tab-icon">🗂</span>
-        <span class="tab-label">Архив</span>
+    <div class="tab" onclick="switchTab('view-universe', this, 'Вселенная')">
+        <span class="tab-icon">🗂</span><span class="tab-label">Вселенная</span>
+    </div>
+    <div class="tab" onclick="switchTab('view-stat', this, 'Статистика')">
+        <span class="tab-icon">📊</span><span class="tab-label">Стата</span>
     </div>
 </nav>
 
-<!-- Всплывающее уведомление -->
 <div id="toast" class="toast">Уведомление</div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.ready(); tg.expand();
 
-    // Загрузка профиля
+    // Профиль
     const user = tg.initDataUnsafe?.user;
     if (user) {
         document.getElementById('greeting-text').innerText = `Привет, ${user.first_name}!`;
@@ -208,157 +223,245 @@
         else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); }
     }
 
-    // Переключение вкладок
+    // Утилиты
     function switchTab(viewId, tabElement, title) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
-        
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         tabElement.classList.add('active');
-        
         document.getElementById('header-title').innerText = title;
     }
 
-    // Уведомления
     function showToast(message) {
         const toast = document.getElementById("toast");
         toast.innerText = message; toast.classList.add("show");
         setTimeout(() => { toast.classList.remove("show"); }, 2500);
     }
 
-    // Авторасширение полей ввода
-    document.addEventListener('input', function (event) {
-        if (!event.target.classList.contains('auto-expand')) return;
-        event.target.style.height = 'auto'; event.target.style.height = (event.target.scrollHeight) + 'px';
-    }, false);
+    function autoResize(el) {
+        el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px';
+    }
+    document.addEventListener('input', e => { if (e.target.classList.contains('auto-expand')) autoResize(e.target); }, false);
 
     // ==========================================
-    // ЛОГИКА ТЕКСТА (ЧЕРНОВИК)
+    // 1. ТЕКСТ (Синхронизация через ОБЛАКО!)
     // ==========================================
     const chapterInput = document.getElementById('chapterText');
-    const charCountDisplay = document.getElementById('char-count');
-    const homeCharCount = document.getElementById('home-char-count');
-    
-    chapterInput.value = localStorage.getItem('writer_draft') || "";
-    updateCount();
-    
+    const syncStatus = document.getElementById('sync-status');
+    let saveTimeout;
+
+    // Загружаем текст из облака (теперь и на ПК, и на телефоне текст будет общим!)
+    if (tg.CloudStorage) {
+        tg.CloudStorage.getItem('writer_draft_cloud', (err, val) => {
+            if (!err && val) { chapterInput.value = val; updateCount(); }
+        });
+    }
+
     chapterInput.addEventListener('input', () => { 
-        localStorage.setItem('writer_draft', chapterInput.value); 
         updateCount(); 
+        // Умное сохранение с задержкой, чтобы не перегружать Telegram
+        clearTimeout(saveTimeout);
+        syncStatus.style.opacity = '1'; // Показываем облачко
+        
+        saveTimeout = setTimeout(() => {
+            if (tg.CloudStorage) {
+                tg.CloudStorage.setItem('writer_draft_cloud', chapterInput.value, (err) => {
+                    if (!err) syncStatus.style.opacity = '0'; // Прячем облачко после успешного сохранения
+                });
+            }
+        }, 1500); // Сохраняем через 1.5 сек после остановки печати
     });
     
     function updateCount() { 
         const text = chapterInput.value.trim(); 
         const words = text ? text.split(/\s+/).length : 0;
-        charCountDisplay.innerText = words + " слов(а)"; 
-        homeCharCount.innerText = chapterInput.value.length;
+        document.getElementById('char-count').innerText = words + " слов(а)"; 
+        document.getElementById('home-char-count').innerText = words;
     }
     
     function insertSymbol(symbol) {
         const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value;
         chapterInput.value = text.substring(0, start) + symbol + text.substring(end);
-        localStorage.setItem('writer_draft', chapterInput.value); updateCount();
-        chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1;
+        updateCount(); chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1;
+        // Принудительно триггерим сохранение
+        chapterInput.dispatchEvent(new Event('input'));
     }
-    
     function copyText() {
-        if (!chapterInput.value) { showToast("Пустой черновик"); return; }
         chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Текст скопирован");
     }
 
     // ==========================================
-    // ЛОГИКА ИДЕЙ
+    // 2. ИДЕИ (Добавление, Редактирование, Удаление)
     // ==========================================
     let ideas = [];
-    if (tg.CloudStorage) { 
-        tg.CloudStorage.getItem('my_ideas_app', (err, val) => { 
-            if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } 
-        }); 
-    }
+    let editIdeaIndex = -1;
+    
+    if (tg.CloudStorage) tg.CloudStorage.getItem('my_ideas_app', (err, val) => { if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } });
 
-    function addIdea() {
+    function saveIdea() {
         const text = document.getElementById("quickIdea").value.trim();
-        if (!text) { showToast("Напиши что-нибудь!"); return; }
+        if (!text) { showToast("Пустое поле!"); return; }
         
-        ideas.unshift({ text });
+        if (editIdeaIndex > -1) ideas[editIdeaIndex].text = text; // Обновляем
+        else ideas.unshift({ text }); // Новое
+            
         if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas));
-        
-        document.getElementById("quickIdea").value = ""; 
-        document.getElementById("quickIdea").style.height = 'auto';
-        showToast("💡 Идея сохранена!"); 
-        renderIdeas();
+        cancelEditIdea(); renderIdeas(); showToast("Сохранено!");
     }
 
-    function deleteIdea(index) {
-        ideas.splice(index, 1);
-        if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas));
-        showToast("🗑 Удалено"); 
-        renderIdeas();
+    function editIdea(index) {
+        editIdeaIndex = index;
+        document.getElementById("quickIdea").value = ideas[index].text;
+        autoResize(document.getElementById("quickIdea"));
+        document.getElementById("btn-save-idea").innerText = "💾 Обновить идею";
+        document.getElementById("btn-cancel-idea").style.display = "block";
     }
+
+    function cancelEditIdea() {
+        editIdeaIndex = -1;
+        document.getElementById("quickIdea").value = "";
+        document.getElementById("quickIdea").style.height = 'auto';
+        document.getElementById("btn-save-idea").innerText = "Добавить идею";
+        document.getElementById("btn-cancel-idea").style.display = "none";
+    }
+
+    function deleteIdea(index) { ideas.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); renderIdeas(); }
 
     function renderIdeas() {
-        const list = document.getElementById("ideasList");
-        if (!ideas.length) { 
-            list.innerHTML = "<p style='color:var(--hint); font-size:13px;'>Нет сохраненных идей.</p>"; 
-            return; 
-        }
-        list.innerHTML = ideas.map((idea, i) => `
+        document.getElementById("ideasList").innerHTML = ideas.map((idea, i) => `
             <div class="card">
-                <button class="del-btn" onclick="deleteIdea(${i})">×</button>
+                <div class="card-actions">
+                    <button class="icon-btn" onclick="editIdea(${i})">✏️</button>
+                    <button class="icon-btn danger" onclick="deleteIdea(${i})">✖</button>
+                </div>
                 <div class="card-desc">${idea.text}</div>
-            </div>
-        `).join('');
+            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>Пусто.</p>";
     }
 
     // ==========================================
-    // ЛОГИКА АРХИВА (ГЕРОИ, ЛОКАЦИИ, ЛОР)
+    // 3. ВСЕЛЕННАЯ (Подвкладки + Редактирование)
     // ==========================================
-    let archives = [];
-    if (tg.CloudStorage) { 
-        tg.CloudStorage.getItem('my_universe', (err, val) => { 
-            if (!err && val) { archives = JSON.parse(val); renderArchives(); } 
-        }); 
-    }
-    
-    function addArchive() {
-        const type = document.getElementById("archiveType").value;
-        let name = document.getElementById("archiveName").value.trim();
-        const desc = document.getElementById("archiveDesc").value.trim();
-        
-        if (!desc) { showToast("Введите описание!"); return; }
-        if (!name && type !== 'lore') { showToast("Введите название!"); return; }
-        if (!name && type === 'lore') name = "Факт";
+    let universe = [];
+    let currentUniMode = 'char'; // 'char', 'loc', 'lore'
+    let editUniIndex = -1;
 
-        archives.unshift({ type, name, desc });
-        if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe', JSON.stringify(archives));
+    if (tg.CloudStorage) tg.CloudStorage.getItem('my_universe_v2', (err, val) => { if (!err && val) { universe = JSON.parse(val); renderUniverse(); } });
+
+    function setUniverseMode(mode) {
+        currentUniMode = mode;
+        document.querySelectorAll('.seg-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`seg-${mode}`).classList.add('active');
         
-        document.getElementById("archiveName").value = ""; document.getElementById("archiveDesc").value = ""; 
-        document.getElementById("archiveDesc").style.height = 'auto';
-        showToast("Сохранено в архив"); renderArchives();
-    }
-    
-    function deleteArchive(index) {
-        archives.splice(index, 1);
-        if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe', JSON.stringify(archives));
-        showToast("Запись удалена"); renderArchives();
+        const nameInput = document.getElementById("uniName");
+        if (mode === 'lore') { nameInput.style.display = 'none'; nameInput.value = ''; } 
+        else { nameInput.style.display = 'block'; nameInput.placeholder = mode === 'char' ? "Имя героя" : "Название места"; }
+        cancelEditUniverse(); renderUniverse();
     }
 
-    function renderArchives() {
-        const charList = document.getElementById("charList");
-        const locList = document.getElementById("locList");
-        const loreList = document.getElementById("loreList");
-        let charHTML = '', locHTML = '', loreHTML = '';
+    function saveUniverse() {
+        const name = document.getElementById("uniName").value.trim();
+        const desc = document.getElementById("uniDesc").value.trim();
         
-        archives.forEach((a, index) => {
-            const html = `<div class="card"><button class="del-btn" onclick="deleteArchive(${index})">×</button><span class="card-name">${a.name}</span><div class="card-desc">${a.desc}</div></div>`;
-            if (a.type === 'char') charHTML += html; 
-            else if (a.type === 'loc') locHTML += html;
-            else loreHTML += html;
-        });
+        if (!desc) { showToast("Описание не может быть пустым!"); return; }
+        if (currentUniMode !== 'lore' && !name) { showToast("Введите название!"); return; }
+
+        if (editUniIndex > -1) {
+            universe[editUniIndex] = { type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc };
+        } else {
+            universe.unshift({ type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc });
+        }
+
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe));
+        cancelEditUniverse(); renderUniverse(); showToast("Сохранено!");
+    }
+
+    function editUniverse(index) {
+        editUniIndex = index;
+        const item = universe[index];
+        setUniverseMode(item.type); // Переключаем вкладку на нужную
         
-        charList.innerHTML = charHTML || "<p style='color:var(--hint); font-size:13px;'>Нет записей.</p>";
-        locList.innerHTML = locHTML || "<p style='color:var(--hint); font-size:13px;'>Нет записей.</p>";
-        loreList.innerHTML = loreHTML || "<p style='color:var(--hint); font-size:13px;'>Нет записей.</p>";
+        editUniIndex = index; // Восстанавливаем индекс, т.к. setUniverseMode его сбрасывает
+        if (item.type !== 'lore') document.getElementById("uniName").value = item.name;
+        document.getElementById("uniDesc").value = item.desc;
+        autoResize(document.getElementById("uniDesc"));
+        
+        document.getElementById("btn-save-uni").innerText = "💾 Обновить запись";
+        document.getElementById("btn-cancel-uni").style.display = "block";
+    }
+
+    function cancelEditUniverse() {
+        editUniIndex = -1;
+        document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = "";
+        document.getElementById("uniDesc").style.height = 'auto';
+        document.getElementById("btn-save-uni").innerText = "Добавить запись";
+        document.getElementById("btn-cancel-uni").style.display = "none";
+    }
+
+    function deleteUniverse(index) { universe.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); renderUniverse(); }
+
+    function renderUniverse() {
+        const filtered = universe.map((item, index) => ({...item, originalIndex: index})).filter(item => item.type === currentUniMode);
+        document.getElementById("universeList").innerHTML = filtered.map(item => `
+            <div class="card">
+                <div class="card-actions">
+                    <button class="icon-btn" onclick="editUniverse(${item.originalIndex})">✏️</button>
+                    <button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">✖</button>
+                </div>
+                ${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}
+                <div class="card-desc">${item.desc}</div>
+            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>В этой категории пока пусто.</p>";
+    }
+
+    // ==========================================
+    // 4. СТАТИСТИКА (Прогресс)
+    // ==========================================
+    let stats = [];
+    let editStatIndex = -1;
+    // Устанавливаем сегодня по умолчанию
+    document.getElementById("statDate").valueAsDate = new Date();
+
+    if (tg.CloudStorage) tg.CloudStorage.getItem('my_stats', (err, val) => { if (!err && val) { stats = JSON.parse(val); renderStats(); } });
+
+    function saveStat() {
+        const date = document.getElementById("statDate").value;
+        const words = parseInt(document.getElementById("statWords").value);
+        if (!date || isNaN(words)) { showToast("Заполните дату и количество слов!"); return; }
+
+        if (editStatIndex > -1) stats[editStatIndex] = { date, words };
+        else stats.unshift({ date, words });
+
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_stats', JSON.stringify(stats));
+        cancelEditStat(); renderStats(); showToast("Прогресс записан!");
+    }
+
+    function editStat(index) {
+        editStatIndex = index;
+        document.getElementById("statDate").value = stats[index].date;
+        document.getElementById("statWords").value = stats[index].words;
+        document.getElementById("btn-save-stat").innerText = "💾 Обновить статистику";
+        document.getElementById("btn-cancel-stat").style.display = "block";
+    }
+
+    function cancelEditStat() {
+        editStatIndex = -1;
+        document.getElementById("statDate").valueAsDate = new Date();
+        document.getElementById("statWords").value = "";
+        document.getElementById("btn-save-stat").innerText = "Добавить прогресс";
+        document.getElementById("btn-cancel-stat").style.display = "none";
+    }
+
+    function deleteStat(index) { stats.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_stats', JSON.stringify(stats)); renderStats(); }
+
+    function renderStats() {
+        document.getElementById("statList").innerHTML = stats.map((stat, i) => `
+            <div class="stat-row">
+                <div class="stat-date">${stat.date}</div>
+                <div class="stat-words">+ ${stat.words} слов</div>
+                <div style="display:flex; gap:4px;">
+                    <button class="icon-btn" onclick="editStat(${i})">✏️</button>
+                    <button class="icon-btn danger" onclick="deleteStat(${i})">✖</button>
+                </div>
+            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>История чиста.</p>";
     }
 </script>
 </body>
