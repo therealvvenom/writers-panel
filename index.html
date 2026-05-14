@@ -69,15 +69,12 @@
         .icon-btn:active { opacity: 1; color: var(--text); }
         .icon-btn.danger:active { color: var(--danger); }
 
-        /* Кросс-линкинг */
         .crosslink { color: var(--link); font-weight: 500; cursor: pointer; text-decoration: underline; text-decoration-color: transparent; transition: 0.2s; }
         .crosslink:active { text-decoration-color: var(--link); }
 
-        /* Таймлайн */
         .timeline-item { display: flex; gap: 12px; margin-bottom: 16px; position: relative; }
         .tl-controls { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
         .tl-btn { background: var(--hover); border: none; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--hint); cursor: pointer; }
-        /* ИСПРАВЛЕНИЕ: Добавлен position: relative, чтобы кнопки не улетали */
         .tl-content { flex: 1; background: var(--hover); padding: 12px; border-radius: 8px; border: 1px solid var(--border); position: relative; }
         .tl-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; padding-right: 50px; }
         .tl-desc { font-size: 13px; color: var(--hint); word-wrap: break-word; }
@@ -105,7 +102,6 @@
         <div class="avatar-large" id="user-avatar">?</div>
         <div class="greeting-title" id="greeting-text">Привет, Писатель!</div>
         <div class="greeting-subtitle">Все системы синхронизированы.</div>
-        
         <div style="text-align: left; background: var(--hover); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
             <div style="font-size: 13px; color: var(--hint); margin-bottom: 4px;">Слов во всех главах:</div>
             <div id="home-char-count" style="font-size: 24px; font-weight: 600;">0</div>
@@ -118,12 +114,10 @@
         <select id="chapterSelect" onchange="changeChapter()" style="margin-bottom: 0; flex: 1; padding: 10px; font-weight: 600;"></select>
         <button class="btn btn-small" onclick="addChapter()">+ Глава</button>
     </div>
-    
     <div class="status-bar">
         <span id="char-count">0 слов</span>
         <button class="icon-btn danger" style="font-size: 12px; padding: 0;" onclick="deleteCurrentChapter()">Удалить главу</button>
     </div>
-    
     <div class="symbol-toolbar">
         <button class="symbol-btn" onclick="insertSymbol('—')">—</button>
         <button class="symbol-btn" onclick="insertSymbol('«')">«</button>
@@ -139,7 +133,6 @@
     <textarea id="tlDesc" class="auto-expand" placeholder="Краткое описание событий..."></textarea>
     <button class="btn" id="btn-save-tl" onclick="saveTimeline()">Добавить сцену на доску</button>
     <button class="btn btn-cancel" id="btn-cancel-tl" onclick="cancelEditTimeline()">Отмена</button>
-    
     <div style="font-weight: 600; margin-bottom: 16px; margin-top: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Хронология:</div>
     <div id="timelineList"></div>
 </div>
@@ -162,14 +155,12 @@
         <div class="seg-btn active" id="seg-idea" onclick="setToolMode('idea')">Быстрые идеи</div>
         <div class="seg-btn" id="seg-stat" onclick="setToolMode('stat')">Прогресс</div>
     </div>
-
     <div id="tool-idea-block">
         <textarea id="quickIdea" class="auto-expand" placeholder="Внезапная мысль..."></textarea>
         <button class="btn" id="btn-save-idea" onclick="saveIdea()">Сохранить идею</button>
         <button class="btn btn-cancel" id="btn-cancel-idea" onclick="cancelEditIdea()">Отмена</button>
         <div id="ideasList" style="margin-top: 16px;"></div>
     </div>
-
     <div id="tool-stat-block" style="display: none;">
         <div style="display: flex; gap: 10px;">
             <input type="date" id="statDate" style="flex: 1;">
@@ -199,11 +190,8 @@
     function adjustForKeyboard() {
         const currentHeight = tg.viewportStableHeight || window.innerHeight;
         document.body.style.height = currentHeight + 'px';
-        if (currentHeight < initialHeight * 0.8) {
-            document.body.style.paddingBottom = '0px'; document.querySelector('.tab-bar').style.display = 'none';
-        } else {
-            document.body.style.paddingBottom = '70px'; document.querySelector('.tab-bar').style.display = 'flex';
-        }
+        if (currentHeight < initialHeight * 0.8) { document.body.style.paddingBottom = '0px'; document.querySelector('.tab-bar').style.display = 'none'; } 
+        else { document.body.style.paddingBottom = '70px'; document.querySelector('.tab-bar').style.display = 'flex'; }
     }
     tg.onEvent('viewportChanged', adjustForKeyboard); adjustForKeyboard();
 
@@ -211,8 +199,7 @@
     if (user) {
         document.getElementById('greeting-text').innerText = `Привет, ${user.first_name}!`;
         const avatar = document.getElementById('user-avatar');
-        if (user.photo_url) { avatar.innerHTML = `<img src="${user.photo_url}">`; } 
-        else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); }
+        if (user.photo_url) { avatar.innerHTML = `<img src="${user.photo_url}">`; } else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); }
     }
 
     function switchTab(viewId, tabElement, title) {
@@ -223,16 +210,13 @@
         document.getElementById('header-title').innerText = title;
     }
 
-    function showToast(message) {
-        const toast = document.getElementById("toast");
-        toast.innerText = message; toast.classList.add("show");
-        setTimeout(() => { toast.classList.remove("show"); }, 2500);
-    }
-
+    function showToast(message) { const toast = document.getElementById("toast"); toast.innerText = message; toast.classList.add("show"); setTimeout(() => { toast.classList.remove("show"); }, 2500); }
     function autoResize(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
     document.addEventListener('input', e => { if (e.target.classList.contains('auto-expand')) autoResize(e.target); }, false);
 
-    // --- 1. МЕНЕДЖЕР ГЛАВ ---
+    // ==========================================
+    // 1. УМНЫЙ МЕНЕДЖЕР ГЛАВ С "РАЗРЕЗАНИЕМ" ТЕКСТА (CHUNKING)
+    // ==========================================
     let chapters = [{ id: 'default', title: 'Глава 1', text: '' }];
     let currentChapterId = 'default';
     const chapterInput = document.getElementById('chapterText');
@@ -240,22 +224,78 @@
     const syncStatus = document.getElementById('sync-status');
     let saveTimeout;
 
-    if (tg.CloudStorage) {
-        tg.CloudStorage.getItem('my_book_chapters', (err, val) => {
-            if (!err && val) { 
-                chapters = JSON.parse(val); 
-                currentChapterId = chapters[0].id; 
-                renderChapterSelect(); loadCurrentChapter(); 
-            } else { renderChapterSelect(); }
-        });
-    } else { renderChapterSelect(); }
+    // Загрузка "нарезанных" данных из облака
+    function loadChaptersFromCloud() {
+        if (!tg.CloudStorage) { renderChapterSelect(); return; }
 
-    function renderChapterSelect() {
-        chapterSelect.innerHTML = chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join('');
-        updateTotalWords();
+        tg.CloudStorage.getItem('ch_meta', (err, metaVal) => {
+            if (err || !metaVal) {
+                // Если метаданных нет, пытаемся загрузить старым способом (для обратной совместимости)
+                tg.CloudStorage.getItem('my_book_chapters', (e, v) => {
+                    if (!e && v) { chapters = JSON.parse(v); currentChapterId = chapters[0].id; renderChapterSelect(); loadCurrentChapter(); } 
+                    else { renderChapterSelect(); }
+                });
+                return;
+            }
+
+            const chunkCount = parseInt(metaVal);
+            const keysToFetch = [];
+            for (let i = 0; i < chunkCount; i++) keysToFetch.push('ch_part_' + i);
+
+            // Получаем все куски сразу
+            tg.CloudStorage.getItems(keysToFetch, (err, values) => {
+                if (!err && values) {
+                    let fullJson = '';
+                    for (let i = 0; i < chunkCount; i++) fullJson += values['ch_part_' + i] || '';
+                    try {
+                        chapters = JSON.parse(fullJson);
+                        // Проверка на то, чтобы не сломать приложение, если загрузилась пустышка
+                        if (!chapters || chapters.length === 0) chapters = [{ id: 'default', title: 'Глава 1', text: '' }];
+                        currentChapterId = chapters[0].id;
+                        renderChapterSelect(); loadCurrentChapter();
+                    } catch (e) { console.error("Parse error", e); renderChapterSelect(); }
+                }
+            });
+        });
     }
+
+    loadChaptersFromCloud(); // Запускаем загрузку при старте
+
+    // "Нарезка" и сохранение
+    function saveChunksRecursively(chunks, index, callback) {
+        if (index >= chunks.length) { callback(); return; }
+        tg.CloudStorage.setItem('ch_part_' + index, chunks[index], (err) => {
+            if (err) console.error("Error saving chunk", index);
+            saveChunksRecursively(chunks, index + 1, callback);
+        });
+    }
+
+    function cloudSaveChapters() {
+        if (!tg.CloudStorage) return;
+        syncStatus.innerText = "☁️ Синхронизация...";
+        
+        const jsonStr = JSON.stringify(chapters);
+        const chunkSize = 3900; // Лимит Telegram - 4096. Оставляем запас.
+        const chunks = [];
+        for (let i = 0; i < jsonStr.length; i += chunkSize) chunks.push(jsonStr.substring(i, i + chunkSize));
+
+        // Сначала сохраняем сколько всего кусков получилось
+        tg.CloudStorage.setItem('ch_meta', chunks.length.toString(), (err) => {
+            if (!err) {
+                // Затем рекурсивно (по очереди) сохраняем сами куски, чтобы не заспамить API
+                saveChunksRecursively(chunks, 0, () => {
+                    syncStatus.innerText = "✅ Сохранено";
+                    setTimeout(() => syncStatus.style.opacity = '0', 2000);
+                    updateTotalWords();
+                });
+            }
+        });
+    }
+
+    function renderChapterSelect() { chapterSelect.innerHTML = chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join(''); updateTotalWords(); }
     function loadCurrentChapter() { const chapter = chapters.find(c => c.id === currentChapterId); if (chapter) { chapterInput.value = chapter.text; updateCount(); } }
     function changeChapter() { currentChapterId = chapterSelect.value; loadCurrentChapter(); }
+    
     function addChapter() {
         const title = prompt("Название новой главы:", `Глава ${chapters.length + 1}`);
         if (!title) return;
@@ -264,6 +304,7 @@
         currentChapterId = newId;
         renderChapterSelect(); loadCurrentChapter(); cloudSaveChapters();
     }
+    
     function deleteCurrentChapter() {
         if (chapters.length <= 1) { showToast("Нельзя удалить единственную главу!"); return; }
         if (!confirm("Точно удалить эту главу?")) return;
@@ -271,157 +312,52 @@
         currentChapterId = chapters[0].id;
         renderChapterSelect(); loadCurrentChapter(); cloudSaveChapters();
     }
+
     chapterInput.addEventListener('input', () => { 
         updateCount(); const chapter = chapters.find(c => c.id === currentChapterId);
         if (chapter) chapter.text = chapterInput.value;
-        clearTimeout(saveTimeout); syncStatus.style.opacity = '1'; 
-        saveTimeout = setTimeout(cloudSaveChapters, 1500); 
+        clearTimeout(saveTimeout); syncStatus.style.opacity = '1'; syncStatus.innerText = "☁️ Печатает...";
+        saveTimeout = setTimeout(cloudSaveChapters, 2000); 
     });
-    function cloudSaveChapters() { if (tg.CloudStorage) { tg.CloudStorage.setItem('my_book_chapters', JSON.stringify(chapters), (err) => { if (!err) syncStatus.style.opacity = '0'; updateTotalWords(); }); } }
+
     function updateCount() { const text = chapterInput.value.trim(); const words = text ? text.split(/\s+/).length : 0; document.getElementById('char-count').innerText = words + " слов(а)"; }
     function updateTotalWords() { let total = 0; chapters.forEach(c => { const text = c.text.trim(); total += text ? text.split(/\s+/).length : 0; }); document.getElementById('home-char-count').innerText = total; }
     function insertSymbol(symbol) { const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value; chapterInput.value = text.substring(0, start) + symbol + text.substring(end); chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1; chapterInput.dispatchEvent(new Event('input')); }
     function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Глава скопирована"); }
 
-    // --- 2. СЮЖЕТ (Таймлайн) ---
-    let timeline = [];
-    let editTlIndex = -1;
-    if (tg.CloudStorage) tg.CloudStorage.getItem('my_timeline', (err, val) => { if (!err && val) { timeline = JSON.parse(val); renderTimeline(); } });
-
-    function saveTimeline() {
-        const name = document.getElementById("tlName").value.trim(); const desc = document.getElementById("tlDesc").value.trim();
-        if (!name) { showToast("Введите название сцены!"); return; }
-        if (editTlIndex > -1) timeline[editTlIndex] = { name, desc }; else timeline.push({ name, desc });
-        if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline));
-        cancelEditTimeline(); renderTimeline(); showToast("Сцена сохранена!");
-    }
-    function editTimeline(index) { editTlIndex = index; document.getElementById("tlName").value = timeline[index].name; document.getElementById("tlDesc").value = timeline[index].desc; autoResize(document.getElementById("tlDesc")); document.getElementById("btn-save-tl").innerText = "💾 Обновить сцену"; document.getElementById("btn-cancel-tl").style.display = "block"; }
-    function cancelEditTimeline() { editTlIndex = -1; document.getElementById("tlName").value = ""; document.getElementById("tlDesc").value = ""; document.getElementById("tlDesc").style.height = 'auto'; document.getElementById("btn-save-tl").innerText = "Добавить сцену на доску"; document.getElementById("btn-cancel-tl").style.display = "none"; }
-    function moveTimeline(index, dir) {
-        if (dir === -1 && index > 0) [timeline[index], timeline[index - 1]] = [timeline[index - 1], timeline[index]];
-        else if (dir === 1 && index < timeline.length - 1) [timeline[index], timeline[index + 1]] = [timeline[index + 1], timeline[index]];
-        if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline();
-    }
-    function deleteTimeline(index) { timeline.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); }
+    // --- ОСТАЛЬНАЯ ЛОГИКА (Таймлайн, Архив, Идеи) ---
+    // (Работают как прежде, у них лимиты не такие страшные, т.к. это маленькие карточки)
     
-    function renderTimeline() {
-        document.getElementById("timelineList").innerHTML = timeline.map((tl, i) => `
-            <div class="timeline-item">
-                <div class="tl-controls">
-                    <button class="tl-btn" onclick="moveTimeline(${i}, -1)">▲</button>
-                    <button class="tl-btn" onclick="moveTimeline(${i}, 1)">▼</button>
-                </div>
-                <div class="tl-content">
-                    <div class="card-actions" style="top: 8px; right: 8px;">
-                        <button class="icon-btn" onclick="editTimeline(${i})" style="font-size: 14px;">✏️</button>
-                        <button class="icon-btn danger" onclick="deleteTimeline(${i})" style="font-size: 14px;">✖</button>
-                    </div>
-                    <div class="tl-title">${i + 1}. ${tl.name}</div>
-                    <div class="tl-desc">${(tl.desc || "").replace(/\n/g, '<br>')}</div>
-                </div>
-            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>Сцен пока нет.</p>";
-    }
+    let timeline = []; let editTlIndex = -1;
+    if (tg.CloudStorage) tg.CloudStorage.getItem('my_timeline', (err, val) => { if (!err && val) { timeline = JSON.parse(val); renderTimeline(); } });
+    function saveTimeline() { const name = document.getElementById("tlName").value.trim(); const desc = document.getElementById("tlDesc").value.trim(); if (!name) { showToast("Введите название!"); return; } if (editTlIndex > -1) timeline[editTlIndex] = { name, desc }; else timeline.push({ name, desc }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); cancelEditTimeline(); renderTimeline(); showToast("Сохранено!"); }
+    function editTimeline(index) { editTlIndex = index; document.getElementById("tlName").value = timeline[index].name; document.getElementById("tlDesc").value = timeline[index].desc; autoResize(document.getElementById("tlDesc")); document.getElementById("btn-save-tl").innerText = "💾 Обновить сцену"; document.getElementById("btn-cancel-tl").style.display = "block"; }
+    function cancelEditTimeline() { editTlIndex = -1; document.getElementById("tlName").value = ""; document.getElementById("tlDesc").value = ""; document.getElementById("tlDesc").style.height = 'auto'; document.getElementById("btn-save-tl").innerText = "Добавить сцену"; document.getElementById("btn-cancel-tl").style.display = "none"; }
+    function moveTimeline(index, dir) { if (dir === -1 && index > 0) [timeline[index], timeline[index - 1]] = [timeline[index - 1], timeline[index]]; else if (dir === 1 && index < timeline.length - 1) [timeline[index], timeline[index + 1]] = [timeline[index + 1], timeline[index]]; if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); }
+    function deleteTimeline(index) { timeline.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); }
+    function renderTimeline() { document.getElementById("timelineList").innerHTML = timeline.map((tl, i) => `<div class="timeline-item"><div class="tl-controls"><button class="tl-btn" onclick="moveTimeline(${i}, -1)">▲</button><button class="tl-btn" onclick="moveTimeline(${i}, 1)">▼</button></div><div class="tl-content"><div class="card-actions" style="top: 8px; right: 8px;"><button class="icon-btn" onclick="editTimeline(${i})" style="font-size: 14px;">✏️</button><button class="icon-btn danger" onclick="deleteTimeline(${i})" style="font-size: 14px;">✖</button></div><div class="tl-title">${i + 1}. ${tl.name}</div><div class="tl-desc">${(tl.desc || "").replace(/\n/g, '<br>')}</div></div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>Сцен пока нет.</p>"; }
 
-    // --- 3. ВСЕЛЕННАЯ (Магия ссылок) ---
-    let universe = [];
-    let currentUniMode = 'char'; 
-    let editUniIndex = -1;
+    let universe = []; let currentUniMode = 'char'; let editUniIndex = -1;
     if (tg.CloudStorage) tg.CloudStorage.getItem('my_universe_v2', (err, val) => { if (!err && val) { universe = JSON.parse(val); renderUniverse(); } });
-
-    function setUniverseMode(mode) {
-        currentUniMode = mode;
-        document.querySelectorAll('#view-universe .seg-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`seg-${mode}`).classList.add('active');
-        const nameInput = document.getElementById("uniName");
-        if (mode === 'lore') { nameInput.style.display = 'none'; nameInput.value = ''; } 
-        else { nameInput.style.display = 'block'; nameInput.placeholder = mode === 'char' ? "Имя героя (Напр: Лия)" : "Название места"; }
-        cancelEditUniverse(); renderUniverse();
-    }
-    function saveUniverse() {
-        const name = document.getElementById("uniName").value.trim(); const desc = document.getElementById("uniDesc").value.trim();
-        if (!desc) { showToast("Описание не может быть пустым!"); return; }
-        if (currentUniMode !== 'lore' && !name) { showToast("Введите название!"); return; }
-        if (editUniIndex > -1) universe[editUniIndex] = { type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc };
-        else universe.unshift({ type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc });
-        if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe));
-        cancelEditUniverse(); renderUniverse(); showToast("Сохранено!");
-    }
-    function editUniverse(index) {
-        const item = universe[index]; setUniverseMode(item.type); editUniIndex = index; 
-        if (item.type !== 'lore') document.getElementById("uniName").value = item.name;
-        document.getElementById("uniDesc").value = item.desc; autoResize(document.getElementById("uniDesc"));
-        document.getElementById("btn-save-uni").innerText = "💾 Обновить запись"; document.getElementById("btn-cancel-uni").style.display = "block";
-    }
-    function cancelEditUniverse() {
-        editUniIndex = -1; document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = "";
-        document.getElementById("uniDesc").style.height = 'auto'; document.getElementById("btn-save-uni").innerText = "Добавить запись"; document.getElementById("btn-cancel-uni").style.display = "none";
-    }
+    function setUniverseMode(mode) { currentUniMode = mode; document.querySelectorAll('#view-universe .seg-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`seg-${mode}`).classList.add('active'); const nameInput = document.getElementById("uniName"); if (mode === 'lore') { nameInput.style.display = 'none'; nameInput.value = ''; } else { nameInput.style.display = 'block'; nameInput.placeholder = mode === 'char' ? "Имя героя" : "Название места"; } cancelEditUniverse(); renderUniverse(); }
+    function saveUniverse() { const name = document.getElementById("uniName").value.trim(); const desc = document.getElementById("uniDesc").value.trim(); if (!desc) return; if (currentUniMode !== 'lore' && !name) return; if (editUniIndex > -1) universe[editUniIndex] = { type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc }; else universe.unshift({ type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); cancelEditUniverse(); renderUniverse(); showToast("Сохранено!"); }
+    function editUniverse(index) { const item = universe[index]; setUniverseMode(item.type); editUniIndex = index; if (item.type !== 'lore') document.getElementById("uniName").value = item.name; document.getElementById("uniDesc").value = item.desc; autoResize(document.getElementById("uniDesc")); document.getElementById("btn-save-uni").innerText = "💾 Обновить"; document.getElementById("btn-cancel-uni").style.display = "block"; }
+    function cancelEditUniverse() { editUniIndex = -1; document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = ""; document.getElementById("uniDesc").style.height = 'auto'; document.getElementById("btn-save-uni").innerText = "Добавить запись"; document.getElementById("btn-cancel-uni").style.display = "none"; }
     function deleteUniverse(index) { universe.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); renderUniverse(); }
+    
+    function applyCrosslinks(text) { if (!text) return ""; let htmlText = text.replace(/\n/g, '<br>'); const namesToLink = universe.filter(u => u.type !== 'lore' && u.name).map(u => u.name); if (namesToLink.length === 0) return htmlText; namesToLink.sort((a, b) => b.length - a.length); namesToLink.forEach(name => { const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); const regex = new RegExp(`(^|[^а-яёa-z0-9_])(${safeName})(?=[^а-яёa-z0-9_]|$)`, 'gi'); let parts = htmlText.split(/(<[^>]+>)/g); for (let i = 0; i < parts.length; i++) { if (!parts[i].startsWith('<')) { parts[i] = parts[i].replace(regex, `$1<span class="crosslink" onclick="openCrosslink('${name.replace(/'/g, "\\'")}')">$2</span>`); } } htmlText = parts.join(''); }); return htmlText; }
+    function openCrosslink(name) { const itemIndex = universe.findIndex(u => u.name.toLowerCase() === name.toLowerCase()); if (itemIndex > -1) { setUniverseMode(universe[itemIndex].type); showToast(`Открыто: ${universe[itemIndex].name}`); } }
+    function renderUniverse() { const filtered = universe.map((item, index) => ({...item, originalIndex: index})).filter(item => item.type === currentUniMode); document.getElementById("universeList").innerHTML = filtered.map(item => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editUniverse(${item.originalIndex})">✏️</button><button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">✖</button></div>${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}<div class="card-desc">${applyCrosslinks(item.desc)}</div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>В этой категории пока пусто.</p>"; }
 
-    // ИСПРАВЛЕННЫЕ КРОСС-ЛИНКИ (С ПОДДЕРЖКОЙ РУССКОГО ЯЗЫКА)
-    function applyCrosslinks(text) {
-        if (!text) return "";
-        let htmlText = text.replace(/\n/g, '<br>');
-        const namesToLink = universe.filter(u => u.type !== 'lore' && u.name).map(u => u.name);
-        if (namesToLink.length === 0) return htmlText;
-        
-        namesToLink.sort((a, b) => b.length - a.length);
-
-        namesToLink.forEach(name => {
-            const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            // Универсальная регулярка: ищет имя, игнорируя прилипшие знаки препинания (работает с кириллицей)
-            const regex = new RegExp(`(^|[^а-яёa-z0-9_])(${safeName})(?=[^а-яёa-z0-9_]|$)`, 'gi');
-            
-            let parts = htmlText.split(/(<[^>]+>)/g);
-            for (let i = 0; i < parts.length; i++) {
-                if (!parts[i].startsWith('<')) {
-                    parts[i] = parts[i].replace(regex, `$1<span class="crosslink" onclick="openCrosslink('${name.replace(/'/g, "\\'")}')">$2</span>`);
-                }
-            }
-            htmlText = parts.join('');
-        });
-        return htmlText;
-    }
-
-    function openCrosslink(name) {
-        const itemIndex = universe.findIndex(u => u.name.toLowerCase() === name.toLowerCase());
-        if (itemIndex > -1) {
-            setUniverseMode(universe[itemIndex].type);
-            showToast(`Открыто: ${universe[itemIndex].name}`);
-        }
-    }
-
-    function renderUniverse() {
-        const filtered = universe.map((item, index) => ({...item, originalIndex: index})).filter(item => item.type === currentUniMode);
-        document.getElementById("universeList").innerHTML = filtered.map(item => `
-            <div class="card">
-                <div class="card-actions">
-                    <button class="icon-btn" onclick="editUniverse(${item.originalIndex})">✏️</button>
-                    <button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">✖</button>
-                </div>
-                ${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}
-                <div class="card-desc">${applyCrosslinks(item.desc)}</div>
-            </div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>В этой категории пока пусто.</p>";
-    }
-
-    // --- 4. ЗАМЕТКИ (Идеи и Статистика) ---
-    function setToolMode(mode) {
-        document.querySelectorAll('#view-tools .seg-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`seg-${mode}`).classList.add('active');
-        document.getElementById("tool-idea-block").style.display = mode === 'idea' ? 'block' : 'none';
-        document.getElementById("tool-stat-block").style.display = mode === 'stat' ? 'block' : 'none';
-    }
-
-    let ideas = []; let editIdeaIndex = -1;
-    if (tg.CloudStorage) tg.CloudStorage.getItem('my_ideas_app', (err, val) => { if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } });
+    function setToolMode(mode) { document.querySelectorAll('#view-tools .seg-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`seg-${mode}`).classList.add('active'); document.getElementById("tool-idea-block").style.display = mode === 'idea' ? 'block' : 'none'; document.getElementById("tool-stat-block").style.display = mode === 'stat' ? 'block' : 'none'; }
+    let ideas = []; let editIdeaIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_ideas_app', (err, val) => { if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } });
     function saveIdea() { const text = document.getElementById("quickIdea").value.trim(); if (!text) return; if (editIdeaIndex > -1) ideas[editIdeaIndex].text = text; else ideas.unshift({ text }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); cancelEditIdea(); renderIdeas(); showToast("Сохранено!"); }
     function editIdea(index) { editIdeaIndex = index; document.getElementById("quickIdea").value = ideas[index].text; autoResize(document.getElementById("quickIdea")); document.getElementById("btn-save-idea").innerText = "💾 Обновить идею"; document.getElementById("btn-cancel-idea").style.display = "block"; }
     function cancelEditIdea() { editIdeaIndex = -1; document.getElementById("quickIdea").value = ""; document.getElementById("quickIdea").style.height = 'auto'; document.getElementById("btn-save-idea").innerText = "Сохранить идею"; document.getElementById("btn-cancel-idea").style.display = "none"; }
     function deleteIdea(index) { ideas.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); renderIdeas(); }
     function renderIdeas() { document.getElementById("ideasList").innerHTML = ideas.map((idea, i) => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editIdea(${i})">✏️</button><button class="icon-btn danger" onclick="deleteIdea(${i})">✖</button></div><div class="card-desc">${(idea.text || "").replace(/\n/g, '<br>')}</div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>Пусто.</p>"; }
 
-    let stats = []; let editStatIndex = -1; document.getElementById("statDate").valueAsDate = new Date();
-    if (tg.CloudStorage) tg.CloudStorage.getItem('my_stats', (err, val) => { if (!err && val) { stats = JSON.parse(val); renderStats(); } });
+    let stats = []; let editStatIndex = -1; document.getElementById("statDate").valueAsDate = new Date(); if (tg.CloudStorage) tg.CloudStorage.getItem('my_stats', (err, val) => { if (!err && val) { stats = JSON.parse(val); renderStats(); } });
     function saveStat() { const date = document.getElementById("statDate").value; const words = parseInt(document.getElementById("statWords").value); if (!date || isNaN(words)) return; if (editStatIndex > -1) stats[editStatIndex] = { date, words }; else stats.unshift({ date, words }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_stats', JSON.stringify(stats)); cancelEditStat(); renderStats(); showToast("Записано!"); }
     function editStat(index) { editStatIndex = index; document.getElementById("statDate").value = stats[index].date; document.getElementById("statWords").value = stats[index].words; document.getElementById("btn-save-stat").innerText = "💾 Обновить"; document.getElementById("btn-cancel-stat").style.display = "block"; }
     function cancelEditStat() { editStatIndex = -1; document.getElementById("statDate").valueAsDate = new Date(); document.getElementById("statWords").value = ""; document.getElementById("btn-save-stat").innerText = "Записать прогресс"; document.getElementById("btn-cancel-stat").style.display = "none"; }
