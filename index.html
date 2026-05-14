@@ -52,7 +52,9 @@
             width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border);
             border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px;
             box-sizing: border-box; font-family: 'Inter', sans-serif;
+            appearance: none; -webkit-appearance: none;
         }
+        select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23787774%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 14px top 50%; background-size: 10px auto; }
         textarea:focus, input:focus, select:focus { border-color: var(--hint); }
         
         #chapterText { flex-grow: 1; resize: none; line-height: 1.6; font-family: 'Lora', serif; font-size: 16px; border: none; padding: 0; margin-top: 8px; }
@@ -72,12 +74,14 @@
         .symbol-btn { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--hint); padding: 8px; border-radius: 6px; font-size: 16px; font-weight: 500; cursor: pointer; }
         .symbol-btn:active { background: var(--hover); color: var(--text); }
 
-        /* Карточки архива */
+        /* Списки и карточки */
+        .list-container { margin-bottom: 24px; }
         .section-title { font-weight: 600; font-size: 13px; color: var(--hint); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; margin-top: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
         .card { background: transparent; padding: 16px; border-radius: 8px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); }
         .card-name { font-weight: 600; display: block; margin-bottom: 6px; font-size: 15px;}
         .card-desc { font-size: 14px; color: var(--hint); white-space: pre-wrap; line-height: 1.5;}
         .del-btn { position: absolute; top: 16px; right: 16px; color: var(--hint); border: none; background: none; font-size: 18px; cursor: pointer; padding: 0; }
+        .del-btn:active { color: var(--danger); }
 
         /* НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (TabBar) */
         .tab-bar {
@@ -95,6 +99,7 @@
         .tab.active .tab-icon { filter: grayscale(0%) opacity(1); transform: scale(1.1); }
         .tab-label { font-size: 10px; font-weight: 600; }
 
+        /* Уведомления */
         .toast {
             visibility: hidden; min-width: 200px; background: var(--btn-bg); color: var(--btn-text);
             text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 1000;
@@ -110,7 +115,7 @@
     <div id="header-title">ОС Писателя</div>
 </header>
 
-<!-- Вкладка: Главная -->
+<!-- Вкладка 1: Главная -->
 <div id="view-home" class="view active">
     <div class="profile-hero">
         <div class="avatar-large" id="user-avatar">?</div>
@@ -124,7 +129,7 @@
     </div>
 </div>
 
-<!-- Вкладка: Редактор -->
+<!-- Вкладка 2: Редактор -->
 <div id="view-chapter" class="view">
     <div class="status-bar" id="char-count">0 слов</div>
     <div class="symbol-toolbar">
@@ -137,14 +142,16 @@
     <button class="btn btn-secondary" onclick="copyText()">Скопировать текст</button>
 </div>
 
-<!-- Вкладка: Идеи -->
+<!-- Вкладка 3: Идеи -->
 <div id="view-idea" class="view">
-    <div class="section-title">Быстрая заметка</div>
     <textarea id="quickIdea" class="auto-expand" placeholder="Запиши внезапную идею..."></textarea>
-    <button class="btn" onclick="sendIdeaToBot()">Отправить в Идеи бота</button>
+    <button class="btn" onclick="addIdea()">Сохранить идею</button>
+    
+    <div class="section-title">Список идей</div>
+    <div id="ideasList" class="list-container"></div>
 </div>
 
-<!-- Вкладка: Архив (Герои, Локации, Лор) -->
+<!-- Вкладка 4: Архив (Герои, Локации, Лор) -->
 <div id="view-archive" class="view">
     <select id="archiveType">
         <option value="char">👤 Персонаж</option>
@@ -156,13 +163,13 @@
     <button class="btn" onclick="addArchive()">Сохранить в архив</button>
     
     <div class="section-title">Персонажи</div>
-    <div id="charList"></div>
+    <div id="charList" class="list-container"></div>
     
     <div class="section-title">Локации</div>
-    <div id="locList"></div>
+    <div id="locList" class="list-container"></div>
 
     <div class="section-title">Законы мира</div>
-    <div id="loreList"></div>
+    <div id="loreList" class="list-container"></div>
 </div>
 
 <!-- Нижняя навигация -->
@@ -185,12 +192,14 @@
     </div>
 </nav>
 
+<!-- Всплывающее уведомление -->
 <div id="toast" class="toast">Уведомление</div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.ready(); tg.expand();
 
+    // Загрузка профиля
     const user = tg.initDataUnsafe?.user;
     if (user) {
         document.getElementById('greeting-text').innerText = `Привет, ${user.first_name}!`;
@@ -199,33 +208,33 @@
         else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); }
     }
 
-    // НОВАЯ СИСТЕМА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
+    // Переключение вкладок
     function switchTab(viewId, tabElement, title) {
-        // Меняем экраны
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         
-        // Меняем активную кнопку внизу
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         tabElement.classList.add('active');
         
-        // Меняем заголовок
         document.getElementById('header-title').innerText = title;
     }
 
+    // Уведомления
     function showToast(message) {
         const toast = document.getElementById("toast");
         toast.innerText = message; toast.classList.add("show");
         setTimeout(() => { toast.classList.remove("show"); }, 2500);
     }
 
-    // Авторасширение полей
+    // Авторасширение полей ввода
     document.addEventListener('input', function (event) {
         if (!event.target.classList.contains('auto-expand')) return;
         event.target.style.height = 'auto'; event.target.style.height = (event.target.scrollHeight) + 'px';
     }, false);
 
-    // Логика редактора
+    // ==========================================
+    // ЛОГИКА ТЕКСТА (ЧЕРНОВИК)
+    // ==========================================
     const chapterInput = document.getElementById('chapterText');
     const charCountDisplay = document.getElementById('char-count');
     const homeCharCount = document.getElementById('home-char-count');
@@ -242,7 +251,7 @@
         const text = chapterInput.value.trim(); 
         const words = text ? text.split(/\s+/).length : 0;
         charCountDisplay.innerText = words + " слов(а)"; 
-        homeCharCount.innerText = chapterInput.value.length; // На главной показываем символы для разнообразия
+        homeCharCount.innerText = chapterInput.value.length;
     }
     
     function insertSymbol(symbol) {
@@ -257,12 +266,53 @@
         chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Текст скопирован");
     }
 
-    function sendIdeaToBot() {
-        const text = document.getElementById("quickIdea").value;
-        if (text.trim()) { tg.sendData(text); document.getElementById("quickIdea").value = ""; document.getElementById("quickIdea").style.height = 'auto'; showToast("Отправлено в базу"); }
+    // ==========================================
+    // ЛОГИКА ИДЕЙ
+    // ==========================================
+    let ideas = [];
+    if (tg.CloudStorage) { 
+        tg.CloudStorage.getItem('my_ideas_app', (err, val) => { 
+            if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } 
+        }); 
     }
 
-    // --- ЕДИНАЯ БАЗА АРХИВА (Герои, Локации, Лор) ---
+    function addIdea() {
+        const text = document.getElementById("quickIdea").value.trim();
+        if (!text) { showToast("Напиши что-нибудь!"); return; }
+        
+        ideas.unshift({ text });
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas));
+        
+        document.getElementById("quickIdea").value = ""; 
+        document.getElementById("quickIdea").style.height = 'auto';
+        showToast("💡 Идея сохранена!"); 
+        renderIdeas();
+    }
+
+    function deleteIdea(index) {
+        ideas.splice(index, 1);
+        if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas));
+        showToast("🗑 Удалено"); 
+        renderIdeas();
+    }
+
+    function renderIdeas() {
+        const list = document.getElementById("ideasList");
+        if (!ideas.length) { 
+            list.innerHTML = "<p style='color:var(--hint); font-size:13px;'>Нет сохраненных идей.</p>"; 
+            return; 
+        }
+        list.innerHTML = ideas.map((idea, i) => `
+            <div class="card">
+                <button class="del-btn" onclick="deleteIdea(${i})">×</button>
+                <div class="card-desc">${idea.text}</div>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // ЛОГИКА АРХИВА (ГЕРОИ, ЛОКАЦИИ, ЛОР)
+    // ==========================================
     let archives = [];
     if (tg.CloudStorage) { 
         tg.CloudStorage.getItem('my_universe', (err, val) => { 
@@ -284,13 +334,13 @@
         
         document.getElementById("archiveName").value = ""; document.getElementById("archiveDesc").value = ""; 
         document.getElementById("archiveDesc").style.height = 'auto';
-        showToast("Сохранено"); renderArchives();
+        showToast("Сохранено в архив"); renderArchives();
     }
     
     function deleteArchive(index) {
         archives.splice(index, 1);
         if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe', JSON.stringify(archives));
-        showToast("Удалено"); renderArchives();
+        showToast("Запись удалена"); renderArchives();
     }
 
     function renderArchives() {
@@ -306,9 +356,9 @@
             else loreHTML += html;
         });
         
-        charList.innerHTML = charHTML || "<p style='color:var(--hint); font-size:13px; margin-bottom: 16px;'>Нет записей.</p>";
-        locList.innerHTML = locHTML || "<p style='color:var(--hint); font-size:13px; margin-bottom: 16px;'>Нет записей.</p>";
-        loreList.innerHTML = loreHTML || "<p style='color:var(--hint); font-size:13px; margin-bottom: 16px;'>Нет записей.</p>";
+        charList.innerHTML = charHTML || "<p style='color:var(--hint); font-size:13px;'>Нет записей.</p>";
+        locList.innerHTML = locHTML || "<p style='color:var(--hint); font-size:13px;'>Нет записей.</p>";
+        loreList.innerHTML = loreHTML || "<p style='color:var(--hint); font-size:13px;'>Нет записей.</p>";
     }
 </script>
 </body>
