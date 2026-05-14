@@ -101,7 +101,7 @@
     <div class="profile-hero">
         <div class="avatar-large" id="user-avatar">?</div>
         <div class="greeting-title" id="greeting-text">Привет, Писатель!</div>
-        <div class="greeting-subtitle">Все системы синхронизированы.</div>
+        <div class="greeting-subtitle">База: Telegram Cloud | Тексты: Персональный сервер</div>
         <div style="text-align: left; background: var(--hover); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
             <div style="font-size: 13px; color: var(--hint); margin-bottom: 4px;">Слов во всех главах:</div>
             <div id="home-char-count" style="font-size: 24px; font-weight: 600;">0</div>
@@ -215,7 +215,7 @@
     document.addEventListener('input', e => { if (e.target.classList.contains('auto-expand')) autoResize(e.target); }, false);
 
     // ==========================================
-    // 1. УМНЫЙ МЕНЕДЖЕР ГЛАВ С "РАЗРЕЗАНИЕМ" ТЕКСТА (CHUNKING)
+    // 1. МЕНЕДЖЕР ГЛАВ С ПОДКЛЮЧЕНИЕМ К PYTHONANYWHERE API
     // ==========================================
     let chapters = [{ id: 'default', title: 'Глава 1', text: '' }];
     let currentChapterId = 'default';
@@ -224,73 +224,50 @@
     const syncStatus = document.getElementById('sync-status');
     let saveTimeout;
 
-    // Загрузка "нарезанных" данных из облака
-    function loadChaptersFromCloud() {
-        if (!tg.CloudStorage) { renderChapterSelect(); return; }
+    // Ссылка на твой личный сервер
+    const API_URL = 'https://tonygererro.pythonanywhere.com/api/chapters';
 
-        tg.CloudStorage.getItem('ch_meta', (err, metaVal) => {
-            if (err || !metaVal) {
-                // Если метаданных нет, пытаемся загрузить старым способом (для обратной совместимости)
-                tg.CloudStorage.getItem('my_book_chapters', (e, v) => {
-                    if (!e && v) { chapters = JSON.parse(v); currentChapterId = chapters[0].id; renderChapterSelect(); loadCurrentChapter(); } 
-                    else { renderChapterSelect(); }
-                });
-                return;
+    async function loadChaptersFromServer() {
+        syncStatus.innerText = "☁️ Загрузка..."; syncStatus.style.opacity = '1';
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            if (data.chapters_data && data.chapters_data !== '[]') {
+                chapters = JSON.parse(data.chapters_data);
+            } else {
+                chapters = [{ id: 'default', title: 'Глава 1', text: '' }];
             }
+            syncStatus.style.opacity = '0';
+        } catch (e) {
+            console.error("Ошибка загрузки с сервера", e);
+            showToast("Не удалось загрузить данные с сервера!");
+            chapters = [{ id: 'default', title: 'Офлайн Глава', text: '' }];
+        }
+        currentChapterId = chapters[0].id;
+        renderChapterSelect(); 
+        loadCurrentChapter();
+    }
 
-            const chunkCount = parseInt(metaVal);
-            const keysToFetch = [];
-            for (let i = 0; i < chunkCount; i++) keysToFetch.push('ch_part_' + i);
-
-            // Получаем все куски сразу
-            tg.CloudStorage.getItems(keysToFetch, (err, values) => {
-                if (!err && values) {
-                    let fullJson = '';
-                    for (let i = 0; i < chunkCount; i++) fullJson += values['ch_part_' + i] || '';
-                    try {
-                        chapters = JSON.parse(fullJson);
-                        // Проверка на то, чтобы не сломать приложение, если загрузилась пустышка
-                        if (!chapters || chapters.length === 0) chapters = [{ id: 'default', title: 'Глава 1', text: '' }];
-                        currentChapterId = chapters[0].id;
-                        renderChapterSelect(); loadCurrentChapter();
-                    } catch (e) { console.error("Parse error", e); renderChapterSelect(); }
-                }
+    async function cloudSaveChapters() {
+        syncStatus.innerText = "☁️ Сохраняем на сервер...";
+        syncStatus.style.opacity = '1';
+        try {
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chapters_data: JSON.stringify(chapters) })
             });
-        });
+            syncStatus.innerText = "✅ На сервере";
+            setTimeout(() => syncStatus.style.opacity = '0', 2000);
+            updateTotalWords();
+        } catch (e) {
+            console.error("Ошибка сохранения на сервер", e);
+            syncStatus.innerText = "❌ Ошибка сети";
+            showToast("Ошибка сохранения!");
+        }
     }
 
-    loadChaptersFromCloud(); // Запускаем загрузку при старте
-
-    // "Нарезка" и сохранение
-    function saveChunksRecursively(chunks, index, callback) {
-        if (index >= chunks.length) { callback(); return; }
-        tg.CloudStorage.setItem('ch_part_' + index, chunks[index], (err) => {
-            if (err) console.error("Error saving chunk", index);
-            saveChunksRecursively(chunks, index + 1, callback);
-        });
-    }
-
-    function cloudSaveChapters() {
-        if (!tg.CloudStorage) return;
-        syncStatus.innerText = "☁️ Синхронизация...";
-        
-        const jsonStr = JSON.stringify(chapters);
-        const chunkSize = 3900; // Лимит Telegram - 4096. Оставляем запас.
-        const chunks = [];
-        for (let i = 0; i < jsonStr.length; i += chunkSize) chunks.push(jsonStr.substring(i, i + chunkSize));
-
-        // Сначала сохраняем сколько всего кусков получилось
-        tg.CloudStorage.setItem('ch_meta', chunks.length.toString(), (err) => {
-            if (!err) {
-                // Затем рекурсивно (по очереди) сохраняем сами куски, чтобы не заспамить API
-                saveChunksRecursively(chunks, 0, () => {
-                    syncStatus.innerText = "✅ Сохранено";
-                    setTimeout(() => syncStatus.style.opacity = '0', 2000);
-                    updateTotalWords();
-                });
-            }
-        });
-    }
+    loadChaptersFromServer(); // Запускаем загрузку при старте
 
     function renderChapterSelect() { chapterSelect.innerHTML = chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join(''); updateTotalWords(); }
     function loadCurrentChapter() { const chapter = chapters.find(c => c.id === currentChapterId); if (chapter) { chapterInput.value = chapter.text; updateCount(); } }
@@ -326,7 +303,7 @@
     function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Глава скопирована"); }
 
     // --- ОСТАЛЬНАЯ ЛОГИКА (Таймлайн, Архив, Идеи) ---
-    // (Работают как прежде, у них лимиты не такие страшные, т.к. это маленькие карточки)
+    // (Они остаются в Telegram Cloud, так как это маленькие фрагменты данных)
     
     let timeline = []; let editTlIndex = -1;
     if (tg.CloudStorage) tg.CloudStorage.getItem('my_timeline', (err, val) => { if (!err && val) { timeline = JSON.parse(val); renderTimeline(); } });
@@ -345,7 +322,29 @@
     function cancelEditUniverse() { editUniIndex = -1; document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = ""; document.getElementById("uniDesc").style.height = 'auto'; document.getElementById("btn-save-uni").innerText = "Добавить запись"; document.getElementById("btn-cancel-uni").style.display = "none"; }
     function deleteUniverse(index) { universe.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); renderUniverse(); }
     
-    function applyCrosslinks(text) { if (!text) return ""; let htmlText = text.replace(/\n/g, '<br>'); const namesToLink = universe.filter(u => u.type !== 'lore' && u.name).map(u => u.name); if (namesToLink.length === 0) return htmlText; namesToLink.sort((a, b) => b.length - a.length); namesToLink.forEach(name => { const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); const regex = new RegExp(`(^|[^а-яёa-z0-9_])(${safeName})(?=[^а-яёa-z0-9_]|$)`, 'gi'); let parts = htmlText.split(/(<[^>]+>)/g); for (let i = 0; i < parts.length; i++) { if (!parts[i].startsWith('<')) { parts[i] = parts[i].replace(regex, `$1<span class="crosslink" onclick="openCrosslink('${name.replace(/'/g, "\\'")}')">$2</span>`); } } htmlText = parts.join(''); }); return htmlText; }
+    // ИСПРАВЛЕННЫЕ КРОСС-ЛИНКИ С UNICODE ДЛЯ РУССКОГО ЯЗЫКА
+    function applyCrosslinks(text) { 
+        if (!text) return ""; 
+        let htmlText = text.replace(/\n/g, '<br>'); 
+        const namesToLink = universe.filter(u => u.type !== 'lore' && u.name).map(u => u.name); 
+        if (namesToLink.length === 0) return htmlText; 
+        
+        namesToLink.sort((a, b) => b.length - a.length); 
+        namesToLink.forEach(name => { 
+            const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+            const regex = new RegExp(`(^|[^\\p{L}\\p{N}_])(${safeName})(?=[^\\p{L}\\p{N}_]|$)`, 'giu'); 
+            
+            let parts = htmlText.split(/(<[^>]+>)/g); 
+            for (let i = 0; i < parts.length; i++) { 
+                if (!parts[i].startsWith('<')) { 
+                    parts[i] = parts[i].replace(regex, `$1<span class="crosslink" onclick="openCrosslink('${name.replace(/'/g, "\\'")}')">$2</span>`); 
+                } 
+            } 
+            htmlText = parts.join(''); 
+        }); 
+        return htmlText; 
+    }
+    
     function openCrosslink(name) { const itemIndex = universe.findIndex(u => u.name.toLowerCase() === name.toLowerCase()); if (itemIndex > -1) { setUniverseMode(universe[itemIndex].type); showToast(`Открыто: ${universe[itemIndex].name}`); } }
     function renderUniverse() { const filtered = universe.map((item, index) => ({...item, originalIndex: index})).filter(item => item.type === currentUniMode); document.getElementById("universeList").innerHTML = filtered.map(item => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editUniverse(${item.originalIndex})">✏️</button><button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">✖</button></div>${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}<div class="card-desc">${applyCrosslinks(item.desc)}</div></div>`).join('') || "<p style='color:var(--hint); font-size:13px;'>В этой категории пока пусто.</p>"; }
 
