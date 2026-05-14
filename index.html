@@ -32,11 +32,19 @@
         .view { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; overflow-y: auto; }
         .view.active { display: flex; }
 
-        .profile-hero { text-align: center; padding: 40px 20px; }
-        .avatar-large { width: 80px; height: 80px; border-radius: 24px; background: var(--btn-bg); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: var(--btn-text); font-weight: 600; font-size: 32px; overflow: hidden; }
+        .profile-hero { text-align: center; padding: 30px 20px 20px; }
+        .avatar-large { width: 84px; height: 84px; border-radius: 28px; background: var(--btn-bg); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: var(--btn-text); font-weight: 600; font-size: 34px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
         .avatar-large img { width: 100%; height: 100%; object-fit: cover; }
-        .greeting-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .greeting-subtitle { font-size: 15px; color: var(--hint); margin-bottom: 40px; }
+        .greeting-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
+        .greeting-subtitle { font-size: 15px; color: var(--hint); margin-bottom: 10px; }
+
+        /* Стили для нового меню-дашборда */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px 0; }
+        .dash-card { background: var(--hover); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 6px; }
+        .dash-card:active { transform: scale(0.96); background: var(--border); }
+        .dash-icon { font-size: 26px; margin-bottom: 4px; filter: grayscale(20%); }
+        .dash-title { font-weight: 600; font-size: 15px; color: var(--text); }
+        .dash-desc { font-size: 12px; color: var(--hint); line-height: 1.3; }
 
         textarea, input, select { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px; box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0; }
         textarea:focus, input:focus, select:focus { border-color: var(--hint); }
@@ -99,12 +107,32 @@
 
 <div id="view-home" class="view active">
     <div class="profile-hero">
-        <div class="avatar-large" id="user-avatar">?</div>
-        <div class="greeting-title" id="greeting-text">Привет, Писатель!</div>
-        <div class="greeting-subtitle">База: Telegram Cloud | Тексты: Персональный сервер</div>
-        <div style="text-align: left; background: var(--hover); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
-            <div style="font-size: 13px; color: var(--hint); margin-bottom: 4px;">Слов во всех главах:</div>
-            <div id="home-char-count" style="font-size: 24px; font-weight: 600;">0</div>
+        <div class="avatar-large" id="user-avatar">🖋️</div>
+        <div class="greeting-title">Студия писателя</div>
+        <div class="greeting-subtitle" id="greeting-text">Добро пожаловать!</div>
+    </div>
+    
+    <!-- Новое меню-дашборд -->
+    <div class="dashboard-grid">
+        <div class="dash-card" onclick="goToTab(1)">
+            <div class="dash-icon">✍️</div>
+            <div class="dash-title">Тексты</div>
+            <div class="dash-desc">Писать главы и черновики</div>
+        </div>
+        <div class="dash-card" onclick="goToTab(2)">
+            <div class="dash-icon">⏳</div>
+            <div class="dash-title">Сюжет</div>
+            <div class="dash-desc">Хронология и сцены</div>
+        </div>
+        <div class="dash-card" onclick="goToTab(3)">
+            <div class="dash-icon">🗂</div>
+            <div class="dash-title">База</div>
+            <div class="dash-desc">Герои, места и лор</div>
+        </div>
+        <div class="dash-card" onclick="goToTab(4)">
+            <div class="dash-icon">📝</div>
+            <div class="dash-title">Заметки</div>
+            <div class="dash-desc">Идеи и статистика</div>
         </div>
     </div>
 </div>
@@ -199,7 +227,15 @@
     if (user) {
         document.getElementById('greeting-text').innerText = `Привет, ${user.first_name}!`;
         const avatar = document.getElementById('user-avatar');
-        if (user.photo_url) { avatar.innerHTML = `<img src="${user.photo_url}">`; } else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); }
+        if (user.photo_url) { avatar.innerHTML = `<img src="${user.photo_url}">`; } 
+    }
+
+    // Вспомогательная функция для дашборда
+    function goToTab(index) {
+        const tabs = document.querySelectorAll('.tab');
+        const views = ['view-home', 'view-chapter', 'view-timeline', 'view-universe', 'view-tools'];
+        const titles = ['ОС Писателя', 'Черновики', 'Сюжет', 'База', 'Инструменты'];
+        switchTab(views[index], tabs[index], titles[index]);
     }
 
     function switchTab(viewId, tabElement, title) {
@@ -215,7 +251,7 @@
     document.addEventListener('input', e => { if (e.target.classList.contains('auto-expand')) autoResize(e.target); }, false);
 
     // ==========================================
-    // 1. МЕНЕДЖЕР ГЛАВ С ПОДКЛЮЧЕНИЕМ К PYTHONANYWHERE API
+    // 1. МЕНЕДЖЕР ГЛАВ (API)
     // ==========================================
     let chapters = [{ id: 'default', title: 'Глава 1', text: '' }];
     let currentChapterId = 'default';
@@ -224,7 +260,6 @@
     const syncStatus = document.getElementById('sync-status');
     let saveTimeout;
 
-    // Ссылка на твой личный сервер
     const API_URL = 'https://tonygererro.pythonanywhere.com/api/chapters';
 
     async function loadChaptersFromServer() {
@@ -239,7 +274,7 @@
             }
             syncStatus.style.opacity = '0';
         } catch (e) {
-            console.error("Ошибка загрузки с сервера", e);
+            console.error("Ошибка загрузки", e);
             showToast("Не удалось загрузить данные с сервера!");
             chapters = [{ id: 'default', title: 'Офлайн Глава', text: '' }];
         }
@@ -249,7 +284,7 @@
     }
 
     async function cloudSaveChapters() {
-        syncStatus.innerText = "☁️ Сохраняем на сервер...";
+        syncStatus.innerText = "☁️ Сохраняем...";
         syncStatus.style.opacity = '1';
         try {
             await fetch(API_URL, {
@@ -259,17 +294,16 @@
             });
             syncStatus.innerText = "✅ На сервере";
             setTimeout(() => syncStatus.style.opacity = '0', 2000);
-            updateTotalWords();
         } catch (e) {
-            console.error("Ошибка сохранения на сервер", e);
-            syncStatus.innerText = "❌ Ошибка сети";
+            console.error("Ошибка сети", e);
+            syncStatus.innerText = "❌ Ошибка";
             showToast("Ошибка сохранения!");
         }
     }
 
-    loadChaptersFromServer(); // Запускаем загрузку при старте
+    loadChaptersFromServer();
 
-    function renderChapterSelect() { chapterSelect.innerHTML = chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join(''); updateTotalWords(); }
+    function renderChapterSelect() { chapterSelect.innerHTML = chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join(''); }
     function loadCurrentChapter() { const chapter = chapters.find(c => c.id === currentChapterId); if (chapter) { chapterInput.value = chapter.text; updateCount(); } }
     function changeChapter() { currentChapterId = chapterSelect.value; loadCurrentChapter(); }
     
@@ -298,13 +332,10 @@
     });
 
     function updateCount() { const text = chapterInput.value.trim(); const words = text ? text.split(/\s+/).length : 0; document.getElementById('char-count').innerText = words + " слов(а)"; }
-    function updateTotalWords() { let total = 0; chapters.forEach(c => { const text = c.text.trim(); total += text ? text.split(/\s+/).length : 0; }); document.getElementById('home-char-count').innerText = total; }
     function insertSymbol(symbol) { const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value; chapterInput.value = text.substring(0, start) + symbol + text.substring(end); chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1; chapterInput.dispatchEvent(new Event('input')); }
     function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Глава скопирована"); }
 
-    // --- ОСТАЛЬНАЯ ЛОГИКА (Таймлайн, Архив, Идеи) ---
-    // (Они остаются в Telegram Cloud, так как это маленькие фрагменты данных)
-    
+    // --- ОСТАЛЬНАЯ ЛОГИКА ---
     let timeline = []; let editTlIndex = -1;
     if (tg.CloudStorage) tg.CloudStorage.getItem('my_timeline', (err, val) => { if (!err && val) { timeline = JSON.parse(val); renderTimeline(); } });
     function saveTimeline() { const name = document.getElementById("tlName").value.trim(); const desc = document.getElementById("tlDesc").value.trim(); if (!name) { showToast("Введите название!"); return; } if (editTlIndex > -1) timeline[editTlIndex] = { name, desc }; else timeline.push({ name, desc }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); cancelEditTimeline(); renderTimeline(); showToast("Сохранено!"); }
@@ -322,18 +353,15 @@
     function cancelEditUniverse() { editUniIndex = -1; document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = ""; document.getElementById("uniDesc").style.height = 'auto'; document.getElementById("btn-save-uni").innerText = "Добавить запись"; document.getElementById("btn-cancel-uni").style.display = "none"; }
     function deleteUniverse(index) { universe.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); renderUniverse(); }
     
-    // ИСПРАВЛЕННЫЕ КРОСС-ЛИНКИ С UNICODE ДЛЯ РУССКОГО ЯЗЫКА
     function applyCrosslinks(text) { 
         if (!text) return ""; 
         let htmlText = text.replace(/\n/g, '<br>'); 
         const namesToLink = universe.filter(u => u.type !== 'lore' && u.name).map(u => u.name); 
         if (namesToLink.length === 0) return htmlText; 
-        
         namesToLink.sort((a, b) => b.length - a.length); 
         namesToLink.forEach(name => { 
             const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
             const regex = new RegExp(`(^|[^\\p{L}\\p{N}_])(${safeName})(?=[^\\p{L}\\p{N}_]|$)`, 'giu'); 
-            
             let parts = htmlText.split(/(<[^>]+>)/g); 
             for (let i = 0; i < parts.length; i++) { 
                 if (!parts[i].startsWith('<')) { 
