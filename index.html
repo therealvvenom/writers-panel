@@ -361,12 +361,15 @@
     const syncDot = document.getElementById('sync-dot');
     let saveTimeout;
 
+    // ДОБАВИЛИ ПОЛУЧЕНИЕ ID
+    const userId = tg.initDataUnsafe?.user?.id || 'offline';
     const API_URL = 'https://tonygererro.pythonanywhere.com/api/chapters';
 
     async function loadChaptersFromServer() {
         syncStatus.innerText = "Загрузка..."; syncDot.innerText = "🔄";
         try {
-            const response = await fetch(API_URL);
+            // Отправляем GET запрос с ID пользователя
+            const response = await fetch(`${API_URL}?user_id=${userId}`);
             const data = await response.json();
             if (data.chapters_data && data.chapters_data !== '[]') { chapters = JSON.parse(data.chapters_data); } 
             else { chapters = [{ id: 'default', title: 'Глава 1', text: '' }]; }
@@ -385,7 +388,11 @@
             await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chapters_data: JSON.stringify(chapters) })
+                // Отправляем ID пользователя вместе с текстом книги
+                body: JSON.stringify({ 
+                    user_id: userId,
+                    chapters_data: JSON.stringify(chapters) 
+                })
             });
             syncStatus.innerText = "Сохранено"; syncDot.innerText = "✅";
             setTimeout(() => { syncStatus.innerText = "В облаке"; syncDot.innerText = "☁️"; }, 3000);
