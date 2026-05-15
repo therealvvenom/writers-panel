@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Системные переменные по умолчанию */
             --bg: var(--tg-theme-bg-color, #ffffff); --text: var(--tg-theme-text-color, #37352f);
             --hint: var(--tg-theme-hint-color, #787774); --border: rgba(120, 119, 116, 0.2);
             --hover: rgba(120, 119, 116, 0.08); --danger: #eb5757;
@@ -15,74 +16,98 @@
             --nav-bg: var(--tg-theme-bg-color, #ffffff); --link: var(--tg-theme-link-color, #007aff);
         }
 
+        /* Принудительная ТЕМНАЯ тема */
+        [data-theme="dark"] {
+            --bg: #181818; --text: #e0e0e0; --hint: #888888; --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.05); --nav-bg: #181818; --btn-bg: #e0e0e0; --btn-text: #181818;
+        }
+
+        /* Принудительная СВЕТЛАЯ тема */
+        [data-theme="light"] {
+            --bg: #ffffff; --text: #37352f; --hint: #787774; --border: rgba(120, 119, 116, 0.2);
+            --hover: rgba(120, 119, 116, 0.08); --nav-bg: #ffffff; --btn-bg: #37352f; --btn-text: #ffffff;
+        }
+
         body {
             font-family: 'Inter', -apple-system, sans-serif; background-color: var(--bg); color: var(--text);
             margin: 0; padding: 0; display: flex; flex-direction: column; 
             height: 100vh; height: var(--tg-viewport-stable-height, 100vh);
             -webkit-font-smoothing: antialiased; padding-bottom: 70px; box-sizing: border-box; overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        header { 
-            padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; 
-            border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 10; flex-shrink: 0;
-            display: none; /* Скрываем старый хэдер, используем новый профильный */
+        /* АНИМАЦИЯ ПОЯВЛЕНИЯ ВСТРАНИЦ */
+        .view { 
+            display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; overflow-y: auto; 
+            opacity: 0; transform: translateY(15px);
+        }
+        .view.active { 
+            display: flex; 
+            animation: fadeSlideUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; 
         }
 
-        .view { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; overflow-y: auto; }
-        .view.active { display: flex; }
+        @keyframes fadeSlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        /* НОВАЯ ШАПКА ПРОФИЛЯ */
-        .top-profile-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+        /* ШАПКА ПРОФИЛЯ */
+        .top-profile-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); transition: 0.3s; }
         .top-profile-left { display: flex; align-items: center; gap: 12px; }
-        .top-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--btn-bg); color: var(--btn-text); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px; overflow: hidden; }
+        .top-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--btn-bg); color: var(--btn-text); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px; overflow: hidden; transition: 0.3s; }
         .top-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .top-username { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 2px; }
         .top-subtitle { font-size: 12px; color: var(--hint); display: flex; align-items: center; gap: 4px;}
         
+        .header-actions { display: flex; gap: 8px; align-items: center; }
+        .btn-theme { background: transparent; border: 1px solid var(--border); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; color: var(--text); transition: 0.2s; }
+        .btn-theme:active { transform: scale(0.9); background: var(--hover); }
+
         .btn-ai { background: var(--hover); color: var(--text); border: none; padding: 8px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; }
         .btn-ai:active { transform: scale(0.96); background: var(--border); }
         .btn-ai svg { width: 16px; height: 16px; fill: currentColor; }
 
-        .stat-card { margin-top: 10px; text-align: center; background: var(--hover); padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
+        .stat-card { margin-top: 10px; text-align: center; background: var(--hover); padding: 24px; border-radius: 16px; border: 1px solid var(--border); transition: 0.3s; }
         .stat-card-title { font-size: 14px; color: var(--hint); margin-bottom: 8px; font-weight: 500; }
         .stat-card-value { font-size: 36px; font-weight: 700; color: var(--text); }
 
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px 0; }
         .dash-card { background: var(--hover); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; }
         .dash-card:active { transform: scale(0.96); background: var(--border); }
-        .dash-icon-svg { width: 28px; height: 28px; fill: var(--hint); }
-        .dash-title { font-weight: 600; font-size: 15px; color: var(--text); }
-        .dash-desc { font-size: 12px; color: var(--hint); line-height: 1.3; }
+        .dash-icon-svg { width: 28px; height: 28px; fill: var(--hint); transition: 0.3s; }
+        .dash-title { font-weight: 600; font-size: 15px; color: var(--text); transition: 0.3s; }
+        .dash-desc { font-size: 12px; color: var(--hint); line-height: 1.3; transition: 0.3s; }
 
-        textarea, input, select { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px; box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0; }
+        textarea, input, select { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px; box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0; transition: border-color 0.2s, color 0.3s; }
         textarea:focus, input:focus, select:focus { border-color: var(--hint); }
         select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23787774%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 14px top 50%; background-size: 10px auto; }
         
-        #chapterText { flex-grow: 1; resize: none; line-height: 1.6; font-family: 'Lora', serif; font-size: 16px; border: none; padding: 0; margin-top: 8px; margin-bottom: 0; }
+        /* ПИСАТЕЛЬСКИЙ ШРИФТ ДЛЯ ГЛАВ */
+        #chapterText { flex-grow: 1; resize: none; line-height: 1.7; font-family: 'Lora', serif; font-size: 17px; border: none; padding: 0; margin-top: 8px; margin-bottom: 0; transition: color 0.3s; }
         .auto-expand { overflow: hidden; resize: none; min-height: 60px; }
         
         .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; margin-bottom: 12px; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;}
 
         .btn { background: var(--btn-bg); color: var(--btn-text); border: none; padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 500; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 16px; flex-shrink: 0; }
-        .btn:active { opacity: 0.8; }
+        .btn:active { opacity: 0.8; transform: scale(0.98); }
         .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); margin-bottom: 0; margin-top: 10px; }
         .btn-cancel { background: var(--hover); color: var(--text); margin-bottom: 24px; display: none; }
-        .btn-small { padding: 8px 12px; font-size: 12px; width: auto; margin: 0; border-radius: 6px; }
+        .btn-small { padding: 8px 12px; font-size: 13px; width: auto; margin: 0; border-radius: 6px; }
 
         .symbol-toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-shrink: 0; }
-        .symbol-btn { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--hint); padding: 8px; border-radius: 6px; font-size: 16px; cursor: pointer; }
-        
-        .segmented-control { display: flex; background: var(--hover); border-radius: 8px; padding: 4px; margin-bottom: 20px; flex-shrink: 0; }
+        .symbol-btn { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--hint); padding: 8px; border-radius: 6px; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .symbol-btn:active { background: var(--hover); }
+
+        .segmented-control { display: flex; background: var(--hover); border-radius: 8px; padding: 4px; margin-bottom: 20px; flex-shrink: 0; transition: 0.3s; }
         .seg-btn { flex: 1; text-align: center; padding: 8px 0; font-size: 13px; font-weight: 500; color: var(--hint); border-radius: 6px; cursor: pointer; transition: 0.2s; }
         .seg-btn.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        .card { background: transparent; padding: 16px; border-radius: 8px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); flex-shrink: 0; }
+        .card { background: transparent; padding: 16px; border-radius: 8px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); flex-shrink: 0; transition: 0.3s; }
         .card-name { font-weight: 600; display: block; margin-bottom: 6px; font-size: 15px;}
-        .card-desc { font-size: 14px; color: var(--hint); line-height: 1.5; word-wrap: break-word; }
+        .card-desc { font-size: 14.5px; color: var(--hint); line-height: 1.6; word-wrap: break-word; }
         
         .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 4px; z-index: 2; }
-        .icon-btn { border: none; background: none; font-size: 16px; cursor: pointer; padding: 4px; color: var(--hint); opacity: 0.7; }
-        .icon-btn:active { opacity: 1; color: var(--text); }
+        .icon-btn { border: none; background: none; font-size: 16px; cursor: pointer; padding: 4px; color: var(--hint); opacity: 0.7; transition: 0.2s; }
+        .icon-btn:active { opacity: 1; color: var(--text); transform: scale(1.1); }
         .icon-btn.danger:active { color: var(--danger); }
 
         .crosslink { color: var(--link); font-weight: 500; cursor: pointer; text-decoration: underline; text-decoration-color: transparent; transition: 0.2s; }
@@ -90,29 +115,25 @@
 
         .timeline-item { display: flex; gap: 12px; margin-bottom: 16px; position: relative; }
         .tl-controls { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
-        .tl-btn { background: var(--hover); border: none; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--hint); cursor: pointer; }
-        .tl-content { flex: 1; background: var(--hover); padding: 12px; border-radius: 8px; border: 1px solid var(--border); position: relative; }
+        .tl-btn { background: var(--hover); border: none; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--hint); cursor: pointer; transition: 0.2s; }
+        .tl-content { flex: 1; background: var(--hover); padding: 12px; border-radius: 8px; border: 1px solid var(--border); position: relative; transition: 0.3s; }
         .tl-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; padding-right: 50px; }
-        .tl-desc { font-size: 13px; color: var(--hint); word-wrap: break-word; }
+        .tl-desc { font-size: 14px; color: var(--hint); word-wrap: break-word; line-height: 1.5; }
 
-        /* СТИЛИ НАВИГАЦИИ С ИКОНКАМИ SVG */
-        .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: var(--nav-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); z-index: 100; transition: transform 0.2s ease, opacity 0.2s ease; }
+        .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: var(--nav-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); z-index: 100; transition: transform 0.2s ease, opacity 0.2s ease, background 0.3s; }
         .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 64px; height: 50px; color: var(--hint); cursor: pointer; transition: 0.2s; }
-        
         .tab svg { width: 24px; height: 24px; fill: var(--hint); margin-bottom: 4px; transition: 0.2s; }
         .tab-label { font-size: 10px; font-weight: 600; transition: 0.2s; }
-        
-        .tab.active svg { fill: var(--link); transform: scale(1.1); }
+        .tab.active svg { fill: var(--link); transform: translateY(-2px) scale(1.1); }
         .tab.active .tab-label { color: var(--link); }
 
-        .toast { visibility: hidden; min-width: 200px; background: var(--btn-bg); color: var(--btn-text); text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 1000; left: 50%; bottom: 90px; transform: translateX(-50%); font-size: 13px; font-weight: 500; opacity: 0; transition: 0.3s; }
+        .toast { visibility: hidden; min-width: 200px; background: var(--text); color: var(--bg); text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 1000; left: 50%; bottom: 90px; transform: translateX(-50%); font-size: 13px; font-weight: 500; opacity: 0; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .toast.show { visibility: visible; opacity: 1; bottom: 100px; }
     </style>
 </head>
 <body>
 
 <div id="view-home" class="view active">
-    <!-- НОВАЯ ШАПКА -->
     <div class="top-profile-bar">
         <div class="top-profile-left">
             <div class="top-avatar" id="user-avatar">?</div>
@@ -123,10 +144,13 @@
                 </div>
             </div>
         </div>
-        <button class="btn-ai" onclick="openAIBot()">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-            Связь с ИИ
-        </button>
+        <div class="header-actions">
+            <button class="btn-theme" id="theme-toggle-btn" onclick="toggleTheme()">🌓</button>
+            <button class="btn-ai" onclick="openAIBot()">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                ИИ
+            </button>
+        </div>
     </div>
     
     <div class="stat-card">
@@ -134,7 +158,6 @@
         <div id="home-char-count" class="stat-card-value">0</div>
     </div>
 
-    <!-- ДАШБОРД -->
     <div class="dashboard-grid">
         <div class="dash-card" onclick="goToTab(1)">
             <svg class="dash-icon-svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
@@ -187,9 +210,9 @@
 </div>
 
 <div id="view-timeline" class="view">
-    <input type="text" id="tlName" placeholder="Название сцены (Напр: Петля обрывается)">
+    <input type="text" id="tlName" placeholder="Название сцены">
     <textarea id="tlDesc" class="auto-expand" placeholder="Краткое описание событий..."></textarea>
-    <button class="btn" id="btn-save-tl" onclick="saveTimeline()">Добавить сцену на доску</button>
+    <button class="btn" id="btn-save-tl" onclick="saveTimeline()">Добавить сцену</button>
     <button class="btn btn-cancel" id="btn-cancel-tl" onclick="cancelEditTimeline()">Отмена</button>
     <div style="font-weight: 600; margin-bottom: 16px; margin-top: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Хронология:</div>
     <div id="timelineList"></div>
@@ -201,7 +224,7 @@
         <div class="seg-btn" id="seg-loc" onclick="setUniverseMode('loc')">Места</div>
         <div class="seg-btn" id="seg-lore" onclick="setUniverseMode('lore')">Лор</div>
     </div>
-    <input type="text" id="uniName" placeholder="Имя / Название (Напр: Стив)">
+    <input type="text" id="uniName" placeholder="Имя / Название">
     <textarea id="uniDesc" class="auto-expand" placeholder="Описание (упомянутые имена станут ссылками)..."></textarea>
     <button class="btn" id="btn-save-uni" onclick="saveUniverse()">Добавить запись</button>
     <button class="btn btn-cancel" id="btn-cancel-uni" onclick="cancelEditUniverse()">Отмена</button>
@@ -210,7 +233,7 @@
 
 <div id="view-tools" class="view">
     <div class="segmented-control">
-        <div class="seg-btn active" id="seg-idea" onclick="setToolMode('idea')">Быстрые идеи</div>
+        <div class="seg-btn active" id="seg-idea" onclick="setToolMode('idea')">Идеи</div>
         <div class="seg-btn" id="seg-stat" onclick="setToolMode('stat')">Прогресс</div>
     </div>
     <div id="tool-idea-block">
@@ -259,6 +282,35 @@
     const tg = window.Telegram.WebApp;
     tg.ready(); tg.expand();
 
+    // --- СИСТЕМА ТЕМ ---
+    let currentTheme = localStorage.getItem('app_theme') || 'auto';
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    
+    function applyTheme(theme) {
+        if (theme === 'auto') {
+            document.documentElement.removeAttribute('data-theme');
+            themeBtn.innerText = '🌓';
+        } else if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeBtn.innerText = '☀️';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            themeBtn.innerText = '🌙';
+        }
+    }
+    applyTheme(currentTheme);
+
+    function toggleTheme() {
+        if (currentTheme === 'auto') currentTheme = 'dark';
+        else if (currentTheme === 'dark') currentTheme = 'light';
+        else currentTheme = 'auto';
+        localStorage.setItem('app_theme', currentTheme);
+        applyTheme(currentTheme);
+        let themeName = currentTheme === 'auto' ? 'Системная тема' : (currentTheme === 'dark' ? 'Темная тема' : 'Светлая тема');
+        showToast(themeName);
+    }
+
+    // Обработка клавиатуры
     let initialHeight = window.innerHeight;
     function adjustForKeyboard() {
         const currentHeight = tg.viewportStableHeight || window.innerHeight;
@@ -277,18 +329,24 @@
         else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); }
     }
 
-    // Открытие бота (ЗАМЕНИ ССЫЛКУ ТУТ 👇)
+    // Открытие бота (ИИ)
     function openAIBot() {
-        tg.openTelegramLink('https://t.me/Fudjit_bot'); 
+        tg.openTelegramLink('https://t.me/ТУТ_ТВОЙ_БОТ'); // <--- ВСТАВЬ ССЫЛКУ НА СВОЕГО БОТА
     }
 
-    // Вспомогательная функция для навигации
+    // Навигация с анимацией
     function goToTab(index) {
         const tabs = document.querySelectorAll('.tab');
         const views = ['view-home', 'view-chapter', 'view-timeline', 'view-universe', 'view-tools'];
         
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(views[index]).classList.add('active');
+        document.querySelectorAll('.view').forEach(v => {
+            v.classList.remove('active');
+        });
+        
+        // Маленькая задержка для перезапуска анимации
+        setTimeout(() => {
+            document.getElementById(views[index]).classList.add('active');
+        }, 10);
         
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         tabs[index].classList.add('active');
