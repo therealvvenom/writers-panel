@@ -62,7 +62,7 @@
 
         /* ЦЕЛЬ */
         .goal-card { background: transparent; border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: left; }
-        .goal-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; font-weight: 600; }
+        .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; font-weight: 600; }
         .goal-track { height: 8px; background: var(--hover); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
         .goal-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; }
         .goal-desc { font-size: 12px; color: var(--hint); }
@@ -137,7 +137,7 @@
             <button class="btn-theme" id="theme-toggle-btn" onclick="toggleTheme()">🌓</button>
             <button class="btn-export" onclick="exportBook()">
                 <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                Скачать книгу
+                Скачать
             </button>
         </div>
     </div>
@@ -155,7 +155,7 @@
 
     <div class="goal-card">
         <div class="goal-header">
-            <span>Цель проекта</span>
+            <span>Цель проекта <button class="icon-btn" onclick="editGoal()" style="font-size: 14px; padding: 0 4px; display: inline-block;">✏️</button></span>
             <span id="goal-text">0 / 1500 слов</span>
         </div>
         <div class="goal-track">
@@ -182,7 +182,7 @@
         <button class="symbol-btn" onclick="insertSymbol('…')">…</button>
     </div>
     <textarea id="chapterText" placeholder="Начни писать главу..."></textarea>
-    <button class="btn btn-secondary" onclick="copyText()">Скопировать главу</button>
+    <button id="btn-copy-chapter" class="btn btn-secondary" onclick="copyText()">Скопировать главу</button>
 </div>
 
 <div id="view-timeline" class="view">
@@ -264,8 +264,23 @@
     applyTheme(currentTheme);
     function toggleTheme() { currentTheme = currentTheme === 'auto' ? 'dark' : (currentTheme === 'dark' ? 'light' : 'auto'); localStorage.setItem('app_theme', currentTheme); applyTheme(currentTheme); showToast(currentTheme === 'auto' ? 'Системная тема' : (currentTheme === 'dark' ? 'Темная тема' : 'Светлая тема')); }
 
+    // --- ПРЯЧЕМ КНОПКУ КОПИРОВАНИЯ И НАВИГАЦИЮ ПРИ ОТКРЫТИИ КЛАВИАТУРЫ ---
     let initialHeight = window.innerHeight;
-    function adjustForKeyboard() { const currentHeight = tg.viewportStableHeight || window.innerHeight; document.body.style.height = currentHeight + 'px'; if (currentHeight < initialHeight * 0.8) { document.body.style.paddingBottom = '0px'; document.querySelector('.tab-bar').style.display = 'none'; } else { document.body.style.paddingBottom = '70px'; document.querySelector('.tab-bar').style.display = 'flex'; } }
+    function adjustForKeyboard() { 
+        const currentHeight = tg.viewportStableHeight || window.innerHeight; 
+        document.body.style.height = currentHeight + 'px'; 
+        const copyBtn = document.getElementById('btn-copy-chapter');
+        
+        if (currentHeight < initialHeight * 0.8) { 
+            document.body.style.paddingBottom = '0px'; 
+            document.querySelector('.tab-bar').style.display = 'none'; 
+            if (copyBtn) copyBtn.style.display = 'none'; // Прячем кнопку
+        } else { 
+            document.body.style.paddingBottom = '70px'; 
+            document.querySelector('.tab-bar').style.display = 'flex'; 
+            if (copyBtn) copyBtn.style.display = 'block'; // Показываем кнопку
+        } 
+    }
     tg.onEvent('viewportChanged', adjustForKeyboard); adjustForKeyboard();
 
     const user = tg.initDataUnsafe?.user;
@@ -285,7 +300,22 @@
     document.addEventListener('input', e => { if (e.target.classList.contains('auto-expand')) autoResize(e.target); }, false);
 
     // ==========================================
-    // ЭКСПОРТ РУКОПИСИ
+    // НАСТРОЙКА ЦЕЛИ
+    // ==========================================
+    let dailyGoal = parseInt(localStorage.getItem('my_goal')) || 1500;
+
+    function editGoal() {
+        const newGoal = prompt("Укажи новую цель (количество слов):", dailyGoal);
+        if (newGoal && !isNaN(newGoal)) {
+            dailyGoal = parseInt(newGoal);
+            localStorage.setItem('my_goal', dailyGoal);
+            updateTotalWords();
+            showToast("Цель обновлена!");
+        }
+    }
+
+    // ==========================================
+    // ЭКСПОРТ РУКОПИСИ СО СТРАХОВКОЙ
     // ==========================================
     function exportBook() {
         if (chapters.length === 0 || (chapters.length === 1 && !chapters[0].text)) {
@@ -300,6 +330,15 @@
             bookContent += c.text + "\n";
         });
         
+        // 1. СТРАХОВКА: Копируем весь текст книги в буфер обмена
+        const tempTextArea = document.createElement("textarea");
+        tempTextArea.value = bookContent;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempTextArea);
+
+        // 2. Попытка скачивания
         const blob = new Blob([bookContent], { type: "text/plain;charset=utf-8" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -307,7 +346,8 @@
         a.download = fileName + ".txt";
         a.click();
         URL.revokeObjectURL(url);
-        showToast("Рукопись скачана!");
+        
+        showToast("Скачано! (И на всякий случай скопировано в буфер)");
     }
 
     // ==========================================
@@ -407,18 +447,16 @@
         document.getElementById('home-word-count').innerText = totalW;
         document.getElementById('home-char-count').innerText = totalC;
         
-        // Обновление прогресс-бара цели (допустим цель 1500 слов)
-        const GOAL = 1500;
-        let percent = Math.min((totalW / GOAL) * 100, 100);
+        // Обновление прогресс-бара цели на основе пользовательского значения
+        let percent = Math.min((totalW / dailyGoal) * 100, 100);
         document.getElementById('goal-bar').style.width = percent + '%';
-        document.getElementById('goal-text').innerText = `${totalW} / ${GOAL} слов`;
+        document.getElementById('goal-text').innerText = `${totalW} / ${dailyGoal} слов`;
     }
 
     function insertSymbol(symbol) { const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value; chapterInput.value = text.substring(0, start) + symbol + text.substring(end); chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1; chapterInput.dispatchEvent(new Event('input')); }
     function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Глава скопирована"); }
 
     // --- ЛОГИКА ДРУГИХ ВКЛАДОК (Сюжет, База, Идеи) ОСТАЛАСЬ БЕЗ ИЗМЕНЕНИЙ ДЛЯ ЭКОНОМИИ МЕСТА ---
-    // (Timeline, Universe, Tools) - всё работает как раньше!
     let timeline = []; let editTlIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_timeline', (err, val) => { if (!err && val) { timeline = JSON.parse(val); renderTimeline(); } }); function saveTimeline() { const name = document.getElementById("tlName").value.trim(); const desc = document.getElementById("tlDesc").value.trim(); if (!name) return; if (editTlIndex > -1) timeline[editTlIndex] = { name, desc }; else timeline.push({ name, desc }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); cancelEditTimeline(); renderTimeline(); } function editTimeline(index) { editTlIndex = index; document.getElementById("tlName").value = timeline[index].name; document.getElementById("tlDesc").value = timeline[index].desc; autoResize(document.getElementById("tlDesc")); document.getElementById("btn-save-tl").innerText = "💾 Обновить"; document.getElementById("btn-cancel-tl").style.display = "block"; } function cancelEditTimeline() { editTlIndex = -1; document.getElementById("tlName").value = ""; document.getElementById("tlDesc").value = ""; document.getElementById("tlDesc").style.height = 'auto'; document.getElementById("btn-save-tl").innerText = "Добавить сцену"; document.getElementById("btn-cancel-tl").style.display = "none"; } function moveTimeline(index, dir) { if (dir === -1 && index > 0) [timeline[index], timeline[index - 1]] = [timeline[index - 1], timeline[index]]; else if (dir === 1 && index < timeline.length - 1) [timeline[index], timeline[index + 1]] = [timeline[index + 1], timeline[index]]; if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); } function deleteTimeline(index) { timeline.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); } function renderTimeline() { document.getElementById("timelineList").innerHTML = timeline.map((tl, i) => `<div class="timeline-item"><div class="tl-controls"><button class="tl-btn" onclick="moveTimeline(${i}, -1)">▲</button><button class="tl-btn" onclick="moveTimeline(${i}, 1)">▼</button></div><div class="tl-content"><div class="card-actions" style="top: 8px; right: 8px;"><button class="icon-btn" onclick="editTimeline(${i})">✏️</button><button class="icon-btn danger" onclick="deleteTimeline(${i})">✖</button></div><div class="tl-title">${i + 1}. ${tl.name}</div><div class="tl-desc">${(tl.desc || "").replace(/\n/g, '<br>')}</div></div></div>`).join(''); }
     let universe = []; let currentUniMode = 'char'; let editUniIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_universe_v2', (err, val) => { if (!err && val) { universe = JSON.parse(val); renderUniverse(); } }); function setUniverseMode(mode) { currentUniMode = mode; document.querySelectorAll('#view-universe .seg-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`seg-${mode}`).classList.add('active'); const nameInput = document.getElementById("uniName"); if (mode === 'lore') { nameInput.style.display = 'none'; nameInput.value = ''; } else { nameInput.style.display = 'block'; nameInput.placeholder = mode === 'char' ? "Имя героя" : "Название места"; } cancelEditUniverse(); renderUniverse(); } function saveUniverse() { const name = document.getElementById("uniName").value.trim(); const desc = document.getElementById("uniDesc").value.trim(); if (!desc) return; if (currentUniMode !== 'lore' && !name) return; if (editUniIndex > -1) universe[editUniIndex] = { type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc }; else universe.unshift({ type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); cancelEditUniverse(); renderUniverse(); } function editUniverse(index) { const item = universe[index]; setUniverseMode(item.type); editUniIndex = index; if (item.type !== 'lore') document.getElementById("uniName").value = item.name; document.getElementById("uniDesc").value = item.desc; autoResize(document.getElementById("uniDesc")); document.getElementById("btn-save-uni").innerText = "💾"; document.getElementById("btn-cancel-uni").style.display = "block"; } function cancelEditUniverse() { editUniIndex = -1; document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = ""; document.getElementById("uniDesc").style.height = 'auto'; document.getElementById("btn-save-uni").innerText = "Добавить запись"; document.getElementById("btn-cancel-uni").style.display = "none"; } function deleteUniverse(index) { universe.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); renderUniverse(); } function applyCrosslinks(text) { if (!text) return ""; let htmlText = text.replace(/\n/g, '<br>'); const namesToLink = universe.filter(u => u.type !== 'lore' && u.name).map(u => u.name); if (namesToLink.length === 0) return htmlText; namesToLink.sort((a, b) => b.length - a.length); namesToLink.forEach(name => { const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); const regex = new RegExp(`(^|[^\\p{L}\\p{N}_])(${safeName})(?=[^\\p{L}\\p{N}_]|$)`, 'giu'); let parts = htmlText.split(/(<[^>]+>)/g); for (let i = 0; i < parts.length; i++) { if (!parts[i].startsWith('<')) { parts[i] = parts[i].replace(regex, `$1<span class="crosslink" onclick="openCrosslink('${name.replace(/'/g, "\\'")}')">$2</span>`); } } htmlText = parts.join(''); }); return htmlText; } function openCrosslink(name) { const itemIndex = universe.findIndex(u => u.name.toLowerCase() === name.toLowerCase()); if (itemIndex > -1) { setUniverseMode(universe[itemIndex].type); showToast(`Открыто: ${universe[itemIndex].name}`); } } function renderUniverse() { const filtered = universe.map((item, index) => ({...item, originalIndex: index})).filter(item => item.type === currentUniMode); document.getElementById("universeList").innerHTML = filtered.map(item => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editUniverse(${item.originalIndex})">✏️</button><button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">✖</button></div>${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}<div class="card-desc">${applyCrosslinks(item.desc)}</div></div>`).join(''); }
     function setToolMode(mode) { document.querySelectorAll('#view-tools .seg-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`seg-${mode}`).classList.add('active'); document.getElementById("tool-idea-block").style.display = mode === 'idea' ? 'block' : 'none'; document.getElementById("tool-stat-block").style.display = mode === 'stat' ? 'block' : 'none'; } let ideas = []; let editIdeaIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_ideas_app', (err, val) => { if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } }); function saveIdea() { const text = document.getElementById("quickIdea").value.trim(); if (!text) return; if (editIdeaIndex > -1) ideas[editIdeaIndex].text = text; else ideas.unshift({ text }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); cancelEditIdea(); renderIdeas(); } function editIdea(index) { editIdeaIndex = index; document.getElementById("quickIdea").value = ideas[index].text; autoResize(document.getElementById("quickIdea")); document.getElementById("btn-save-idea").innerText = "💾"; document.getElementById("btn-cancel-idea").style.display = "block"; } function cancelEditIdea() { editIdeaIndex = -1; document.getElementById("quickIdea").value = ""; document.getElementById("quickIdea").style.height = 'auto'; document.getElementById("btn-save-idea").innerText = "Сохранить"; document.getElementById("btn-cancel-idea").style.display = "none"; } function deleteIdea(index) { ideas.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); renderIdeas(); } function renderIdeas() { document.getElementById("ideasList").innerHTML = ideas.map((idea, i) => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editIdea(${i})">✏️</button><button class="icon-btn danger" onclick="deleteIdea(${i})">✖</button></div><div class="card-desc">${(idea.text || "").replace(/\n/g, '<br>')}</div></div>`).join(''); }
