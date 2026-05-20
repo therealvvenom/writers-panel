@@ -47,4 +47,403 @@
         
         .sync-indicator { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--hint); }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--hint); transition: 0.3s; box-shadow: 0 0 6px currentColor; }
-        .status-dot.saved { background: var(--success); color: var(--success);
+        .status-dot.saved { background: var(--success); color: var(--success); }
+        .status-dot.saving { background: var(--warning); color: var(--warning); }
+        .status-dot.error { background: var(--danger); color: var(--danger); }
+        
+        .header-actions { display: flex; gap: 8px; align-items: center; }
+        .btn-theme { background: transparent; border: 1px solid var(--border); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); transition: 0.2s; }
+        .btn-theme svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .btn-theme:active { transform: scale(0.9); background: var(--hover); }
+
+        .btn-export { background: var(--hover); color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; }
+        .btn-export:active { transform: scale(0.96); background: rgba(0, 122, 255, 0.1); color: var(--link); border-color: transparent; }
+        .btn-export svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* ОБЛОЖКА КНИГИ */
+        .hero-banner { width: 100%; height: 160px; border-radius: 16px; background-color: var(--hover); border: 1px dashed var(--border); margin-bottom: 24px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: 0.3s; background-size: cover; background-position: center; flex-shrink: 0; }
+        .hero-banner.has-image { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .hero-banner:active { transform: scale(0.97); }
+        .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); opacity: 0; transition: 0.3s; }
+        .hero-banner.has-image .hero-overlay { opacity: 0; }
+        .hero-banner.has-image:active .hero-overlay { opacity: 1; }
+        .hero-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--hint); font-size: 14px; font-weight: 500; transition: 0.3s; pointer-events: none; }
+        .hero-banner.has-image .hero-content { opacity: 0; color: #ffffff; }
+        .hero-banner.has-image:active .hero-content { opacity: 1; }
+
+        /* СТАТИСТИКА И ЦЕЛЬ */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .stat-box { background: var(--hover); padding: 20px; border-radius: 16px; border: 1px solid var(--border); text-align: center; }
+        .stat-label { font-size: 13px; color: var(--hint); font-weight: 500; margin-bottom: 6px; }
+        .stat-val { font-size: 28px; font-weight: 700; color: var(--text); }
+
+        .goal-card { background: transparent; border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: left; }
+        .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; font-weight: 600; }
+        .goal-track { height: 8px; background: var(--hover); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .goal-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; }
+        .goal-desc { font-size: 12px; color: var(--hint); }
+
+        /* ФОРМЫ */
+        textarea, input { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px; box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0; transition: border-color 0.2s, color 0.3s, box-shadow 0.2s; }
+        textarea:focus, input:focus { border-color: var(--link); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); }
+        
+        select { appearance: none; -webkit-appearance: none; width: 100%; background-color: var(--hover); color: var(--text); border: 1px solid transparent; border-radius: 10px; padding: 10px 14px; font-size: 14px; font-weight: 600; outline: none; margin-bottom: 0; flex: 1; cursor: pointer; transition: all 0.2s ease; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23787774' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
+        select:focus { border-color: var(--link); background-color: transparent; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); }
+        
+        #chapterText { flex-grow: 1; resize: none; line-height: 1.7; font-family: 'Lora', serif; font-size: 17px; border: none; padding: 0; margin-top: 8px; margin-bottom: 0; transition: color 0.3s; }
+        .auto-expand { overflow: hidden; resize: none; min-height: 60px; }
+        
+        .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; margin-bottom: 12px; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;}
+
+        /* КНОПКИ */
+        .btn { background: rgba(0, 122, 255, 0.1); color: var(--link); border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; width: 100%; cursor: pointer; transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); margin-bottom: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn:active { background: rgba(0, 122, 255, 0.2); transform: scale(0.98); }
+        .btn-secondary { background: var(--hover); color: var(--text); margin-bottom: 0; margin-top: 10px; }
+        .btn-secondary:active { background: var(--border); }
+        .btn-cancel { background: rgba(235, 87, 87, 0.1); color: var(--danger); margin-bottom: 24px; display: none; }
+        .btn-cancel:active { background: rgba(235, 87, 87, 0.2); }
+        .btn-small { padding: 10px 14px; width: auto; margin: 0; }
+
+        .symbol-toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-shrink: 0; }
+        .symbol-btn { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--hint); padding: 8px; border-radius: 10px; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .symbol-btn:active { background: var(--hover); }
+
+        .segmented-control { display: flex; background: var(--hover); border-radius: 10px; padding: 4px; margin-bottom: 20px; flex-shrink: 0; transition: 0.3s; }
+        .seg-btn { flex: 1; text-align: center; padding: 8px 0; font-size: 13px; font-weight: 500; color: var(--hint); border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .seg-btn.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        .card { background: transparent; padding: 16px; border-radius: 12px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); flex-shrink: 0; transition: 0.3s; }
+        .card-name { font-weight: 600; display: block; margin-bottom: 6px; font-size: 15px;}
+        .card-desc { font-size: 14.5px; color: var(--hint); line-height: 1.6; word-wrap: break-word; }
+        
+        .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 4px; z-index: 2; }
+        .icon-btn { border: none; background: transparent; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; color: var(--hint); transition: 0.2s; }
+        .icon-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .icon-btn:active { background: var(--hover); color: var(--text); }
+        .icon-btn.danger:active { background: rgba(235, 87, 87, 0.1); color: var(--danger); }
+
+        .crosslink { color: var(--link); font-weight: 500; cursor: pointer; text-decoration: underline; text-decoration-color: transparent; transition: 0.2s; }
+        .crosslink:active { text-decoration-color: var(--link); }
+
+        .timeline-item { display: flex; gap: 12px; margin-bottom: 16px; position: relative; }
+        .tl-controls { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+        .tl-btn { background: var(--hover); border: none; border-radius: 6px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: var(--hint); cursor: pointer; transition: 0.2s; }
+        .tl-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .tl-btn:active { background: var(--border); color: var(--text); }
+        .tl-content { flex: 1; background: var(--hover); padding: 14px; border-radius: 12px; border: 1px solid var(--border); position: relative; transition: 0.3s; }
+        .tl-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; padding-right: 50px; }
+        .tl-desc { font-size: 14px; color: var(--hint); word-wrap: break-word; line-height: 1.5; }
+
+        .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: var(--nav-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); z-index: 100; transition: transform 0.2s ease, opacity 0.2s ease, background 0.3s; }
+        .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 64px; height: 50px; color: var(--hint); cursor: pointer; transition: 0.2s; }
+        .tab svg { width: 24px; height: 24px; fill: var(--hint); margin-bottom: 4px; transition: 0.2s; }
+        .tab-label { font-size: 10px; font-weight: 600; transition: 0.2s; }
+        .tab.active svg { fill: var(--link); transform: translateY(-2px) scale(1.1); }
+        .tab.active .tab-label { color: var(--link); }
+
+        .toast { visibility: hidden; min-width: 200px; background: var(--text); color: var(--bg); text-align: center; border-radius: 12px; padding: 12px 16px; position: fixed; z-index: 1000; left: 50%; bottom: 90px; transform: translateX(-50%); font-size: 13px; font-weight: 500; opacity: 0; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .toast.show { visibility: visible; opacity: 1; bottom: 100px; }
+    </style>
+</head>
+<body>
+
+<svg style="display: none;">
+    <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></symbol>
+    <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle><polyline points="21 15 16 10 5 21" fill="none" stroke="currentColor" stroke-width="2"></polyline></symbol>
+</svg>
+
+<div id="view-home" class="view active">
+    <div class="top-profile-bar">
+        <div class="top-profile-left">
+            <div class="top-avatar" id="user-avatar">?</div>
+            <div>
+                <div class="top-username" id="username-text">@user</div>
+                <div class="sync-indicator">
+                    <div class="status-dot saved" id="sync-dot"></div>
+                    <span id="sync-status">В облаке</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-theme" id="theme-toggle-btn" onclick="toggleTheme()">
+                <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+            <button class="btn-export" onclick="exportBook()">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Скачать
+            </button>
+        </div>
+    </div>
+    
+    <div class="hero-banner" id="hero-banner" onclick="document.getElementById('cover-upload').click()">
+        <div class="hero-overlay"></div>
+        <div class="hero-content" id="hero-content">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><use href="#icon-image"></use></svg>
+            <span>Добавить обложку</span>
+        </div>
+        <input type="file" id="cover-upload" accept="image/*" style="display: none;" onchange="handleCoverUpload(event)">
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-label">Слов</div>
+            <div id="home-word-count" class="stat-val">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Символов</div>
+            <div id="home-char-count" class="stat-val">0</div>
+        </div>
+    </div>
+
+    <div class="goal-card">
+        <div class="goal-header">
+            <span style="display: flex; align-items: center; gap: 6px;">Цель проекта 
+                <button class="icon-btn" onclick="editGoal()" style="width: 20px; height: 20px;"><svg><use href="#icon-edit"></use></svg></button>
+            </span>
+            <span id="goal-text">0 / 1500 слов</span>
+        </div>
+        <div class="goal-track">
+            <div class="goal-fill" id="goal-bar"></div>
+        </div>
+        <div class="goal-desc">Прогресс рассчитывается автоматически.</div>
+    </div>
+</div>
+
+<div id="view-chapter" class="view">
+    <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
+        <select id="chapterSelect" onchange="changeChapter()"></select>
+        <button class="icon-btn" onclick="renameChapter()" style="background: var(--hover); width: 40px; height: 40px; border-radius: 10px;"><svg><use href="#icon-edit"></use></svg></button>
+        <button class="btn btn-small" onclick="addChapter()"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Глава</button>
+    </div>
+    <div class="status-bar">
+        <span id="char-count">0 слов</span>
+        <button class="icon-btn danger" style="width: auto; gap: 4px; font-size: 12px;" onclick="deleteCurrentChapter()">
+            <svg><use href="#icon-trash"></use></svg> Удалить
+        </button>
+    </div>
+    <div class="symbol-toolbar">
+        <button class="symbol-btn" onclick="insertSymbol('—')">—</button>
+        <button class="symbol-btn" onclick="insertSymbol('«')">«</button>
+        <button class="symbol-btn" onclick="insertSymbol('»')">»</button>
+        <button class="symbol-btn" onclick="insertSymbol('…')">…</button>
+    </div>
+    <textarea id="chapterText" placeholder="Начни писать главу..."></textarea>
+    <button id="btn-copy-chapter" class="btn btn-secondary" onclick="copyText()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Скопировать главу
+    </button>
+</div>
+
+<div id="view-timeline" class="view">
+    <input type="text" id="tlName" placeholder="Название сцены">
+    <textarea id="tlDesc" class="auto-expand" placeholder="Краткое описание событий..."></textarea>
+    <button class="btn" id="btn-save-tl" onclick="saveTimeline()"><svg width="16" height="16"><use href="#icon-plus"></use></svg> Добавить сцену</button>
+    <button class="btn btn-cancel" id="btn-cancel-tl" onclick="cancelEditTimeline()">Отмена</button>
+    <div style="font-weight: 600; margin-bottom: 16px; margin-top: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Хронология:</div>
+    <div id="timelineList"></div>
+</div>
+
+<div id="view-universe" class="view">
+    <div class="segmented-control">
+        <div class="seg-btn active" id="seg-char" onclick="setUniverseMode('char')">Герои</div>
+        <div class="seg-btn" id="seg-loc" onclick="setUniverseMode('loc')">Места</div>
+        <div class="seg-btn" id="seg-lore" onclick="setUniverseMode('lore')">Лор</div>
+    </div>
+    <input type="text" id="uniName" placeholder="Имя / Название">
+    <textarea id="uniDesc" class="auto-expand" placeholder="Описание (упомянутые имена станут ссылками)..."></textarea>
+    <button class="btn" id="btn-save-uni" onclick="saveUniverse()"><svg width="16" height="16"><use href="#icon-plus"></use></svg> Добавить запись</button>
+    <button class="btn btn-cancel" id="btn-cancel-uni" onclick="cancelEditUniverse()">Отмена</button>
+    <div id="universeList"></div>
+</div>
+
+<div id="view-tools" class="view">
+    <div class="segmented-control">
+        <div class="seg-btn active" id="seg-idea" onclick="setToolMode('idea')">Идеи</div>
+        <div class="seg-btn" id="seg-stat" onclick="setToolMode('stat')">Прогресс</div>
+    </div>
+    <div id="tool-idea-block">
+        <textarea id="quickIdea" class="auto-expand" placeholder="Внезапная мысль..."></textarea>
+        <button class="btn" id="btn-save-idea" onclick="saveIdea()"><svg width="16" height="16"><use href="#icon-plus"></use></svg> Сохранить идею</button>
+        <button class="btn btn-cancel" id="btn-cancel-idea" onclick="cancelEditIdea()">Отмена</button>
+        <div id="ideasList" style="margin-top: 16px;"></div>
+    </div>
+    <div id="tool-stat-block" style="display: none;">
+        <div style="display: flex; gap: 10px;">
+            <input type="date" id="statDate" style="flex: 1;">
+            <input type="number" id="statWords" placeholder="Слов" style="flex: 1;">
+        </div>
+        <button class="btn" id="btn-save-stat" onclick="saveStat()"><svg width="16" height="16"><use href="#icon-plus"></use></svg> Записать прогресс</button>
+        <button class="btn btn-cancel" id="btn-cancel-stat" onclick="cancelEditStat()">Отмена</button>
+        <div id="statList" style="margin-top: 16px;"></div>
+    </div>
+</div>
+
+<nav class="tab-bar">
+    <div class="tab active" onclick="goToTab(0)">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span class="tab-label">Главная</span>
+    </div>
+    <div class="tab" onclick="goToTab(1)">
+        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        <span class="tab-label">Текст</span>
+    </div>
+    <div class="tab" onclick="goToTab(2)">
+        <svg viewBox="0 0 24 24"><path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zm-4-5l-4-4V4h8v3.5l-4 4z"/></svg>
+        <span class="tab-label">Сюжет</span>
+    </div>
+    <div class="tab" onclick="goToTab(3)">
+        <svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+        <span class="tab-label">База</span>
+    </div>
+    <div class="tab" onclick="goToTab(4)">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <span class="tab-label">Заметки</span>
+    </div>
+</nav>
+
+<div id="toast" class="toast">Уведомление</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready(); tg.expand();
+
+    const SVG_EDIT = `<svg><use href="#icon-edit"></use></svg>`;
+    const SVG_TRASH = `<svg><use href="#icon-trash"></use></svg>`;
+
+    let currentTheme = localStorage.getItem('app_theme') || 'auto';
+    function applyTheme(theme) { if (theme === 'auto') { document.documentElement.removeAttribute('data-theme'); } else if (theme === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); } else { document.documentElement.setAttribute('data-theme', 'light'); } }
+    applyTheme(currentTheme);
+    function toggleTheme() { currentTheme = currentTheme === 'auto' ? 'dark' : (currentTheme === 'dark' ? 'light' : 'auto'); localStorage.setItem('app_theme', currentTheme); applyTheme(currentTheme); showToast(currentTheme === 'auto' ? 'Системная тема' : (currentTheme === 'dark' ? 'Темная тема' : 'Светлая тема')); }
+
+    let initialHeight = window.innerHeight;
+    function adjustForKeyboard() { 
+        const currentHeight = tg.viewportStableHeight || window.innerHeight; 
+        document.body.style.height = currentHeight + 'px'; 
+        const copyBtn = document.getElementById('btn-copy-chapter');
+        if (currentHeight < initialHeight * 0.8) { document.body.style.paddingBottom = '0px'; document.querySelector('.tab-bar').style.display = 'none'; if (copyBtn) copyBtn.style.display = 'none'; } 
+        else { document.body.style.paddingBottom = '70px'; document.querySelector('.tab-bar').style.display = 'flex'; if (copyBtn) copyBtn.style.display = 'flex'; } 
+    }
+    tg.onEvent('viewportChanged', adjustForKeyboard); adjustForKeyboard();
+
+    const user = tg.initDataUnsafe?.user;
+    if (user) { document.getElementById('username-text').innerText = user.username ? '@' + user.username : user.first_name; const avatar = document.getElementById('user-avatar'); if (user.photo_url) { avatar.innerHTML = `<img src="${user.photo_url}">`; } else { avatar.innerText = user.first_name.charAt(0).toUpperCase(); } }
+
+    function goToTab(index) { const tabs = document.querySelectorAll('.tab'); const views = ['view-home', 'view-chapter', 'view-timeline', 'view-universe', 'view-tools']; document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); setTimeout(() => document.getElementById(views[index]).classList.add('active'), 10); document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); tabs[index].classList.add('active'); }
+    function showToast(message) { const toast = document.getElementById("toast"); toast.innerText = message; toast.classList.add("show"); setTimeout(() => { toast.classList.remove("show"); }, 2500); }
+    function autoResize(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
+    document.addEventListener('input', e => { if (e.target.classList.contains('auto-expand')) autoResize(e.target); }, false);
+
+    function setSyncStatus(state) {
+        const dot = document.getElementById('sync-dot');
+        const text = document.getElementById('sync-status');
+        dot.className = 'status-dot'; 
+        if (state === 'saved') { dot.classList.add('saved'); text.innerText = 'В облаке'; }
+        else if (state === 'saving') { dot.classList.add('saving'); text.innerText = 'Сохраняем...'; }
+        else if (state === 'typing') { dot.classList.add('saving'); text.innerText = 'Печатает...'; }
+        else if (state === 'loading') { dot.classList.add('saving'); text.innerText = 'Загрузка...'; }
+        else { dot.classList.add('error'); text.innerText = 'Офлайн'; }
+    }
+
+    let dailyGoal = parseInt(localStorage.getItem('my_goal')) || 1500;
+    function editGoal() { const newGoal = prompt("Укажи новую цель (количество слов):", dailyGoal); if (newGoal && !isNaN(newGoal)) { dailyGoal = parseInt(newGoal); localStorage.setItem('my_goal', dailyGoal); updateTotalWords(); showToast("Цель обновлена!"); } }
+    
+    // --- ЛОГИКА ОБЛОЖКИ ---
+    function handleCoverUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgStr = e.target.result;
+            try {
+                localStorage.setItem('my_app_cover', imgStr);
+                applyCover(imgStr);
+                showToast("Обложка установлена!");
+            } catch (err) {
+                showToast("Файл слишком большой! Выберите картинку поменьше.");
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function applyCover(src) {
+        const banner = document.getElementById('hero-banner');
+        const content = document.getElementById('hero-content');
+        if (src) {
+            banner.style.backgroundImage = `url(${src})`;
+            banner.classList.add('has-image');
+            content.innerHTML = `<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><use href="#icon-image"></use></svg><span>Изменить обложку</span>`;
+        } else {
+            banner.style.backgroundImage = 'none';
+            banner.classList.remove('has-image');
+        }
+    }
+    
+    // При загрузке проверяем, есть ли сохраненная обложка
+    const savedCover = localStorage.getItem('my_app_cover');
+    if (savedCover) applyCover(savedCover);
+
+    function exportBook() {
+        if (chapters.length === 0 || (chapters.length === 1 && !chapters[0].text)) { showToast("Книга пока пуста!"); return; }
+        const fileName = prompt("Сохранить файл как:", "У_меня_ничего_не_получилось") || "Моя_книга";
+        let bookContent = ""; chapters.forEach(c => { bookContent += `\n\n=== ${c.title} ===\n\n`; bookContent += c.text + "\n"; });
+        const tempTextArea = document.createElement("textarea"); tempTextArea.value = bookContent; document.body.appendChild(tempTextArea); tempTextArea.select(); document.execCommand("copy"); document.body.removeChild(tempTextArea);
+        const blob = new Blob([bookContent], { type: "text/plain;charset=utf-8" }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = fileName + ".txt"; a.click(); URL.revokeObjectURL(url);
+        showToast("Скачано! (И скопировано в буфер)");
+    }
+
+    // МЕНЕДЖЕР ГЛАВ
+    let chapters = [{ id: 'default', title: 'Глава 1', text: '' }];
+    let currentChapterId = 'default';
+    const chapterInput = document.getElementById('chapterText');
+    const chapterSelect = document.getElementById('chapterSelect');
+    let saveTimeout;
+    const userId = tg.initDataUnsafe?.user?.id || 'offline';
+    const API_URL = 'https://tonygererro.pythonanywhere.com/api/chapters';
+
+    async function loadChaptersFromServer() {
+        setSyncStatus('loading');
+        try {
+            const response = await fetch(`${API_URL}?user_id=${userId}`);
+            const data = await response.json();
+            if (data.chapters_data && data.chapters_data !== '[]') { chapters = JSON.parse(data.chapters_data); } 
+            else { chapters = [{ id: 'default', title: 'Глава 1', text: '' }]; }
+            setSyncStatus('saved');
+        } catch (e) { chapters = [{ id: 'default', title: 'Офлайн Глава', text: '' }]; setSyncStatus('error'); }
+        currentChapterId = chapters[0].id; renderChapterSelect(); loadCurrentChapter();
+    }
+
+    async function cloudSaveChapters() {
+        setSyncStatus('saving');
+        try {
+            await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: userId, chapters_data: JSON.stringify(chapters) }) });
+            setSyncStatus('saved'); updateTotalWords();
+        } catch (e) { setSyncStatus('error'); }
+    }
+
+    loadChaptersFromServer();
+
+    function renderChapterSelect() { chapterSelect.innerHTML = chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join(''); updateTotalWords(); }
+    function loadCurrentChapter() { const chapter = chapters.find(c => c.id === currentChapterId); if (chapter) { chapterInput.value = chapter.text; updateCount(); } }
+    function changeChapter() { currentChapterId = chapterSelect.value; loadCurrentChapter(); }
+    function addChapter() { const title = prompt("Название новой главы:", `Глава`); if (!title) return; const newId = 'ch_' + Date.now(); chapters.push({ id: newId, title: title, text: '' }); currentChapterId = newId; renderChapterSelect(); loadCurrentChapter(); cloudSaveChapters(); }
+    function renameChapter() { const chapter = chapters.find(c => c.id === currentChapterId); if (!chapter) return; const newTitle = prompt("Новое название:", chapter.title); if (newTitle && newTitle.trim() !== "") { chapter.title = newTitle.trim(); renderChapterSelect(); cloudSaveChapters(); showToast("Название изменено"); } }
+    function deleteCurrentChapter() { if (chapters.length <= 1) { showToast("Нельзя удалить единственную главу!"); return; } if (!confirm("Точно удалить эту главу?")) return; chapters = chapters.filter(c => c.id !== currentChapterId); currentChapterId = chapters[0].id; renderChapterSelect(); loadCurrentChapter(); cloudSaveChapters(); }
+
+    chapterInput.addEventListener('input', () => { updateCount(); const chapter = chapters.find(c => c.id === currentChapterId); if (chapter) chapter.text = chapterInput.value; clearTimeout(saveTimeout); setSyncStatus('typing'); saveTimeout = setTimeout(cloudSaveChapters, 2000); });
+
+    function updateCount() { const text = chapterInput.value.trim(); const words = text ? text.split(/\s+/).length : 0; document.getElementById('char-count').innerText = words + " слов(а)"; }
+    function updateTotalWords() { let totalW = 0; let totalC = 0; chapters.forEach(c => { const text = c.text.trim(); totalW += text ? text.split(/\s+/).length : 0; totalC += text.length; }); document.getElementById('home-word-count').innerText = totalW; document.getElementById('home-char-count').innerText = totalC; let percent = Math.min((totalW / dailyGoal) * 100, 100); document.getElementById('goal-bar').style.width = percent + '%'; document.getElementById('goal-text').innerText = `${totalW} / ${dailyGoal} слов`; }
+    function insertSymbol(symbol) { const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value; chapterInput.value = text.substring(0, start) + symbol + text.substring(end); chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1; chapterInput.dispatchEvent(new Event('input')); }
+    function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Глава скопирована"); }
+
+    // ЛОГИКА ДРУГИХ ВКЛАДОК
+    let timeline = []; let editTlIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_timeline', (err, val) => { if (!err && val) { timeline = JSON.parse(val); renderTimeline(); } }); function saveTimeline() { const name = document.getElementById("tlName").value.trim(); const desc = document.getElementById("tlDesc").value.trim(); if (!name) return; if (editTlIndex > -1) timeline[editTlIndex] = { name, desc }; else timeline.push({ name, desc }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); cancelEditTimeline(); renderTimeline(); } function editTimeline(index) { editTlIndex = index; document.getElementById("tlName").value = timeline[index].name; document.getElementById("tlDesc").value = timeline[index].desc; autoResize(document.getElementById("tlDesc")); document.getElementById("btn-save-tl").innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Обновить`; document.getElementById("btn-cancel-tl").style.display = "block"; } function cancelEditTimeline() { editTlIndex = -1; document.getElementById("tlName").value = ""; document.getElementById("tlDesc").value = ""; document.getElementById("tlDesc").style.height = 'auto'; document.getElementById("btn-save-tl").innerHTML = `<svg width="16" height="16"><use href="#icon-plus"></use></svg> Добавить сцену`; document.getElementById("btn-cancel-tl").style.display = "none"; } function moveTimeline(index, dir) { if (dir === -1 && index > 0) [timeline[index], timeline[index - 1]] = [timeline[index - 1], timeline[index]]; else if (dir === 1 && index < timeline.length - 1) [timeline[index], timeline[index + 1]] = [timeline[index + 1], timeline[index]]; if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); } function deleteTimeline(index) { timeline.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); } function renderTimeline() { document.getElementById("timelineList").innerHTML = timeline.map((tl, i) => `<div class="timeline-item"><div class="tl-controls"><button class="tl-btn" onclick="moveTimeline(${i}, -1)"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button><button class="tl-btn" onclick="moveTimeline(${i}, 1)"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div><div class="tl-content"><div class="card-actions" style="top: 8px; right: 8px;"><button class="icon-btn" onclick="editTimeline(${i})">${SVG_EDIT}</button><button class="icon-btn danger" onclick="deleteTimeline(${i})">${SVG_TRASH}</button></div><div class="tl-title">${i + 1}. ${tl.name}</div><div class="tl-desc">${(tl.desc || "").replace(/\n/g, '<br>')}</div></div></div>`).join(''); }
+    let universe = []; let currentUniMode = 'char'; let editUniIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_universe_v2', (err, val) => { if (!err && val) { universe = JSON.parse(val); renderUniverse(); } }); function setUniverseMode(mode) { currentUniMode = mode; document.querySelectorAll('#view-universe .seg-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`seg-${mode}`).classList.add('active'); const nameInput = document.getElementById("uniName"); if (mode === 'lore') { nameInput.style.display = 'none'; nameInput.value = ''; } else { nameInput.style.display = 'block'; nameInput.placeholder = mode === 'char' ? "Имя героя" : "Название места"; } cancelEditUniverse(); renderUniverse(); } function saveUniverse() { const name = document.getElementById("uniName").value.trim(); const desc = document.getElementById("uniDesc").value.trim(); if (!desc) return; if (currentUniMode !== 'lore' && !name) return; if (editUniIndex > -1) universe[editUniIndex] = { type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc }; else universe.unshift({ type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); cancelEditUniverse(); renderUniverse(); } function editUniverse(index) { const item = universe[index]; setUniverseMode(item.type); editUniIndex = index; if (item.type !== 'lore') document.getElementById("uniName").value = item.name; document.getElementById("uniDesc").value = item.desc; autoResize(document.getElementById("uniDesc")); document.getElementById("btn-save-uni").innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Обновить`; document.getElementById("btn-cancel-uni").style.display = "block"; } function cancelEditUniverse() { editUniIndex = -1; document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = ""; document.getElementById("uniDesc").style.height = 'auto'; document.getElementById("btn-save-uni").innerHTML = `<svg width="16" height="16"><use href="#icon-plus"></use></svg> Добавить запись`; document.getElementById("btn-cancel-uni").style.display = "none"; } function deleteUniverse(index) { universe.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); renderUniverse(); } function applyCrosslinks(text) { if (!text) return ""; let htmlText = text.replace(/\n/g, '<br>'); const namesToLink = universe.filter(u => u.type !== 'lore' && u.name).map(u => u.name); if (namesToLink.length === 0) return htmlText; namesToLink.sort((a, b) => b.length - a.length); namesToLink.forEach(name => { const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); const regex = new RegExp(`(^|[^\\p{L}\\p{N}_])(${safeName})(?=[^\\p{L}\\p{N}_]|$)`, 'giu'); let parts = htmlText.split(/(<[^>]+>)/g); for (let i = 0; i < parts.length; i++) { if (!parts[i].startsWith('<')) { parts[i] = parts[i].replace(regex, `$1<span class="crosslink" onclick="openCrosslink('${name.replace(/'/g, "\\'")}')">$2</span>`); } } htmlText = parts.join(''); }); return htmlText; } function openCrosslink(name) { const itemIndex = universe.findIndex(u => u.name.toLowerCase() === name.toLowerCase()); if (itemIndex > -1) { setUniverseMode(universe[itemIndex].type); showToast(`Открыто: ${universe[itemIndex].name}`); } } function renderUniverse() { const filtered = universe.map((item, index) => ({...item, originalIndex: index})).filter(item => item.type === currentUniMode); document.getElementById("universeList").innerHTML = filtered.map(item => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editUniverse(${item.originalIndex})">${SVG_EDIT}</button><button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">${SVG_TRASH}</button></div>${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}<div class="card-desc">${applyCrosslinks(item.desc)}</div></div>`).join(''); }
+    function setToolMode(mode) { document.querySelectorAll('#view-tools .seg-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`seg-${mode}`).classList.add('active'); document.getElementById("tool-idea-block").style.display = mode === 'idea' ? 'block' : 'none'; document.getElementById("tool-stat-block").style.display = mode === 'stat' ? 'block' : 'none'; } let ideas = []; let editIdeaIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_ideas_app', (err, val) => { if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } }); function saveIdea() { const text = document.getElementById("quickIdea").value.trim(); if (!text) return; if (editIdeaIndex > -1) ideas[editIdeaIndex].text = text; else ideas.unshift({ text }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); cancelEditIdea(); renderIdeas(); } function editIdea(index) { editIdeaIndex = index; document.getElementById("quickIdea").value = ideas[index].text; autoResize(document.getElementById("quickIdea")); document.getElementById("btn-save-idea").innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Обновить`; document.getElementById("btn-cancel-idea").style.display = "block"; } function cancelEditIdea() { editIdeaIndex = -1; document.getElementById("quickIdea").value = ""; document.getElementById("quickIdea").style.height = 'auto'; document.getElementById("btn-save-idea").innerHTML = `<svg width="16" height="16"><use href="#icon-plus"></use></svg> Сохранить`; document.getElementById("btn-cancel-idea").style.display = "none"; } function deleteIdea(index) { ideas.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); renderIdeas(); } function renderIdeas() { document.getElementById("ideasList").innerHTML = ideas.map((idea, i) => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editIdea(${i})">${SVG_EDIT}</button><button class="icon-btn danger" onclick="deleteIdea(${i})">${SVG_TRASH}</button></div><div class="card-desc">${(idea.text || "").replace(/\n/g, '<br>')}</div></div>`).join(''); }
+    let stats = []; let editStatIndex = -1; document.getElementById("statDate").valueAsDate = new Date(); if (tg.CloudStorage) tg.CloudStorage.getItem('my_stats', (err, val) => { if (!err && val) { stats = JSON.parse(val); renderStats(); } }); function saveStat() { const date = document.getElementById("statDate").value; const words = parseInt(document.getElementById("statWords").value); if (!date || isNaN(words)) return; if (editStatIndex > -1) stats[editStatIndex] = { date, words }; else stats.unshift({ date, words }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_stats', JSON.stringify(stats)); cancelEditStat(); renderStats(); } function editStat(index) { editStatIndex = index; document.getElementById("statDate").value = stats[index].date; document.getElementById("statWords").value = stats[index].words; document.getElementById("btn-save-stat").innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Обновить`; document.getElementById("btn-cancel-stat").style.display = "block"; } function cancelEditStat() { editStatIndex = -1; document.getElementById("statDate").valueAsDate = new Date(); document.getElementById("statWords").value = ""; document.getElementById("btn-save-stat").innerHTML = `<svg width="16" height="16"><use href="#icon-plus"></use></svg> Записать`; document.getElementById("btn-cancel-stat").style.display = "none"; } function deleteStat(index) { stats.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_stats', JSON.stringify(stats)); renderStats(); } function renderStats() { document.getElementById("statList").innerHTML = stats.map((stat, i) => `<div class="stat-row" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding:8px 0;"><div class="stat-date" style="font-weight:500;">${stat.date}</div><div class="stat-words" style="color:var(--success); font-weight:600;">+ ${stat.words} слов</div><div style="display:flex; gap:4px;"><button class="icon-btn" onclick="editStat(${i})">${SVG_EDIT}</button><button class="icon-btn danger" onclick="deleteStat(${i})">${SVG_TRASH}</button></div></div>`).join(''); }
+
+</script>
+</body>
+</html>
