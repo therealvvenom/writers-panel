@@ -45,6 +45,7 @@
         .top-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .top-username { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 2px; }
         
+        /* ИНДИКАТОР СОСТОЯНИЯ (СВЕТЯЩАЯСЯ ТОЧКА) */
         .sync-indicator { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--hint); }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--hint); transition: 0.3s; box-shadow: 0 0 6px currentColor; }
         .status-dot.saved { background: var(--success); color: var(--success); }
@@ -60,17 +61,6 @@
         .btn-export:active { transform: scale(0.96); background: rgba(0, 122, 255, 0.1); color: var(--link); border-color: transparent; }
         .btn-export svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-        /* ОБЛОЖКА КНИГИ */
-        .hero-banner { width: 100%; height: 160px; border-radius: 16px; background-color: var(--hover); border: 1px dashed var(--border); margin-bottom: 24px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: 0.3s; background-size: cover; background-position: center; flex-shrink: 0; }
-        .hero-banner.has-image { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .hero-banner:active { transform: scale(0.97); }
-        .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); opacity: 0; transition: 0.3s; }
-        .hero-banner.has-image .hero-overlay { opacity: 0; }
-        .hero-banner.has-image:active .hero-overlay { opacity: 1; }
-        .hero-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--hint); font-size: 14px; font-weight: 500; transition: 0.3s; pointer-events: none; }
-        .hero-banner.has-image .hero-content { opacity: 0; color: #ffffff; }
-        .hero-banner.has-image:active .hero-content { opacity: 1; }
-
         /* СТАТИСТИКА И ЦЕЛЬ */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
         .stat-box { background: var(--hover); padding: 20px; border-radius: 16px; border: 1px solid var(--border); text-align: center; }
@@ -83,11 +73,20 @@
         .goal-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; }
         .goal-desc { font-size: 12px; color: var(--hint); }
 
-        /* ФОРМЫ */
+        /* ЭЛЕГАНТНЫЕ ФОРМЫ */
         textarea, input { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-size: 15px; outline: none; margin-bottom: 16px; box-sizing: border-box; font-family: 'Inter', sans-serif; flex-shrink: 0; transition: border-color 0.2s, color 0.3s, box-shadow 0.2s; }
         textarea:focus, input:focus { border-color: var(--link); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); }
         
-        select { appearance: none; -webkit-appearance: none; width: 100%; background-color: var(--hover); color: var(--text); border: 1px solid transparent; border-radius: 10px; padding: 10px 14px; font-size: 14px; font-weight: 600; outline: none; margin-bottom: 0; flex: 1; cursor: pointer; transition: all 0.2s ease; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23787774' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
+        /* СТИЛЬНЫЙ ВЫБОР ГЛАВ */
+        select { 
+            appearance: none; -webkit-appearance: none; 
+            width: 100%; background-color: var(--hover); color: var(--text); 
+            border: 1px solid transparent; border-radius: 10px; padding: 10px 14px; 
+            font-size: 14px; font-weight: 600; outline: none; margin-bottom: 0; flex: 1;
+            cursor: pointer; transition: all 0.2s ease;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23787774' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); 
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; 
+        }
         select:focus { border-color: var(--link); background-color: transparent; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); }
         
         #chapterText { flex-grow: 1; resize: none; line-height: 1.7; font-family: 'Lora', serif; font-size: 17px; border: none; padding: 0; margin-top: 8px; margin-bottom: 0; transition: color 0.3s; }
@@ -95,13 +94,16 @@
         
         .status-bar { font-size: 12px; color: var(--hint); font-weight: 500; margin-bottom: 12px; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;}
 
-        /* КНОПКИ */
+        /* ПРЕМИУМ КНОПКИ (ИСПРАВЛЕННЫЕ) */
         .btn { background: rgba(0, 122, 255, 0.1); color: var(--link); border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; width: 100%; cursor: pointer; transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); margin-bottom: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn:active { background: rgba(0, 122, 255, 0.2); transform: scale(0.98); }
+        
         .btn-secondary { background: var(--hover); color: var(--text); margin-bottom: 0; margin-top: 10px; }
         .btn-secondary:active { background: var(--border); }
+        
         .btn-cancel { background: rgba(235, 87, 87, 0.1); color: var(--danger); margin-bottom: 24px; display: none; }
         .btn-cancel:active { background: rgba(235, 87, 87, 0.2); }
+        
         .btn-small { padding: 10px 14px; width: auto; margin: 0; }
 
         .symbol-toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-shrink: 0; }
@@ -112,6 +114,7 @@
         .seg-btn { flex: 1; text-align: center; padding: 8px 0; font-size: 13px; font-weight: 500; color: var(--hint); border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .seg-btn.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
+        /* ИКОНКИ ДЕЙСТВИЙ (ВМЕСТО ЭМОДЗИ) */
         .card { background: transparent; padding: 16px; border-radius: 12px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); flex-shrink: 0; transition: 0.3s; }
         .card-name { font-weight: 600; display: block; margin-bottom: 6px; font-size: 15px;}
         .card-desc { font-size: 14.5px; color: var(--hint); line-height: 1.6; word-wrap: break-word; }
@@ -151,7 +154,6 @@
     <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></symbol>
     <symbol id="icon-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></symbol>
     <symbol id="icon-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></symbol>
-    <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle><polyline points="21 15 16 10 5 21" fill="none" stroke="currentColor" stroke-width="2"></polyline></symbol>
 </svg>
 
 <div id="view-home" class="view active">
@@ -177,15 +179,6 @@
         </div>
     </div>
     
-    <div class="hero-banner" id="hero-banner" onclick="document.getElementById('cover-upload').click()">
-        <div class="hero-overlay"></div>
-        <div class="hero-content" id="hero-content">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><use href="#icon-image"></use></svg>
-            <span>Добавить обложку</span>
-        </div>
-        <input type="file" id="cover-upload" accept="image/*" style="display: none;" onchange="handleCoverUpload(event)">
-    </div>
-
     <div class="stats-grid">
         <div class="stat-box">
             <div class="stat-label">Слов</div>
@@ -309,6 +302,7 @@
     const tg = window.Telegram.WebApp;
     tg.ready(); tg.expand();
 
+    // КОНСТАНТЫ ИКОНОК ДЛЯ СКРИПТОВ
     const SVG_EDIT = `<svg><use href="#icon-edit"></use></svg>`;
     const SVG_TRASH = `<svg><use href="#icon-trash"></use></svg>`;
 
@@ -335,6 +329,7 @@
     function autoResize(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
     document.addEventListener('input', e => { if (e.target.classList.contains('auto-expand')) autoResize(e.target); }, false);
 
+    // УПРАВЛЕНИЕ ИНДИКАТОРОМ
     function setSyncStatus(state) {
         const dot = document.getElementById('sync-dot');
         const text = document.getElementById('sync-status');
@@ -349,41 +344,6 @@
     let dailyGoal = parseInt(localStorage.getItem('my_goal')) || 1500;
     function editGoal() { const newGoal = prompt("Укажи новую цель (количество слов):", dailyGoal); if (newGoal && !isNaN(newGoal)) { dailyGoal = parseInt(newGoal); localStorage.setItem('my_goal', dailyGoal); updateTotalWords(); showToast("Цель обновлена!"); } }
     
-    // --- ЛОГИКА ОБЛОЖКИ ---
-    function handleCoverUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const imgStr = e.target.result;
-            try {
-                localStorage.setItem('my_app_cover', imgStr);
-                applyCover(imgStr);
-                showToast("Обложка установлена!");
-            } catch (err) {
-                showToast("Файл слишком большой! Выберите картинку поменьше.");
-            }
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function applyCover(src) {
-        const banner = document.getElementById('hero-banner');
-        const content = document.getElementById('hero-content');
-        if (src) {
-            banner.style.backgroundImage = `url(${src})`;
-            banner.classList.add('has-image');
-            content.innerHTML = `<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><use href="#icon-image"></use></svg><span>Изменить обложку</span>`;
-        } else {
-            banner.style.backgroundImage = 'none';
-            banner.classList.remove('has-image');
-        }
-    }
-    
-    // При загрузке проверяем, есть ли сохраненная обложка
-    const savedCover = localStorage.getItem('my_app_cover');
-    if (savedCover) applyCover(savedCover);
-
     function exportBook() {
         if (chapters.length === 0 || (chapters.length === 1 && !chapters[0].text)) { showToast("Книга пока пуста!"); return; }
         const fileName = prompt("Сохранить файл как:", "У_меня_ничего_не_получилось") || "Моя_книга";
@@ -438,7 +398,7 @@
     function insertSymbol(symbol) { const start = chapterInput.selectionStart, end = chapterInput.selectionEnd, text = chapterInput.value; chapterInput.value = text.substring(0, start) + symbol + text.substring(end); chapterInput.focus(); chapterInput.selectionStart = chapterInput.selectionEnd = start + 1; chapterInput.dispatchEvent(new Event('input')); }
     function copyText() { chapterInput.select(); chapterInput.setSelectionRange(0, 99999); document.execCommand("copy"); showToast("Глава скопирована"); }
 
-    // ЛОГИКА ДРУГИХ ВКЛАДОК
+    // ЛОГИКА ДРУГИХ ВКЛАДОК (Сюжет, База, Идеи)
     let timeline = []; let editTlIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_timeline', (err, val) => { if (!err && val) { timeline = JSON.parse(val); renderTimeline(); } }); function saveTimeline() { const name = document.getElementById("tlName").value.trim(); const desc = document.getElementById("tlDesc").value.trim(); if (!name) return; if (editTlIndex > -1) timeline[editTlIndex] = { name, desc }; else timeline.push({ name, desc }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); cancelEditTimeline(); renderTimeline(); } function editTimeline(index) { editTlIndex = index; document.getElementById("tlName").value = timeline[index].name; document.getElementById("tlDesc").value = timeline[index].desc; autoResize(document.getElementById("tlDesc")); document.getElementById("btn-save-tl").innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Обновить`; document.getElementById("btn-cancel-tl").style.display = "block"; } function cancelEditTimeline() { editTlIndex = -1; document.getElementById("tlName").value = ""; document.getElementById("tlDesc").value = ""; document.getElementById("tlDesc").style.height = 'auto'; document.getElementById("btn-save-tl").innerHTML = `<svg width="16" height="16"><use href="#icon-plus"></use></svg> Добавить сцену`; document.getElementById("btn-cancel-tl").style.display = "none"; } function moveTimeline(index, dir) { if (dir === -1 && index > 0) [timeline[index], timeline[index - 1]] = [timeline[index - 1], timeline[index]]; else if (dir === 1 && index < timeline.length - 1) [timeline[index], timeline[index + 1]] = [timeline[index + 1], timeline[index]]; if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); } function deleteTimeline(index) { timeline.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_timeline', JSON.stringify(timeline)); renderTimeline(); } function renderTimeline() { document.getElementById("timelineList").innerHTML = timeline.map((tl, i) => `<div class="timeline-item"><div class="tl-controls"><button class="tl-btn" onclick="moveTimeline(${i}, -1)"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button><button class="tl-btn" onclick="moveTimeline(${i}, 1)"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div><div class="tl-content"><div class="card-actions" style="top: 8px; right: 8px;"><button class="icon-btn" onclick="editTimeline(${i})">${SVG_EDIT}</button><button class="icon-btn danger" onclick="deleteTimeline(${i})">${SVG_TRASH}</button></div><div class="tl-title">${i + 1}. ${tl.name}</div><div class="tl-desc">${(tl.desc || "").replace(/\n/g, '<br>')}</div></div></div>`).join(''); }
     let universe = []; let currentUniMode = 'char'; let editUniIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_universe_v2', (err, val) => { if (!err && val) { universe = JSON.parse(val); renderUniverse(); } }); function setUniverseMode(mode) { currentUniMode = mode; document.querySelectorAll('#view-universe .seg-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`seg-${mode}`).classList.add('active'); const nameInput = document.getElementById("uniName"); if (mode === 'lore') { nameInput.style.display = 'none'; nameInput.value = ''; } else { nameInput.style.display = 'block'; nameInput.placeholder = mode === 'char' ? "Имя героя" : "Название места"; } cancelEditUniverse(); renderUniverse(); } function saveUniverse() { const name = document.getElementById("uniName").value.trim(); const desc = document.getElementById("uniDesc").value.trim(); if (!desc) return; if (currentUniMode !== 'lore' && !name) return; if (editUniIndex > -1) universe[editUniIndex] = { type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc }; else universe.unshift({ type: currentUniMode, name: currentUniMode === 'lore' ? "Факт" : name, desc }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); cancelEditUniverse(); renderUniverse(); } function editUniverse(index) { const item = universe[index]; setUniverseMode(item.type); editUniIndex = index; if (item.type !== 'lore') document.getElementById("uniName").value = item.name; document.getElementById("uniDesc").value = item.desc; autoResize(document.getElementById("uniDesc")); document.getElementById("btn-save-uni").innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Обновить`; document.getElementById("btn-cancel-uni").style.display = "block"; } function cancelEditUniverse() { editUniIndex = -1; document.getElementById("uniName").value = ""; document.getElementById("uniDesc").value = ""; document.getElementById("uniDesc").style.height = 'auto'; document.getElementById("btn-save-uni").innerHTML = `<svg width="16" height="16"><use href="#icon-plus"></use></svg> Добавить запись`; document.getElementById("btn-cancel-uni").style.display = "none"; } function deleteUniverse(index) { universe.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_universe_v2', JSON.stringify(universe)); renderUniverse(); } function applyCrosslinks(text) { if (!text) return ""; let htmlText = text.replace(/\n/g, '<br>'); const namesToLink = universe.filter(u => u.type !== 'lore' && u.name).map(u => u.name); if (namesToLink.length === 0) return htmlText; namesToLink.sort((a, b) => b.length - a.length); namesToLink.forEach(name => { const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); const regex = new RegExp(`(^|[^\\p{L}\\p{N}_])(${safeName})(?=[^\\p{L}\\p{N}_]|$)`, 'giu'); let parts = htmlText.split(/(<[^>]+>)/g); for (let i = 0; i < parts.length; i++) { if (!parts[i].startsWith('<')) { parts[i] = parts[i].replace(regex, `$1<span class="crosslink" onclick="openCrosslink('${name.replace(/'/g, "\\'")}')">$2</span>`); } } htmlText = parts.join(''); }); return htmlText; } function openCrosslink(name) { const itemIndex = universe.findIndex(u => u.name.toLowerCase() === name.toLowerCase()); if (itemIndex > -1) { setUniverseMode(universe[itemIndex].type); showToast(`Открыто: ${universe[itemIndex].name}`); } } function renderUniverse() { const filtered = universe.map((item, index) => ({...item, originalIndex: index})).filter(item => item.type === currentUniMode); document.getElementById("universeList").innerHTML = filtered.map(item => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editUniverse(${item.originalIndex})">${SVG_EDIT}</button><button class="icon-btn danger" onclick="deleteUniverse(${item.originalIndex})">${SVG_TRASH}</button></div>${item.type !== 'lore' ? `<span class="card-name">${item.name}</span>` : ''}<div class="card-desc">${applyCrosslinks(item.desc)}</div></div>`).join(''); }
     function setToolMode(mode) { document.querySelectorAll('#view-tools .seg-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`seg-${mode}`).classList.add('active'); document.getElementById("tool-idea-block").style.display = mode === 'idea' ? 'block' : 'none'; document.getElementById("tool-stat-block").style.display = mode === 'stat' ? 'block' : 'none'; } let ideas = []; let editIdeaIndex = -1; if (tg.CloudStorage) tg.CloudStorage.getItem('my_ideas_app', (err, val) => { if (!err && val) { ideas = JSON.parse(val); renderIdeas(); } }); function saveIdea() { const text = document.getElementById("quickIdea").value.trim(); if (!text) return; if (editIdeaIndex > -1) ideas[editIdeaIndex].text = text; else ideas.unshift({ text }); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); cancelEditIdea(); renderIdeas(); } function editIdea(index) { editIdeaIndex = index; document.getElementById("quickIdea").value = ideas[index].text; autoResize(document.getElementById("quickIdea")); document.getElementById("btn-save-idea").innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Обновить`; document.getElementById("btn-cancel-idea").style.display = "block"; } function cancelEditIdea() { editIdeaIndex = -1; document.getElementById("quickIdea").value = ""; document.getElementById("quickIdea").style.height = 'auto'; document.getElementById("btn-save-idea").innerHTML = `<svg width="16" height="16"><use href="#icon-plus"></use></svg> Сохранить`; document.getElementById("btn-cancel-idea").style.display = "none"; } function deleteIdea(index) { ideas.splice(index, 1); if (tg.CloudStorage) tg.CloudStorage.setItem('my_ideas_app', JSON.stringify(ideas)); renderIdeas(); } function renderIdeas() { document.getElementById("ideasList").innerHTML = ideas.map((idea, i) => `<div class="card"><div class="card-actions"><button class="icon-btn" onclick="editIdea(${i})">${SVG_EDIT}</button><button class="icon-btn danger" onclick="deleteIdea(${i})">${SVG_TRASH}</button></div><div class="card-desc">${(idea.text || "").replace(/\n/g, '<br>')}</div></div>`).join(''); }
